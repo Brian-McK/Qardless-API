@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "GYJtu0xg0mmQyXnTnhk8YCE+M7gnCgJTqVwr7eV5J94=",
+  "Source": "Qardless.API",
+  "BasePath": "_content/Qardless.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
