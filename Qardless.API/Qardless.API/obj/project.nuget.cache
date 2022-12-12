@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "pkR/vfiLwKDRPufJJccvZb4f2bt94vUFC3BzxHoQeIljal6Ipny9sYxCPmt0eDoKTYphf8N3ruXlZuOoSw6LHg==",
+  "dgSpecHash": "iGbwZtfcZ0EbvDP9PtYXYa+3YW9a8yDtzOfiy+ZhHDcyEQt64gKQ4Gzo9vPabl1jao04tsZEozI3Wr2ggh6C3Q==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Finbar\\Documents\\college\\year4\\qardless\\Qardless.API\\Qardless.API\\Qardless.API.csproj",
+  "projectFilePath": "C:\\Users\\Finbar\\Documents\\college\\year4\\qardless\\repo\\Qardless-API\\Qardless.API\\Qardless.API\\Qardless.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Finbar\\.nuget\\packages\\automapper\\12.0.0\\automapper.12.0.0.nupkg.sha512",
     "C:\\Users\\Finbar\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.0\\automapper.extensions.microsoft.dependencyinjection.12.0.0.nupkg.sha512",
