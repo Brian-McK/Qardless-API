@@ -7,6 +7,11 @@ namespace Qardless.API.Services
         bool SaveChanges();
 
         #region Admin
+        IEnumerable<Admin> GetAdmins();
+        Admin? GetAdmin(Guid adminId);
+        void CreateAdmin(Admin admin);
+        void UpdateAdmin(Admin admin);
+        void DeleteAdmin(Admin admin);
         #endregion
 
         #region Business
