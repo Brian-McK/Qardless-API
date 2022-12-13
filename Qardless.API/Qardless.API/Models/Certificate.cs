@@ -26,7 +26,7 @@ namespace Qardless.API.Models
         public DateTime ExpiryDate { get; set; }
 
         [Required]
-        public DateTime CreatdeDate { get; set; }
+        public DateTime CreatedDate { get; set; }
 
         [Required]
         [ForeignKey("EndUserId")]

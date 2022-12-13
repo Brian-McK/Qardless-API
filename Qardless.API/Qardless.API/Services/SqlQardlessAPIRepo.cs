@@ -93,6 +93,39 @@ namespace Qardless.API.Services
         #endregion
 
         #region Certificate
+        public IEnumerable<Certificate> GetCertificates()
+        {
+            return _context.Certificates.ToList();
+        }
+
+        public Certificate? GetCertificate(Guid certificateId)
+        {
+            return _context.Certificates.FirstOrDefault(a => a.Id == certificateId);
+        }
+
+        public void CreateCertificate(Certificate certificate)
+        {
+            if (certificate == null)
+                throw new ArgumentNullException(nameof(certificate));
+
+            certificate.Id = Guid.NewGuid();
+            certificate.CreatedDate = DateTime.Now;
+
+            _context.Certificates.Add(certificate);
+        }
+
+        public void UpdateCertificate(Certificate certificate)
+        {
+            // no code in this implementation
+        }
+
+        public void DeleteCertificate(Certificate certificate)
+        {
+            if (certificate == null)
+                throw new ArgumentNullException(nameof(certificate));
+
+            _context.Certificates.Remove(certificate);
+        }
         #endregion
 
         #region Changelog

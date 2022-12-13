@@ -51,7 +51,8 @@ namespace Qardless.API.Controllers
 
             var endUserReadFullDto = _mapper.Map<EndUserReadFullDto>(endUserModel);
 
-            return CreatedAtRoute(nameof(GetEndUserById), new { Id = endUserReadFullDto.Id }, endUserReadFullDto);
+            //return CreatedAtRoute(nameof(GetEndUserById), new { Id = endUserReadFullDto.Id }, endUserReadFullDto);
+            return Ok(endUserReadFullDto);
         }
 
         [HttpPut("{id}")]
