@@ -18,6 +18,40 @@ namespace Qardless.API.Services
         }
 
         #region Admin
+        public IEnumerable<Admin> GetAdmins()
+        {
+            return _context.Admins.ToList();
+        }
+
+        public Admin? GetAdmin(Guid adminId)
+        {
+            return _context.Admins.FirstOrDefault(a => a.Id == adminId);
+        }
+
+        public void CreateAdmin(Admin admin)
+        {
+            if (admin == null)
+                throw new ArgumentNullException(nameof(admin));
+
+            admin.Id = Guid.NewGuid();
+            admin.CreatedDate = DateTime.Now;
+            admin.LastLoginDate = admin.CreatedDate;
+
+            _context.Admins.Add(admin);
+        }
+
+        public void UpdateAdmin(Admin admin)
+        {
+            // no code in this implementation
+        }
+
+        public void DeleteAdmin(Admin admin)
+        {
+            if (admin == null)
+                throw new ArgumentNullException(nameof(admin));
+
+            _context.Admins.Remove(admin);
+        }
         #endregion
 
         #region Business
