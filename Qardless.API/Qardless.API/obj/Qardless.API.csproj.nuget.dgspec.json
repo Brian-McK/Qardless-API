@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Finbar\\Documents\\college\\year4\\qardless\\Qardless.API\\Qardless.API\\Qardless.API.csproj": {}
+    "C:\\Users\\jacqu\\source\\repos\\Qardless-API\\Qardless.API\\Qardless.API\\Qardless.API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Finbar\\Documents\\college\\year4\\qardless\\Qardless.API\\Qardless.API\\Qardless.API.csproj": {
+    "C:\\Users\\jacqu\\source\\repos\\Qardless-API\\Qardless.API\\Qardless.API\\Qardless.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Finbar\\Documents\\college\\year4\\qardless\\Qardless.API\\Qardless.API\\Qardless.API.csproj",
+        "projectUniqueName": "C:\\Users\\jacqu\\source\\repos\\Qardless-API\\Qardless.API\\Qardless.API\\Qardless.API.csproj",
         "projectName": "Qardless.API",
-        "projectPath": "C:\\Users\\Finbar\\Documents\\college\\year4\\qardless\\Qardless.API\\Qardless.API\\Qardless.API.csproj",
-        "packagesPath": "C:\\Users\\Finbar\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Finbar\\Documents\\college\\year4\\qardless\\Qardless.API\\Qardless.API\\obj\\",
+        "projectPath": "C:\\Users\\jacqu\\source\\repos\\Qardless-API\\Qardless.API\\Qardless.API\\Qardless.API.csproj",
+        "packagesPath": "C:\\Users\\jacqu\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\jacqu\\source\\repos\\Qardless-API\\Qardless.API\\Qardless.API\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Finbar\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\jacqu\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -26,7 +22,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -77,6 +72,10 @@
               "target": "Package",
               "version": "[7.0.0, )"
             },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[6.0.10, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.2.3, )"
@@ -101,7 +100,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.402\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }
