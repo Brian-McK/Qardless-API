@@ -34,6 +34,8 @@ namespace Qardless.API.Services
                 throw new ArgumentNullException(nameof(admin));
 
             admin.Id = Guid.NewGuid();
+            admin.EmailVerified = false;
+            admin.PhoneMobileVerified = false;
             admin.CreatedDate = DateTime.Now;
             admin.LastLoginDate = admin.CreatedDate;
 
@@ -55,6 +57,39 @@ namespace Qardless.API.Services
         #endregion
 
         #region Business
+        public IEnumerable<Business> GetBusinesses()
+        {
+            return _context.Businesses.ToList();
+        }
+
+        public Business? GetBusiness(Guid businessId)
+        {
+            return _context.Businesses.FirstOrDefault(a => a.Id == businessId);
+        }
+
+        public void CreateBusiness(Business business)
+        {
+            if (business == null)
+                throw new ArgumentNullException(nameof(business));
+
+            business.Id = Guid.NewGuid();
+            business.CreatedDate = DateTime.Now;
+
+            _context.Businesses.Add(business);
+        }
+        
+        public void UpdateBusiness(Business business)
+        {
+            // no code in this implementation
+        }
+
+        public void DeleteBusiness(Business business)
+        {
+            if (business == null)
+                throw new ArgumentNullException(nameof(business));
+
+            _context.Businesses.Remove(business);
+        }
         #endregion
 
         #region Certificate
