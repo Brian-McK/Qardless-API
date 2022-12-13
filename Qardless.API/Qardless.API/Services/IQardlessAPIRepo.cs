@@ -23,6 +23,11 @@ namespace Qardless.API.Services
         #endregion
 
         #region Certificate
+        IEnumerable<Certificate> GetCertificates();
+        Certificate? GetCertificate(Guid certificateId);
+        void CreateCertificate(Certificate certificate);
+        void UpdateCertificate(Certificate certificate);
+        void DeleteCertificate(Certificate certificate);
         #endregion
 
         #region Changelog
