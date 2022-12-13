@@ -15,6 +15,11 @@ namespace Qardless.API.Services
         #endregion
 
         #region Business
+        IEnumerable<Business> GetBusinesses();
+        Business? GetBusiness(Guid businessId);
+        void CreateBusiness(Business business);
+        void UpdateBusiness(Business business);
+        void DeleteBusiness(Business business);
         #endregion
 
         #region Certificate
