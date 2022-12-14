@@ -166,6 +166,41 @@ namespace Qardless.API.Services
         #endregion
 
         #region Employee
+        public IEnumerable<Employee> GetEmployees()
+        {
+            return _context.Employees.ToList();
+        }
+
+        public Employee? GetEmployee(Guid employeeId)
+        {
+            return _context.Employees.FirstOrDefault(a => a.Id == employeeId);
+        }
+
+        public void CreateEmployee(Employee employee)
+        {
+            if (employee == null)
+                throw new ArgumentNullException(nameof(employee));
+
+            employee.Id = Guid.NewGuid();
+            employee.CreatedDate = DateTime.Now;
+            employee.EmailVerified = false;
+            employee.PhoneMobileVerified = false;
+
+            _context.Employees.Add(employee);
+        }
+
+        public void UpdateEmployee(Employee employee)
+        {
+            // no code in this implementation
+        }
+
+        public void DeleteEmployee(Employee employee)
+        {
+            if (employee == null)
+                throw new ArgumentNullException(nameof(employee));
+
+            _context.Changelogs.Remove(employee);
+        }
         #endregion
 
         #region EndUser

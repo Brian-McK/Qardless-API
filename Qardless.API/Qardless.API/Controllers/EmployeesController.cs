@@ -22,19 +22,19 @@ namespace Qardless.API.Controllers
         // GET: Employees
         public async Task<IActionResult> Index()
         {
-            var qardlessAPIContext = _context.Employee.Include(e => e.Business);
+            var qardlessAPIContext = _context.Employees.Include(e => e.Business);
             return View(await qardlessAPIContext.ToListAsync());
         }
 
         // GET: Employees/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null || _context.Employee == null)
+            if (id == null || _context.Employees == null)
             {
                 return NotFound();
             }
 
-            var employee = await _context.Employee
+            var employee = await _context.Employees
                 .Include(e => e.Business)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (employee == null)
@@ -73,12 +73,12 @@ namespace Qardless.API.Controllers
         // GET: Employees/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null || _context.Employee == null)
+            if (id == null || _context.Employees == null)
             {
                 return NotFound();
             }
 
-            var employee = await _context.Employee.FindAsync(id);
+            var employee = await _context.Employees.FindAsync(id);
             if (employee == null)
             {
                 return NotFound();
@@ -126,12 +126,12 @@ namespace Qardless.API.Controllers
         // GET: Employees/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null || _context.Employee == null)
+            if (id == null || _context.Employees == null)
             {
                 return NotFound();
             }
 
-            var employee = await _context.Employee
+            var employee = await _context.Employees
                 .Include(e => e.Business)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (employee == null)
@@ -147,14 +147,14 @@ namespace Qardless.API.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            if (_context.Employee == null)
+            if (_context.Employees == null)
             {
                 return Problem("Entity set 'QardlessAPIContext.Employee'  is null.");
             }
-            var employee = await _context.Employee.FindAsync(id);
+            var employee = await _context.Employees.FindAsync(id);
             if (employee != null)
             {
-                _context.Employee.Remove(employee);
+                _context.Employees.Remove(employee);
             }
             
             await _context.SaveChangesAsync();
@@ -163,7 +163,7 @@ namespace Qardless.API.Controllers
 
         private bool EmployeeExists(Guid id)
         {
-          return _context.Employee.Any(e => e.Id == id);
+          return _context.Employees.Any(e => e.Id == id);
         }
     }
 }

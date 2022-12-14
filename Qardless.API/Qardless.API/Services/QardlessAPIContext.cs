@@ -29,7 +29,7 @@ namespace Qardless.API.Services
         public DbSet<Business> Businesses { get; set; }
         public DbSet<Certificate> Certificates { get; set; }
         public DbSet<Changelog> Changelogs { get; set; }
-        public DbSet<Employee> Employee { get; set; }
+        public DbSet<Employee> Employees { get; set; }
         public DbSet<EndUser> EndUsers { get; set; }
         
     }

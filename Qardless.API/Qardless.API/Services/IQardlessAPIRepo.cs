@@ -53,8 +53,5 @@ namespace Qardless.API.Services
         void UpdateEndUser(EndUser endUser);
         void DeleteEndUser(EndUser endUser);
         #endregion
-
-
-
     }
 }
