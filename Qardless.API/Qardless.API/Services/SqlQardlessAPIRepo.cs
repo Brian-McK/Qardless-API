@@ -199,7 +199,7 @@ namespace Qardless.API.Services
             if (employee == null)
                 throw new ArgumentNullException(nameof(employee));
 
-            _context.Changelogs.Remove(employee);
+            _context.Employees.Remove(employee);
         }
         #endregion
 

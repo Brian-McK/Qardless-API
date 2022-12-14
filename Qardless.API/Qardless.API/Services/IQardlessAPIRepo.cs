@@ -39,8 +39,8 @@ namespace Qardless.API.Services
         #endregion
 
         #region Employee
-        IEnumerable<Employee> GetEmployee();
-        Changelog? GetEmployee(Guid employeeId);
+        IEnumerable<Employee> GetEmployees();
+        Employee? GetEmployee(Guid employeeId);
         void CreateEmployee(Employee employee);
         void UpdateEmployee(Employee employee);
         void DeleteEmployee(Employee employee);
