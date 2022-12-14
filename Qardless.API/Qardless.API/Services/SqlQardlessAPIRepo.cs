@@ -129,6 +129,40 @@ namespace Qardless.API.Services
         #endregion
 
         #region Changelog
+        public IEnumerable<Changelog> GetChangelogs()
+        {
+            return _context.Changelogs.ToList();
+        }
+
+        public Changelog? GetChangelog(Guid changelogId)
+        {
+            return _context.Changelogs.FirstOrDefault(a => a.Id == changelogId);
+        }
+
+        public void CreateChangelog(Changelog changelog)
+        {
+            if (changelog == null)
+                throw new ArgumentNullException(nameof(changelog));
+
+            changelog.Id = Guid.NewGuid();
+            changelog.CreatedDate = DateTime.Now;
+            changelog.WasRead = false;
+
+            _context.Changelogs.Add(changelog);
+        }
+
+        public void UpdateChangelog(Changelog changelog)
+        {
+            // no code in this implementation
+        }
+
+        public void DeleteChangelog(Changelog changelog)
+        {
+            if (changelog == null)
+                throw new ArgumentNullException(nameof(changelog));
+
+            _context.Changelogs.Remove(changelog);
+        }
         #endregion
 
         #region Employee
