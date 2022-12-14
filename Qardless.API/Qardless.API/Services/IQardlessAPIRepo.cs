@@ -31,6 +31,11 @@ namespace Qardless.API.Services
         #endregion
 
         #region Changelog
+        IEnumerable<Changelog> GetChangelogs();
+        Changelog? GetChangelog(Guid changelogId);
+        void CreateChangelog(Changelog changelog);
+        void UpdateChangelog(Changelog changelog);
+        void DeleteChangelog(Changelog changelog);
         #endregion
 
         #region Employee
