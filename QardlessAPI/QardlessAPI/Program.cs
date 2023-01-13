@@ -39,3 +39,9 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+/*
+ * When the API successfully builds and runs, go to this link to test the API
+ *  https://localhost:40443/swagger/index.html
+ * 
+ */
