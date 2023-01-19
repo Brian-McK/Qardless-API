@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Models;
@@ -26,9 +21,8 @@ namespace QardlessAPI.Controllers
         public async Task<ActionResult<IEnumerable<Admin>>> GetAdmins()
         {
           if (_context.Admins == null)
-          {
               return NotFound();
-          }
+         
             return await _context.Admins.ToListAsync();
         }
 
@@ -37,15 +31,12 @@ namespace QardlessAPI.Controllers
         public async Task<ActionResult<Admin>> GetAdmin(Guid id)
         {
           if (_context.Admins == null)
-          {
-              return NotFound();
-          }
+            return NotFound();
+          
             var admin = await _context.Admins.FindAsync(id);
 
             if (admin == null)
-            {
                 return NotFound();
-            }
 
             return admin;
         }
@@ -56,9 +47,7 @@ namespace QardlessAPI.Controllers
         public async Task<IActionResult> PutAdmin(Guid id, Admin admin)
         {
             if (id != admin.Id)
-            {
                 return BadRequest();
-            }
 
             _context.Entry(admin).State = EntityState.Modified;
 
@@ -69,13 +58,9 @@ namespace QardlessAPI.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!AdminExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
 
             return NoContent();
@@ -87,9 +72,8 @@ namespace QardlessAPI.Controllers
         public async Task<ActionResult<Admin>> PostAdmin(Admin admin)
         {
           if (_context.Admins == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.Admins'  is null.");
-          }
+          return Problem("Entity set 'ApplicationDbContext.Admins'  is null.");
+
             _context.Admins.Add(admin);
             await _context.SaveChangesAsync();
 
@@ -101,14 +85,11 @@ namespace QardlessAPI.Controllers
         public async Task<IActionResult> DeleteAdmin(Guid id)
         {
             if (_context.Admins == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
+
             var admin = await _context.Admins.FindAsync(id);
             if (admin == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
 
             _context.Admins.Remove(admin);
             await _context.SaveChangesAsync();

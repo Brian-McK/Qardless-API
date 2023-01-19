@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Dtos.Business;
-using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
 
 namespace QardlessAPI.Controllers
@@ -34,9 +26,7 @@ namespace QardlessAPI.Controllers
         {
             var businessItems = await _repo.GetBusinesses();
             if (businessItems == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
 
             return Ok(_mapper.Map<IEnumerable<BusinessReadPartialDto>>(businessItems));
         }
@@ -47,9 +37,8 @@ namespace QardlessAPI.Controllers
         {
             var business = await _repo.GetBusiness(id);
             if (business == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
+            
             return Ok(_mapper.Map<BusinessReadFullDto>(business));
         }
 
@@ -59,15 +48,11 @@ namespace QardlessAPI.Controllers
         public async Task<IActionResult> PutBusiness(Guid id, BusinessUpdateDto businessUpdateDto)
         {
             if (businessUpdateDto == null)
-            {
-                return BadRequest();
-            }
+            return BadRequest();
 
             var businessModelFromRepo = await _repo.GetBusiness(id);
             if (businessModelFromRepo == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
 
             _mapper.Map(businessUpdateDto, businessModelFromRepo);
             _repo.PutBusiness(id, businessModelFromRepo);
@@ -83,17 +68,13 @@ namespace QardlessAPI.Controllers
             var businessModelFromRepo = await _repo.GetBusiness(id);
 
             if (businessModelFromRepo == null)
-            {
-                return NotFound();
-            }
-
+            return NotFound();
+            
             var businessToPatch = _mapper.Map<BusinessUpdateDto>(businessModelFromRepo);
             patchDoc.ApplyTo(businessToPatch, ModelState);
             
             if(!TryValidateModel(businessToPatch))
-            {
-                return ValidationProblem(ModelState);
-            }
+            return ValidationProblem(ModelState);
 
             _mapper.Map(businessToPatch, businessModelFromRepo);
             _repo.PatchBusiness(id, businessModelFromRepo);
@@ -108,9 +89,7 @@ namespace QardlessAPI.Controllers
         public async Task<ActionResult<BusinessReadFullDto>> PostBusiness(BusinessCreateDto businessCreateDto)
         {
             if (businessCreateDto == null)
-            {
-                return BadRequest();
-            }
+            return BadRequest();
 
             var businessModel = _mapper.Map<Business>(businessCreateDto);
             _repo.PostBusiness(businessModel);
@@ -141,9 +120,8 @@ namespace QardlessAPI.Controllers
         {
             var businessModelFromRepo = _repo.GetBusiness(id);
             if (businessModelFromRepo == null)
-            {
-                return false;
-            }
+            return false;
+            
             return true;
         }
     }

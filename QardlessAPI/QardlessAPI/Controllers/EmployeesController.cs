@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Models;
@@ -26,9 +21,8 @@ namespace QardlessAPI.Controllers
         public async Task<ActionResult<IEnumerable<Employee>>> GetEmployee()
         {
           if (_context.Employees == null)
-          {
-              return NotFound();
-          }
+          return NotFound();
+
             return await _context.Employees.ToListAsync();
         }
 
@@ -37,15 +31,12 @@ namespace QardlessAPI.Controllers
         public async Task<ActionResult<Employee>> GetEmployee(Guid id)
         {
           if (_context.Employees == null)
-          {
-              return NotFound();
-          }
+          return NotFound();
+
             var employee = await _context.Employees.FindAsync(id);
 
             if (employee == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
 
             return employee;
         }
@@ -56,9 +47,7 @@ namespace QardlessAPI.Controllers
         public async Task<IActionResult> PutEmployee(Guid id, Employee employee)
         {
             if (id != employee.Id)
-            {
-                return BadRequest();
-            }
+            return BadRequest();
 
             _context.Entry(employee).State = EntityState.Modified;
 
@@ -69,13 +58,9 @@ namespace QardlessAPI.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!EmployeeExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
 
             return NoContent();
@@ -87,9 +72,8 @@ namespace QardlessAPI.Controllers
         public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
         {
           if (_context.Employees == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.Employee'  is null.");
-          }
+          return Problem("Entity set 'ApplicationDbContext.Employee'  is null.");
+
             _context.Employees.Add(employee);
             await _context.SaveChangesAsync();
 
@@ -101,14 +85,11 @@ namespace QardlessAPI.Controllers
         public async Task<IActionResult> DeleteEmployee(Guid id)
         {
             if (_context.Employees == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
+
             var employee = await _context.Employees.FindAsync(id);
             if (employee == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
 
             _context.Employees.Remove(employee);
             await _context.SaveChangesAsync();

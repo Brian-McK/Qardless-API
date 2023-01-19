@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data.Models;
-using System.Diagnostics.Metrics;
 
 namespace QardlessAPI.Data
 {

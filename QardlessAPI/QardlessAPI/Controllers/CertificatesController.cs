@@ -26,9 +26,8 @@ namespace QardlessAPI.Controllers
         public async Task<ActionResult<IEnumerable<Certificate>>> GetCertificates()
         {
           if (_context.Certificates == null)
-          {
-              return NotFound();
-          }
+          return NotFound();
+         
             return await _context.Certificates.ToListAsync();
         }
 
@@ -37,15 +36,12 @@ namespace QardlessAPI.Controllers
         public async Task<ActionResult<Certificate>> GetCertificate(Guid id)
         {
           if (_context.Certificates == null)
-          {
-              return NotFound();
-          }
+          return NotFound();
+
             var certificate = await _context.Certificates.FindAsync(id);
 
             if (certificate == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
 
             return certificate;
         }
@@ -56,9 +52,7 @@ namespace QardlessAPI.Controllers
         public async Task<IActionResult> PutCertificate(Guid id, Certificate certificate)
         {
             if (id != certificate.Id)
-            {
-                return BadRequest();
-            }
+            return BadRequest();
 
             _context.Entry(certificate).State = EntityState.Modified;
 
@@ -69,15 +63,10 @@ namespace QardlessAPI.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!CertificateExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
-
             return NoContent();
         }
 
@@ -87,9 +76,8 @@ namespace QardlessAPI.Controllers
         public async Task<ActionResult<Certificate>> PostCertificate(Certificate certificate)
         {
           if (_context.Certificates == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.Certificates'  is null.");
-          }
+          return Problem("Entity set 'ApplicationDbContext.Certificates'  is null.");
+          
             _context.Certificates.Add(certificate);
             await _context.SaveChangesAsync();
 
@@ -101,15 +89,12 @@ namespace QardlessAPI.Controllers
         public async Task<IActionResult> DeleteCertificate(Guid id)
         {
             if (_context.Certificates == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
+
             var certificate = await _context.Certificates.FindAsync(id);
             if (certificate == null)
-            {
-                return NotFound();
-            }
-
+            return NotFound();
+            
             _context.Certificates.Remove(certificate);
             await _context.SaveChangesAsync();
 

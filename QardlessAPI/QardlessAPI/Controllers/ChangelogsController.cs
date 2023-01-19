@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Models;
@@ -26,9 +21,8 @@ namespace QardlessAPI.Controllers
         public async Task<ActionResult<IEnumerable<Changelog>>> GetChangelogs()
         {
           if (_context.Changelogs == null)
-          {
-              return NotFound();
-          }
+          return NotFound();
+
             return await _context.Changelogs.ToListAsync();
         }
 
@@ -37,15 +31,12 @@ namespace QardlessAPI.Controllers
         public async Task<ActionResult<Changelog>> GetChangelog(Guid id)
         {
           if (_context.Changelogs == null)
-          {
-              return NotFound();
-          }
+          return NotFound();
+
             var changelog = await _context.Changelogs.FindAsync(id);
 
             if (changelog == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
 
             return changelog;
         }
@@ -56,9 +47,7 @@ namespace QardlessAPI.Controllers
         public async Task<IActionResult> PutChangelog(Guid id, Changelog changelog)
         {
             if (id != changelog.Id)
-            {
-                return BadRequest();
-            }
+            return BadRequest();
 
             _context.Entry(changelog).State = EntityState.Modified;
 
@@ -69,15 +58,10 @@ namespace QardlessAPI.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!ChangelogExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
-
             return NoContent();
         }
 
@@ -87,9 +71,8 @@ namespace QardlessAPI.Controllers
         public async Task<ActionResult<Changelog>> PostChangelog(Changelog changelog)
         {
           if (_context.Changelogs == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.Changelogs'  is null.");
-          }
+          return Problem("Entity set 'ApplicationDbContext.Changelogs'  is null.");
+          
             _context.Changelogs.Add(changelog);
             await _context.SaveChangesAsync();
 
@@ -101,14 +84,11 @@ namespace QardlessAPI.Controllers
         public async Task<IActionResult> DeleteChangelog(Guid id)
         {
             if (_context.Changelogs == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
+            
             var changelog = await _context.Changelogs.FindAsync(id);
             if (changelog == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
 
             _context.Changelogs.Remove(changelog);
             await _context.SaveChangesAsync();

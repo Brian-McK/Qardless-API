@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Models;
@@ -26,9 +21,8 @@ namespace QardlessAPI.Controllers
         public async Task<ActionResult<IEnumerable<EndUser>>> GetEndUsers()
         {
           if (_context.EndUsers == null)
-          {
-              return NotFound();
-          }
+          return NotFound();
+
             return await _context.EndUsers.ToListAsync();
         }
 
@@ -37,15 +31,12 @@ namespace QardlessAPI.Controllers
         public async Task<ActionResult<EndUser>> GetEndUser(Guid id)
         {
           if (_context.EndUsers == null)
-          {
-              return NotFound();
-          }
+          return NotFound();
+
             var endUser = await _context.EndUsers.FindAsync(id);
 
             if (endUser == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
 
             return endUser;
         }
@@ -56,9 +47,7 @@ namespace QardlessAPI.Controllers
         public async Task<IActionResult> PutEndUser(Guid id, EndUser endUser)
         {
             if (id != endUser.Id)
-            {
-                return BadRequest();
-            }
+            return BadRequest();
 
             _context.Entry(endUser).State = EntityState.Modified;
 
@@ -69,13 +58,10 @@ namespace QardlessAPI.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!EndUserExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
+                
             }
 
             return NoContent();
@@ -87,9 +73,8 @@ namespace QardlessAPI.Controllers
         public async Task<ActionResult<EndUser>> PostEndUser(EndUser endUser)
         {
           if (_context.EndUsers == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.EndUsers'  is null.");
-          }
+            return Problem("Entity set 'ApplicationDbContext.EndUsers'  is null.");
+
             _context.EndUsers.Add(endUser);
             await _context.SaveChangesAsync();
 
@@ -101,14 +86,11 @@ namespace QardlessAPI.Controllers
         public async Task<IActionResult> DeleteEndUser(Guid id)
         {
             if (_context.EndUsers == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
+
             var endUser = await _context.EndUsers.FindAsync(id);
             if (endUser == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
 
             _context.EndUsers.Remove(endUser);
             await _context.SaveChangesAsync();
