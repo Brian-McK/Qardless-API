@@ -25,22 +25,22 @@ namespace QardlessAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Employee>>> GetEmployee()
         {
-          if (_context.Employee == null)
+          if (_context.Employees == null)
           {
               return NotFound();
           }
-            return await _context.Employee.ToListAsync();
+            return await _context.Employees.ToListAsync();
         }
 
         // GET: api/Employees/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Employee>> GetEmployee(Guid id)
         {
-          if (_context.Employee == null)
+          if (_context.Employees == null)
           {
               return NotFound();
           }
-            var employee = await _context.Employee.FindAsync(id);
+            var employee = await _context.Employees.FindAsync(id);
 
             if (employee == null)
             {
@@ -86,11 +86,11 @@ namespace QardlessAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
         {
-          if (_context.Employee == null)
+          if (_context.Employees == null)
           {
               return Problem("Entity set 'ApplicationDbContext.Employee'  is null.");
           }
-            _context.Employee.Add(employee);
+            _context.Employees.Add(employee);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetEmployee", new { id = employee.Id }, employee);
@@ -100,17 +100,17 @@ namespace QardlessAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployee(Guid id)
         {
-            if (_context.Employee == null)
+            if (_context.Employees == null)
             {
                 return NotFound();
             }
-            var employee = await _context.Employee.FindAsync(id);
+            var employee = await _context.Employees.FindAsync(id);
             if (employee == null)
             {
                 return NotFound();
             }
 
-            _context.Employee.Remove(employee);
+            _context.Employees.Remove(employee);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -118,7 +118,7 @@ namespace QardlessAPI.Controllers
 
         private bool EmployeeExists(Guid id)
         {
-            return (_context.Employee?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Employees?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

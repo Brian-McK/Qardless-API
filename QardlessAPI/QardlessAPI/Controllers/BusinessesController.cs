@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
+using QardlessAPI.Data.Dtos.Business;
+using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
 
 namespace QardlessAPI.Controllers
@@ -14,69 +19,85 @@ namespace QardlessAPI.Controllers
     [ApiController]
     public class BusinessesController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IQardlessAPIRepo _repo;
+        private readonly IMapper _mapper;
 
-        public BusinessesController(ApplicationDbContext context)
+        public BusinessesController(IQardlessAPIRepo repo, IMapper mapper)
         {
-            _context = context;
+            _repo = repo;
+            _mapper = mapper;
         }
 
         // GET: api/Businesses
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Business>>> GetBusinesses()
         {
-          if (_context.Businesses == null)
-          {
-              return NotFound();
-          }
-            return await _context.Businesses.ToListAsync();
+            var businessItems = await _repo.GetBusinesses();
+            if (businessItems == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<IEnumerable<BusinessReadPartialDto>>(businessItems));
         }
 
         // GET: api/Businesses/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Business>> GetBusiness(Guid id)
         {
-          if (_context.Businesses == null)
-          {
-              return NotFound();
-          }
-            var business = await _context.Businesses.FindAsync(id);
-
+            var business = await _repo.GetBusiness(id);
             if (business == null)
             {
                 return NotFound();
             }
-
-            return business;
+            return Ok(_mapper.Map<BusinessReadFullDto>(business));
         }
 
         // PUT: api/Businesses/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBusiness(Guid id, Business business)
+        public async Task<IActionResult> PutBusiness(Guid id, BusinessUpdateDto businessUpdateDto)
         {
-            if (id != business.Id)
+            if (businessUpdateDto == null)
             {
                 return BadRequest();
             }
 
-            _context.Entry(business).State = EntityState.Modified;
+            var businessModelFromRepo = await _repo.GetBusiness(id);
+            if (businessModelFromRepo == null)
+            {
+                return NotFound();
+            }
 
-            try
+            _mapper.Map(businessUpdateDto, businessModelFromRepo);
+            _repo.PutBusiness(id, businessModelFromRepo);
+            _repo.SaveChanges();
+
+            return NoContent();
+        }
+
+        // PATCH: api/Businesses/5
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchBusiness(Guid id, JsonPatchDocument<BusinessUpdateDto> patchDoc)
+        {
+            var businessModelFromRepo = await _repo.GetBusiness(id);
+
+            if (businessModelFromRepo == null)
             {
-                await _context.SaveChangesAsync();
+                return NotFound();
             }
-            catch (DbUpdateConcurrencyException)
+
+            var businessToPatch = _mapper.Map<BusinessUpdateDto>(businessModelFromRepo);
+            patchDoc.ApplyTo(businessToPatch, ModelState);
+            
+            if(!TryValidateModel(businessToPatch))
             {
-                if (!BusinessExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return ValidationProblem(ModelState);
             }
+
+            _mapper.Map(businessToPatch, businessModelFromRepo);
+            _repo.PatchBusiness(id, businessModelFromRepo);
+            _repo.SaveChanges();
 
             return NoContent();
         }
@@ -84,41 +105,46 @@ namespace QardlessAPI.Controllers
         // POST: api/Businesses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Business>> PostBusiness(Business business)
+        public async Task<ActionResult<BusinessReadFullDto>> PostBusiness(BusinessCreateDto businessCreateDto)
         {
-          if (_context.Businesses == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.Businesses'  is null.");
-          }
-            _context.Businesses.Add(business);
-            await _context.SaveChangesAsync();
+            if (businessCreateDto == null)
+            {
+                return BadRequest();
+            }
 
-            return CreatedAtAction("GetBusiness", new { id = business.Id }, business);
+            var businessModel = _mapper.Map<Business>(businessCreateDto);
+            _repo.PostBusiness(businessModel);
+            _repo.SaveChanges();
+
+            var businessReadFullDto = _mapper.Map<BusinessReadFullDto>(businessModel);
+
+            return CreatedAtAction(nameof(GetBusiness), new { Id = businessReadFullDto.Id }, businessReadFullDto);
         }
 
         // DELETE: api/Businesses/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBusiness(Guid id)
         {
-            if (_context.Businesses == null)
-            {
-                return NotFound();
-            }
-            var business = await _context.Businesses.FindAsync(id);
-            if (business == null)
+            var businessModelFromRepo = await _repo.GetBusiness(id);
+            if (businessModelFromRepo == null)
             {
                 return NotFound();
             }
 
-            _context.Businesses.Remove(business);
-            await _context.SaveChangesAsync();
+            _repo.DeleteBusiness(businessModelFromRepo);
+            _repo.SaveChanges();
 
             return NoContent();
         }
 
         private bool BusinessExists(Guid id)
         {
-            return (_context.Businesses?.Any(e => e.Id == id)).GetValueOrDefault();
+            var businessModelFromRepo = _repo.GetBusiness(id);
+            if (businessModelFromRepo == null)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

@@ -22,6 +22,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     )
 );
 
+// Service Lifetime: Scoped, created once per request.
+builder.Services.AddScoped<IQardlessAPIRepo, QardlessAPIRepo>();
+
+// Automapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
