@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Models;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace QardlessAPI.Controllers
 {
@@ -61,19 +63,31 @@ namespace QardlessAPI.Controllers
                     return NotFound();
                 else
                     throw;
-                
             }
 
             return NoContent();
         }
 
+        // Business logic: Register EndUser
         // POST: api/EndUsers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<EndUser>> PostEndUser(EndUser endUser)
+        [HttpPost()]
+        public async Task<ActionResult<EndUser>> PostEndUser(EndUser endUser, string name, string email, string contact, string password)
         {
-          if (_context.EndUsers == null)
-            return Problem("Entity set 'ApplicationDbContext.EndUsers'  is null.");
+            if (_context.EndUsers == null)
+                return NotFound();
+
+            //Security - Hash user passwords
+            var sha = SHA256.Create();
+            var asByteArray = Encoding.Default.GetBytes(password);
+            var hashedPassword = sha.ComputeHash(asByteArray);
+            var convertedHashedPassword = Convert.ToBase64String(hashedPassword);
+           
+            endUser.Name = name;
+            endUser.Email = email;
+            endUser.EmailVerified = false;
+            endUser.PasswordHash = convertedHashedPassword;
+            endUser.ContactNumber = contact;
 
             _context.EndUsers.Add(endUser);
             await _context.SaveChangesAsync();
