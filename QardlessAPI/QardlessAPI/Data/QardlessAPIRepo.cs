@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data.Models;
+using System.Text;
 
 namespace QardlessAPI.Data
 {
@@ -281,9 +282,7 @@ namespace QardlessAPI.Data
         public void PostEndUser(EndUser? endUser)
         {
             if (endUser == null)
-            {
                 throw new ArgumentNullException(nameof(endUser));
-            }
 
             endUser.Id = Guid.NewGuid();
             endUser.CreatedDate = DateTime.Now;

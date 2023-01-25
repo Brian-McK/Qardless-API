@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace QardlessAPI.Controllers
 {
@@ -31,10 +33,18 @@ namespace QardlessAPI.Controllers
             if (endUser == null)
                 return NotFound();
 
-            if (endUser.PasswordHash != password)
+            //Security - Hash user passwords
+            var sha = SHA256.Create();
+            var asByteArray = Encoding.Default.GetBytes(password);
+            var hashedPassword = sha.ComputeHash(asByteArray);
+            var convertedHashedPassword = Convert.ToBase64String(hashedPassword);
+
+            if (endUser.PasswordHash != convertedHashedPassword)
                 return Unauthorized();
 
             //TODO: set isLoggedIn to true (default is true atm)
+            EndUserLoginDto eu = new EndUserLoginDto();
+            eu.isLoggedin = true; 
 
             return Ok();
         }
