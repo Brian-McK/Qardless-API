@@ -62,9 +62,7 @@ namespace QardlessAPI.Data
         void PatchEndUser(Guid id, EndUser endUser);
         void PostEndUser(EndUser endUser);
         void DeleteEndUser(EndUser endUser);
+
         #endregion
-
-
-
     }
 }
