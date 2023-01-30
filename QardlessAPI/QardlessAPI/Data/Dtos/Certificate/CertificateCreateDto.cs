@@ -5,21 +5,22 @@ namespace QardlessAPI.Data.Dtos.Certificate
     public class CertificateCreateDto
     {
         [Required]
-        public string Title { get; set; }
+        public string CourseTitle { get; set; }
 
         [Required]
-        public string QrCodeUri { get; set; }
+        public string CertNumber { get; set; }
 
         [Required]
-        public string PdfUri { get; set; }
+        public DateTime CourseDate { get; set; }
 
         [Required]
-        public string SerialNumber { get; set; }
-
-        [Required]
-        public bool Expires { get; set; }
-
         public DateTime ExpiryDate { get; set; }
+
+        [Required]
+        public string PdfUrl { get; set; }
+
+        [Required]
+        public DateTime CreatedDate { get; set; }
 
         [Required]
         public Guid EndUserId { get; set; }
