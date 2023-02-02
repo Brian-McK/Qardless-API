@@ -283,11 +283,7 @@ namespace QardlessAPI.Data
         {
             if (endUser == null)
                 throw new ArgumentNullException(nameof(endUser));
-
-            endUser.Id = Guid.NewGuid();
-            endUser.CreatedDate = DateTime.Now;
-            endUser.LastLoginDate = endUser.CreatedDate;
-
+     
             _context.EndUsers.Add(endUser);
         }
 

@@ -4,6 +4,7 @@ using QardlessAPI.Data;
 using QardlessAPI.Data.Models;
 using System.Text;
 using System.Security.Cryptography;
+using QardlessAPI.Data.Dtos.EndUser;
 
 namespace QardlessAPI.Controllers
 {
@@ -72,23 +73,27 @@ namespace QardlessAPI.Controllers
         // POST: api/EndUsers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost()]
-        public async Task<ActionResult<EndUser>> PostEndUser(EndUser endUser, string name, string email, string contact, string password)
+        public async Task<ActionResult<EndUser>> PostEndUser(EndUserCreateDto endUserForCreation)
         {
             if (_context.EndUsers == null)
                 return NotFound();
 
             //Security - Hash user passwords
             var sha = SHA256.Create();
-            var asByteArray = Encoding.Default.GetBytes(password);
+            var asByteArray = Encoding.Default.GetBytes(endUserForCreation.PasswordHash);
             var hashedPassword = sha.ComputeHash(asByteArray);
             var convertedHashedPassword = Convert.ToBase64String(hashedPassword);
 
+            EndUser endUser = new EndUser();
+
             endUser.Id = new Guid();
-            endUser.Name = name;
-            endUser.Email = email;
+            endUser.Name = endUserForCreation.Name;
+            endUser.Email = endUserForCreation.Email;
             endUser.EmailVerified = false;
             endUser.PasswordHash = convertedHashedPassword;
-            endUser.ContactNumber = contact;
+            endUser.ContactNumber = endUserForCreation.ContactNumber;
+            endUser.CreatedDate = DateTime.Now;
+            endUser.LastLoginDate = endUser.CreatedDate;
 
             _context.EndUsers.Add(endUser);
             await _context.SaveChangesAsync();
