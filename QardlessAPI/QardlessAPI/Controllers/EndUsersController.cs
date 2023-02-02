@@ -82,7 +82,8 @@ namespace QardlessAPI.Controllers
             var asByteArray = Encoding.Default.GetBytes(password);
             var hashedPassword = sha.ComputeHash(asByteArray);
             var convertedHashedPassword = Convert.ToBase64String(hashedPassword);
-           
+
+            endUser.Id = new Guid();
             endUser.Name = name;
             endUser.Email = email;
             endUser.EmailVerified = false;
