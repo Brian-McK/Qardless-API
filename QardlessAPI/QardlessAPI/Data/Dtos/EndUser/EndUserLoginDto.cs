@@ -6,12 +6,5 @@
 
         public string Password { get; set; }
 
-        public bool isLoggedin 
-        {
-            get { return isLoggedin; }
-            
-            set { isLoggedin = false; }
-        }
-
     }
 }

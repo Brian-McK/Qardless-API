@@ -6,6 +6,11 @@
 
         public string PasswordHash { get; set; }
 
-        public bool isLoggedIn { get; set; }
+        public bool isLoggedin
+        {
+            get { return isLoggedin; }
+
+            set { isLoggedin = false; }
+        }
     }
 }

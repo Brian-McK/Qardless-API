@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Bson;
+//using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
 
 namespace QardlessAPI.Data
@@ -58,6 +59,7 @@ namespace QardlessAPI.Data
         #region EndUser
         Task<IEnumerable<EndUser?>> GetEndUsers();
         Task<EndUser?> GetEndUser(Guid id);
+        //Task<EndUser?> GetEndUserByEmail(EndUserLoginDto loginDto);
         void PutEndUser(Guid id, EndUser endUser);
         void PatchEndUser(Guid id, EndUser endUser);
         void PostEndUser(EndUser endUser);

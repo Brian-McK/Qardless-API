@@ -13,23 +13,27 @@ namespace QardlessAPI.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
+        private readonly IQardlessAPIRepo _qardlessRepo;
         private readonly ApplicationDbContext _context;
-        public LoginController(ApplicationDbContext context)
+
+        public LoginController(IQardlessAPIRepo qardlessRepo, IMapper mapper, ApplicationDbContext context)
         {
+            _qardlessRepo = qardlessRepo ??
+                throw new ArgumentNullException(nameof(qardlessRepo));
             _context = context;
         }
 
         // POST: api/Login/
         [HttpPost()]
-        public async Task<ActionResult<Login>> PostEndUserLogin(EndUserLoginDto loginUser)
+        public async Task<ActionResult<Login>> EndUserLogin(EndUserLoginDto loginUser)
         {
-            //check users have come from db
-            if (_context.EndUsers == null)
-                return NotFound();
+            if (loginUser == null)
+                return BadRequest();
 
-            EndUser endUser = await _context.EndUsers.FirstOrDefaultAsync(e => e.Email == loginUser.Email);
+            EndUser? endUser = _context.EndUsers
+                .Where(e => e.Email == loginUser.Email)
+                .FirstOrDefault();
 
-            //check user exists
             if (endUser == null)
                 return NotFound();
 
@@ -42,7 +46,15 @@ namespace QardlessAPI.Controllers
             if (endUser.PasswordHash != convertedHashedPassword)
                 return Unauthorized();
 
-            loginUser.isLoggedin = true; 
+            endUser.LastLoginDate = DateTime.Now;
+
+            //For frontend
+            EndUserReadPartialDto endUserForProps = new EndUserReadPartialDto();
+            endUserForProps.Name = endUser.Name;
+            endUserForProps.Email = endUser.Email;
+            endUserForProps.ContactNumber = endUser.ContactNumber;
+            endUserForProps.isLoggedin = true;
+            //SendUserDetailsForProps(endUserForProps);
 
             return Ok();
         }
