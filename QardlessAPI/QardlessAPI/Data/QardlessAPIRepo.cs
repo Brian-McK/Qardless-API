@@ -270,11 +270,6 @@ namespace QardlessAPI.Data
             return await _context.EndUsers.FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        /*public async Task<EndUser?> GetEndUserByEmail(EndUserLoginDto loginDto)
-        {
-            return await _context.EndUsers.FirstOrDefaultAsync(e => e.Email == loginDto.Email);
-        }*/
-
         public void PutEndUser(Guid id, EndUser? endUser)
         {
             // Implemented in the controller

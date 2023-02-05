@@ -16,7 +16,7 @@ namespace QardlessAPI.Controllers
         private readonly IQardlessAPIRepo _qardlessRepo;
         private readonly ApplicationDbContext _context;
 
-        public LoginController(IQardlessAPIRepo qardlessRepo, IMapper mapper, ApplicationDbContext context)
+        public LoginController(IQardlessAPIRepo qardlessRepo, ApplicationDbContext context)
         {
             _qardlessRepo = qardlessRepo ??
                 throw new ArgumentNullException(nameof(qardlessRepo));

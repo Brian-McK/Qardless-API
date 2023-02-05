@@ -48,21 +48,6 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<EndUserReadFullDto>(endUser));
         }
 
-        // GET: api/EndUsers/<<email>>
-        /*[HttpGet("{email}")]
-        public async Task<ActionResult<EndUser>> GetEndUserByEmail(EndUserLoginDto loginDto)
-        {
-            if (loginDto == null)
-                return NotFound();
-            
-            var endUser = await _qardlessRepo.GetEndUserByEmail(loginDto);
-
-            if (endUser == null)
-                return NotFound();
-
-            return Ok(_mapper.Map<EndUserReadFullDto>(endUser));
-        }*/
-
         // PUT: api/EndUsers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
