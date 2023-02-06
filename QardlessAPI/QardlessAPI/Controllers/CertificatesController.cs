@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Models;
+using QardlessAPI.Data.Dtos.Certificate;
+using AutoMapper;
 
 namespace QardlessAPI.Controllers
 {
@@ -14,11 +16,17 @@ namespace QardlessAPI.Controllers
     [ApiController]
     public class CertificatesController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context; 
+        private readonly IQardlessAPIRepo _repo;
+        private readonly IMapper _mapper;
 
-        public CertificatesController(ApplicationDbContext context)
+        public CertificatesController(IMapper mapper, ApplicationDbContext context, IQardlessAPIRepo repo)
         {
+            _repo = repo ??
+                throw new ArgumentNullException(nameof(repo));
             _context = context;
+            _mapper = mapper ??
+               throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/Certificates
@@ -73,15 +81,27 @@ namespace QardlessAPI.Controllers
         // POST: api/Certificates
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Certificate>> PostCertificate(Certificate certificate)
+        public async Task<ActionResult<Certificate>> PostCertificate(CertificateCreateDto certificateForCreation)
         {
-            if (_context.Certificates == null)
-            return Problem("Entity set 'ApplicationDbContext.Certificates'  is null.");
-          
-            _context.Certificates.Add(certificate);
-            await _context.SaveChangesAsync();
+            if (certificateForCreation == null)
+                return BadRequest();
 
-            return CreatedAtAction("GetCertificate", new { id = certificate.Id }, certificate);
+            var cert = _mapper.Map<Certificate>(certificateForCreation);
+
+            cert.Id = new Guid();
+            cert.CourseTitle = certificateForCreation.CourseTitle;
+            cert.CertNumber = certificateForCreation.CertNumber;
+            cert.CourseDate = certificateForCreation.CourseDate;
+            cert.ExpiryDate = certificateForCreation.ExpiryDate;
+            cert.PdfUrl = certificateForCreation.PdfUrl;
+            cert.CreatedDate = DateTime.Now;
+            cert.EndUserId = certificateForCreation.EndUserId;
+            cert.BusinessId = certificateForCreation.BusinessId;
+
+            _repo.PostCertificate(cert);
+            _repo.SaveChanges();
+
+            return CreatedAtAction("GetCertificate", new { id = cert.Id }, cert);
         }
 
         // DELETE: api/Certificates/5
