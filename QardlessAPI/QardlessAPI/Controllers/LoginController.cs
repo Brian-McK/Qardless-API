@@ -6,6 +6,7 @@ using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
 using System.Text;
 using System.Security.Cryptography;
+using AutoMapper;
 
 namespace QardlessAPI.Controllers
 {
@@ -14,25 +15,21 @@ namespace QardlessAPI.Controllers
     public class LoginController : ControllerBase
     {
         private readonly IQardlessAPIRepo _qardlessRepo;
-        private readonly ApplicationDbContext _context;
 
-        public LoginController(IQardlessAPIRepo qardlessRepo, ApplicationDbContext context)
+        public LoginController(IQardlessAPIRepo qardlessRepo)
         {
             _qardlessRepo = qardlessRepo ??
                 throw new ArgumentNullException(nameof(qardlessRepo));
-            _context = context;
         }
 
         // POST: api/Login/
         [HttpPost()]
-        public async Task<ActionResult<Login>> EndUserLogin(EndUserLoginDto loginUser)
+        public async Task<ActionResult<EndUser>> EndUserLogin(EndUserLoginDto loginUser)
         {
             if (loginUser == null)
                 return BadRequest();
 
-            EndUser? endUser = _context.EndUsers
-                .Where(e => e.Email == loginUser.Email)
-                .FirstOrDefault();
+            EndUser? endUser = await _qardlessRepo.GetEndUserByEmail(loginUser);
 
             if (endUser == null)
                 return NotFound();

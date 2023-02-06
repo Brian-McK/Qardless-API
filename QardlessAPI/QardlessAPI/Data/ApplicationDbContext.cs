@@ -20,6 +20,5 @@ namespace QardlessAPI.Data
         public DbSet<Changelog> Changelogs { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<EndUser> EndUsers { get; set; }
-
     }
 }
