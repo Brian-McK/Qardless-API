@@ -6,6 +6,7 @@ using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
 using System.Text;
 using System.Security.Cryptography;
+using AutoMapper;
 
 namespace QardlessAPI.Controllers
 {
@@ -13,38 +14,44 @@ namespace QardlessAPI.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-        public LoginController(ApplicationDbContext context)
+        private readonly IQardlessAPIRepo _qardlessRepo;
+
+        public LoginController(IQardlessAPIRepo qardlessRepo)
         {
-            _context = context;
+            _qardlessRepo = qardlessRepo ??
+                throw new ArgumentNullException(nameof(qardlessRepo));
         }
 
         // POST: api/Login/
         [HttpPost()]
-        public async Task<ActionResult<Login>> GetEndUserLogin(string email, string password)
+        public async Task<ActionResult<EndUser>> EndUserLogin(EndUserLoginDto loginUser)
         {
-            //check users have come from db
-            if (_context.EndUsers == null)
-                return NotFound();
+            if (loginUser == null)
+                return BadRequest();
 
-            EndUser endUser = await _context.EndUsers.FirstOrDefaultAsync(e => e.Email == email);
+            EndUser? endUser = await _qardlessRepo.GetEndUserByEmail(loginUser);
 
-            //check user exists
             if (endUser == null)
                 return NotFound();
 
             //Security - Hash user passwords
             var sha = SHA256.Create();
-            var asByteArray = Encoding.Default.GetBytes(password);
+            var asByteArray = Encoding.Default.GetBytes(loginUser.Password);
             var hashedPassword = sha.ComputeHash(asByteArray);
             var convertedHashedPassword = Convert.ToBase64String(hashedPassword);
 
             if (endUser.PasswordHash != convertedHashedPassword)
                 return Unauthorized();
 
-            //TODO: set isLoggedIn to true (default is true atm)
-            EndUserLoginDto eu = new EndUserLoginDto();
-            eu.isLoggedin = true; 
+            endUser.LastLoginDate = DateTime.Now;
+
+            //For frontend
+            EndUserReadPartialDto endUserForProps = new EndUserReadPartialDto();
+            endUserForProps.Name = endUser.Name;
+            endUserForProps.Email = endUser.Email;
+            endUserForProps.ContactNumber = endUser.ContactNumber;
+            endUserForProps.isLoggedin = true;
+            //SendUserDetailsForProps(endUserForProps);
 
             return Ok();
         }

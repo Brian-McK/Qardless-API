@@ -4,12 +4,7 @@
     {
         public string Email { get; set; }
 
-        public bool isLoggedin 
-        {
-            get { return isLoggedin; }
-            
-            set { isLoggedin = false; }
-        }
+        public string Password { get; set; }
 
     }
 }

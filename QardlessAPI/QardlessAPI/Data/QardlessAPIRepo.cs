@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
 using System.Text;
 
@@ -8,10 +10,14 @@ namespace QardlessAPI.Data
     public class QardlessAPIRepo : IQardlessAPIRepo
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public QardlessAPIRepo(ApplicationDbContext context)
+        public QardlessAPIRepo(ApplicationDbContext context, IMapper mapper)
         {
-            _context = context;
+            _context = context ??
+                throw new ArgumentNullException(nameof(context)); 
+            _mapper = mapper ??
+               throw new ArgumentNullException(nameof(mapper));
         }
 
         public bool SaveChanges()
@@ -269,6 +275,22 @@ namespace QardlessAPI.Data
             return await _context.EndUsers.FirstOrDefaultAsync(e => e.Id == id);
         }
 
+        //For login controller
+        public async Task<EndUser?> GetEndUserByEmail(EndUserLoginDto endUserLoginDto)
+        {
+            var endUsers = await GetEndUsers();
+            //_mapper.Map<IEnumerable<EndUserReadFullDto>>(endUsers);
+
+            EndUser? endUser = await _context.EndUsers
+                .Where(e => e.Email == endUserLoginDto.Email)
+                .FirstOrDefaultAsync();
+
+            if (endUser == null)
+                return null;
+
+            return endUser;
+        }
+
         public void PutEndUser(Guid id, EndUser? endUser)
         {
             // Implemented in the controller
@@ -283,11 +305,7 @@ namespace QardlessAPI.Data
         {
             if (endUser == null)
                 throw new ArgumentNullException(nameof(endUser));
-
-            endUser.Id = Guid.NewGuid();
-            endUser.CreatedDate = DateTime.Now;
-            endUser.LastLoginDate = endUser.CreatedDate;
-
+     
             _context.EndUsers.Add(endUser);
         }
 

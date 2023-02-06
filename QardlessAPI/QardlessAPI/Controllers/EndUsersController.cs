@@ -4,6 +4,8 @@ using QardlessAPI.Data;
 using QardlessAPI.Data.Models;
 using System.Text;
 using System.Security.Cryptography;
+using QardlessAPI.Data.Dtos.EndUser;
+using AutoMapper;
 
 namespace QardlessAPI.Controllers
 {
@@ -11,110 +13,113 @@ namespace QardlessAPI.Controllers
     [ApiController]
     public class EndUsersController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IQardlessAPIRepo _qardlessRepo;
+        private readonly IMapper _mapper;
 
-        public EndUsersController(ApplicationDbContext context)
+        public EndUsersController(IQardlessAPIRepo qardlessRepo, IMapper mapper)
         {
-            _context = context;
+            _qardlessRepo = qardlessRepo ??
+                throw new ArgumentNullException(nameof(qardlessRepo));
+            _mapper = mapper ??
+               throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/EndUsers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EndUser>>> GetEndUsers()
+        public async Task<ActionResult<EndUser>> GetEndUsers()
         {
-          if (_context.EndUsers == null)
-          return NotFound();
+            var endUsers = await _qardlessRepo.GetEndUsers();
 
-            return await _context.EndUsers.ToListAsync();
+            if (endUsers == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<IEnumerable<EndUserReadFullDto>>(endUsers));
         }
-
+        
         // GET: api/EndUsers/5
         [HttpGet("{id}")]
         public async Task<ActionResult<EndUser>> GetEndUser(Guid id)
         {
-          if (_context.EndUsers == null)
-          return NotFound();
-
-            var endUser = await _context.EndUsers.FindAsync(id);
+            var endUser = await _qardlessRepo.GetEndUser(id);
 
             if (endUser == null)
-            return NotFound();
+                return NotFound();
 
-            return endUser;
+            return Ok(_mapper.Map<EndUserReadFullDto>(endUser));
         }
 
         // PUT: api/EndUsers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEndUser(Guid id, EndUser endUser)
+        public async Task<IActionResult> PutEndUser(Guid id, EndUserUpdateDto endUserUpdateDto)
         {
-            if (id != endUser.Id)
-            return BadRequest();
+            if (endUserUpdateDto == null)
+                return BadRequest();
 
-            _context.Entry(endUser).State = EntityState.Modified;
+            var endUser = await _qardlessRepo.GetEndUser(id);
+            if (endUser == null)
+                return NotFound();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EndUserExists(id))
-                    return NotFound();
-                else
-                    throw;
-            }
+            _mapper.Map(endUserUpdateDto, endUser);
+            _qardlessRepo.PutEndUser(id, endUser);
+            _qardlessRepo.SaveChanges();
 
-            return NoContent();
+            return Accepted();
         }
-
+        
         // Business logic: Register EndUser
         // POST: api/EndUsers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost()]
-        public async Task<ActionResult<EndUser>> PostEndUser(EndUser endUser, string name, string email, string contact, string password)
+        public async Task<ActionResult<EndUser>> PostEndUser(EndUserCreateDto endUserForCreation)
         {
-            if (_context.EndUsers == null)
-                return NotFound();
+            if(endUserForCreation == null)
+                return BadRequest();
+
+            var endUser = _mapper.Map<EndUser>(endUserForCreation);
 
             //Security - Hash user passwords
             var sha = SHA256.Create();
-            var asByteArray = Encoding.Default.GetBytes(password);
+            var asByteArray = Encoding.Default.GetBytes(endUserForCreation.PasswordHash);
             var hashedPassword = sha.ComputeHash(asByteArray);
             var convertedHashedPassword = Convert.ToBase64String(hashedPassword);
-           
-            endUser.Name = name;
-            endUser.Email = email;
+
+            endUser.Id = new Guid();
+            endUser.Name = endUserForCreation.Name;
+            endUser.Email = endUserForCreation.Email;
             endUser.EmailVerified = false;
             endUser.PasswordHash = convertedHashedPassword;
-            endUser.ContactNumber = contact;
+            endUser.ContactNumber = endUserForCreation.ContactNumber;
+            endUser.CreatedDate = DateTime.Now;
+            endUser.LastLoginDate = endUser.CreatedDate;
 
-            _context.EndUsers.Add(endUser);
-            await _context.SaveChangesAsync();
+            _qardlessRepo.PostEndUser(endUser);
+            _qardlessRepo.SaveChanges();
 
             return CreatedAtAction("GetEndUser", new { id = endUser.Id }, endUser);
         }
-
+        
         // DELETE: api/EndUsers/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEndUser(Guid id)
         {
-            if (_context.EndUsers == null)
-            return NotFound();
-
-            var endUser = await _context.EndUsers.FindAsync(id);
+            var endUser = await _qardlessRepo.GetEndUser(id);
             if (endUser == null)
-            return NotFound();
+                return NotFound();
 
-            _context.EndUsers.Remove(endUser);
-            await _context.SaveChangesAsync();
+            _qardlessRepo.DeleteEndUser(endUser);
+            _qardlessRepo.SaveChanges();
 
-            return NoContent();
+            return Accepted();
         }
 
         private bool EndUserExists(Guid id)
         {
-            return (_context.EndUsers?.Any(e => e.Id == id)).GetValueOrDefault();
+            var endUser = _qardlessRepo.GetEndUser(id);
+            if (endUser == null)
+                return false;
+
+            return true;
         }
     }
 }
