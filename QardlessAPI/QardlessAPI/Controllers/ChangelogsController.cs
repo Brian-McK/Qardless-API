@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
+using QardlessAPI.Data.Dtos.Changelog;
+using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
 
 namespace QardlessAPI.Controllers
@@ -9,72 +12,80 @@ namespace QardlessAPI.Controllers
     [ApiController]
     public class ChangelogsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IQardlessAPIRepo _repo;
+        private readonly IMapper _mapper;
 
-        public ChangelogsController(ApplicationDbContext context)
+        public ChangelogsController(IQardlessAPIRepo repo, IMapper mapper)
         {
-            _context = context;
+            _repo = repo ??
+                throw new ArgumentNullException(nameof(repo));
+            _mapper = mapper ??
+               throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/Changelogs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Changelog>>> GetChangelogs()
+        public async Task<ActionResult<Changelog>> GetChangelogs()
         {
-          if (_context.Changelogs == null)
-          return NotFound();
+            var changeLogs = await _repo.GetChangelogs();
 
-            return await _context.Changelogs.ToListAsync();
+            if (changeLogs == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<IEnumerable<ChangelogReadDto>>(changeLogs));
         }
 
         // GET: api/Changelogs/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Changelog>> GetChangelog(Guid id)
         {
-          if (_context.Changelogs == null)
-          return NotFound();
-
-            var changelog = await _context.Changelogs.FindAsync(id);
+            var changelog = await _repo.GetChangelog(id);
 
             if (changelog == null)
-            return NotFound();
+                return NotFound();
 
-            return changelog;
+            return Ok(_mapper.Map<ChangelogReadDto>(changelog));
         }
 
         // PUT: api/Changelogs/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutChangelog(Guid id, Changelog changelog)
+        public async Task<IActionResult> PutChangelog(Guid id, ChangelogUpdateDto changelogUpdateDto)
         {
-            if (id != changelog.Id)
-            return BadRequest();
+            if (changelogUpdateDto == null)
+                return BadRequest();
 
-            _context.Entry(changelog).State = EntityState.Modified;
+            var changelog = await _repo.GetChangelog(id);
+            if (changelog == null)
+                return NotFound();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ChangelogExists(id))
-                    return NotFound();
-                else
-                    throw;
-            }
-            return NoContent();
+            changelog.WasRead = true;
+
+            _mapper.Map(changelogUpdateDto, changelog);
+            _repo.PutChangelog(id, changelog);
+            _repo.SaveChanges();
+
+            return Accepted();
         }
 
         // POST: api/Changelogs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Changelog>> PostChangelog(Changelog changelog)
+        public async Task<ActionResult<Changelog>> PostChangelog(ChangelogCreateDto changelogForCreation)
         {
-          if (_context.Changelogs == null)
-          return Problem("Entity set 'ApplicationDbContext.Changelogs'  is null.");
-          
-            _context.Changelogs.Add(changelog);
-            await _context.SaveChangesAsync();
+            if(changelogForCreation == null)
+                return BadRequest();
+
+            var changelog = _mapper.Map<Changelog>(changelogForCreation);
+
+            changelog.Id = Guid.NewGuid();
+            changelog.Type = changelogForCreation.Type;
+            changelog.Content = changelogForCreation.Content;
+            changelog.WasRead = false;
+            changelog.CreatedDate = DateTime.Now;
+
+            _repo.PostChangelog(changelog);
+            _repo.SaveChanges();
 
             return CreatedAtAction("GetChangelog", new { id = changelog.Id }, changelog);
         }
@@ -83,22 +94,23 @@ namespace QardlessAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteChangelog(Guid id)
         {
-            if (_context.Changelogs == null)
-            return NotFound();
-            
-            var changelog = await _context.Changelogs.FindAsync(id);
-            if (changelog == null)
-            return NotFound();
+            var changelog = await _repo.GetChangelog(id);
+            if(changelog == null)
+                return NotFound();
 
-            _context.Changelogs.Remove(changelog);
-            await _context.SaveChangesAsync();
+            _repo.DeleteChangelog(changelog);
+            _repo.SaveChanges();
 
-            return NoContent();
+            return Accepted();
         }
 
         private bool ChangelogExists(Guid id)
         {
-            return (_context.Changelogs?.Any(e => e.Id == id)).GetValueOrDefault();
+            var changelog = _repo.GetChangelog(id);
+            if (changelog == null)
+                return false;
+
+            return true;
         }
     }
 }

@@ -24,7 +24,7 @@ namespace QardlessAPI.Controllers
 
         // POST: api/Login/
         [HttpPost()]
-        public async Task<ActionResult<EndUser>> EndUserLogin(EndUserLoginDto loginUser)
+        public async Task<ActionResult<EndUserReadPartialDto>> EndUserLogin(EndUserLoginDto loginUser)
         {
             if (loginUser == null)
                 return BadRequest();
@@ -34,9 +34,16 @@ namespace QardlessAPI.Controllers
                 return Unauthorized();
 
             endUser.LastLoginDate = DateTime.Now;
+
+            EndUserReadPartialDto endUserForProps = new EndUserReadPartialDto();
+            endUserForProps.Name = endUser.Name;
+            endUserForProps.Email = endUser.Email;
+            endUserForProps.ContactNumber = endUser.ContactNumber;
+            endUserForProps.isLoggedin = true;
+
             _repo.SaveChanges();
 
-            return Ok(endUser);
+            return Ok(endUserForProps);
         }
     }
 }

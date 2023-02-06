@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Models;
+using QardlessAPI.Data.Dtos.Certificate;
+using AutoMapper;
+using QardlessAPI.Data.Dtos.EndUser;
 
 namespace QardlessAPI.Controllers
 {
@@ -14,96 +17,111 @@ namespace QardlessAPI.Controllers
     [ApiController]
     public class CertificatesController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IQardlessAPIRepo _repo;
+        private readonly IMapper _mapper;
 
-        public CertificatesController(ApplicationDbContext context)
+        public CertificatesController(IMapper mapper, IQardlessAPIRepo repo)
         {
-            _context = context;
+            _repo = repo ??
+                throw new ArgumentNullException(nameof(repo));
+            _mapper = mapper ??
+               throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/Certificates
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Certificate>>> GetCertificates()
+        public async Task<ActionResult<Certificate>> GetCertificates()
         {
-          if (_context.Certificates == null)
-          return NotFound();
-         
-            return await _context.Certificates.ToListAsync();
+            var certs = await _repo.GetCertificates();
+            
+            if (certs == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<IEnumerable<CertificateReadFullDto>>(certs));
         }
 
         // GET: api/Certificates/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Certificate>> GetCertificate(Guid id)
         {
-          if (_context.Certificates == null)
-          return NotFound();
+            var cert = await _repo.GetCertificate(id);
 
-            var certificate = await _context.Certificates.FindAsync(id);
+            if (cert == null)
+                return NotFound();
 
-            if (certificate == null)
-            return NotFound();
-
-            return certificate;
+            return Ok(_mapper.Map<CertificateReadFullDto>(cert));
         }
 
         // PUT: api/Certificates/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCertificate(Guid id, Certificate certificate)
+        public async Task<IActionResult> PutCertificate(Guid id, CertificateUpdateDto certForUpdateDto)
         {
-            if (id != certificate.Id)
-            return BadRequest();
+            if(certForUpdateDto == null)
+                return NotFound();
 
-            _context.Entry(certificate).State = EntityState.Modified;
+            var cert = await _repo.GetCertificate(id);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CertificateExists(id))
-                    return NotFound();
-                else
-                    throw;
-            }
-            return NoContent();
+            if (cert == null)
+                return NotFound();
+
+            cert.CreatedDate = DateTime.Now;
+
+            _mapper.Map(certForUpdateDto, cert);
+            _repo.PutCertificate(id, cert);
+            _repo.SaveChanges();
+
+            return Accepted();
         }
 
         // POST: api/Certificates
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Certificate>> PostCertificate(Certificate certificate)
+        public async Task<ActionResult<Certificate>> PostCertificate(CertificateCreateDto certificateForCreation)
         {
-          if (_context.Certificates == null)
-          return Problem("Entity set 'ApplicationDbContext.Certificates'  is null.");
-          
-            _context.Certificates.Add(certificate);
-            await _context.SaveChangesAsync();
+            if (certificateForCreation == null)
+                return BadRequest();
 
-            return CreatedAtAction("GetCertificate", new { id = certificate.Id }, certificate);
+            var cert = _mapper.Map<Certificate>(certificateForCreation);
+
+            cert.Id = new Guid();
+            cert.CourseTitle = certificateForCreation.CourseTitle;
+            cert.CertNumber = certificateForCreation.CertNumber;
+            cert.CourseDate = certificateForCreation.CourseDate;
+            cert.ExpiryDate = certificateForCreation.ExpiryDate;
+            cert.PdfUrl = certificateForCreation.PdfUrl;
+            cert.CreatedDate = DateTime.Now;
+            cert.EndUserId = certificateForCreation.EndUserId;
+            cert.BusinessId = certificateForCreation.BusinessId;
+
+            _repo.PostCertificate(cert);
+            _repo.SaveChanges();
+
+            return CreatedAtAction("GetCertificate", new { id = cert.Id }, cert);
         }
 
         // DELETE: api/Certificates/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCertificate(Guid id)
         {
-            if (_context.Certificates == null)
-            return NotFound();
-
-            var certificate = await _context.Certificates.FindAsync(id);
-            if (certificate == null)
-            return NotFound();
+            var cert = await _repo.GetCertificate(id);
             
-            _context.Certificates.Remove(certificate);
-            await _context.SaveChangesAsync();
+            if(cert == null)
+                return NotFound();
 
-            return NoContent();
+            _repo.DeleteCertificate(cert);
+            _repo.SaveChanges();
+
+            return Accepted();
         }
 
         private bool CertificateExists(Guid id)
         {
-            return (_context.Certificates?.Any(e => e.Id == id)).GetValueOrDefault();
+            var cert = _repo.GetCertificate(id);
+            if (cert == null)
+                return false;
+
+            return true;
         }
     }
 }
