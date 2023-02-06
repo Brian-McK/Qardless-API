@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace QardlessAPI.Data
@@ -278,8 +279,10 @@ namespace QardlessAPI.Data
         //For login controller
         public async Task<EndUser?> GetEndUserByEmail(EndUserLoginDto endUserLoginDto)
         {
-            var endUsers = await GetEndUsers();
+            //var endUsers = await GetEndUsers();
             //_mapper.Map<IEnumerable<EndUserReadFullDto>>(endUsers);
+
+            /*
 
             EndUser? endUser = await _context.EndUsers
                 .Where(e => e.Email == endUserLoginDto.Email)
@@ -287,8 +290,15 @@ namespace QardlessAPI.Data
 
             if (endUser == null)
                 return null;
+            */
 
-            return endUser;
+            var sha = SHA256.Create();
+            var asByteArray = Encoding.Default.GetBytes(endUserLoginDto.Password);
+            var hashedPassword = sha.ComputeHash(asByteArray);
+            var convertedHashedPassword = Convert.ToBase64String(hashedPassword);
+
+            return await _context.EndUsers.FirstOrDefaultAsync(
+                e => e.Email == endUserLoginDto.Email && e.PasswordHash == convertedHashedPassword);
         }
 
         public void PutEndUser(Guid id, EndUser? endUser)

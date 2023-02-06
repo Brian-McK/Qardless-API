@@ -14,12 +14,12 @@ namespace QardlessAPI.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private readonly IQardlessAPIRepo _qardlessRepo;
+        private readonly IQardlessAPIRepo _repo;
 
-        public LoginController(IQardlessAPIRepo qardlessRepo)
+        public LoginController(IQardlessAPIRepo repo)
         {
-            _qardlessRepo = qardlessRepo ??
-                throw new ArgumentNullException(nameof(qardlessRepo));
+            _repo = repo ??
+                throw new ArgumentNullException(nameof(repo));
         }
 
         // POST: api/Login/
@@ -29,31 +29,27 @@ namespace QardlessAPI.Controllers
             if (loginUser == null)
                 return BadRequest();
 
-            EndUser? endUser = await _qardlessRepo.GetEndUserByEmail(loginUser);
-
+            EndUser? endUser = await _repo.GetEndUserByEmail(loginUser);
             if (endUser == null)
-                return NotFound();
-
-            //Security - Hash user passwords
-            var sha = SHA256.Create();
-            var asByteArray = Encoding.Default.GetBytes(loginUser.Password);
-            var hashedPassword = sha.ComputeHash(asByteArray);
-            var convertedHashedPassword = Convert.ToBase64String(hashedPassword);
-
-            if (endUser.PasswordHash != convertedHashedPassword)
+            {
                 return Unauthorized();
+            }
 
             endUser.LastLoginDate = DateTime.Now;
+            _repo.SaveChanges();
 
+            // @TODO: Use Jacs code to send back a DTO instead of the entire End User object
             //For frontend
+            /*
             EndUserReadPartialDto endUserForProps = new EndUserReadPartialDto();
             endUserForProps.Name = endUser.Name;
             endUserForProps.Email = endUser.Email;
             endUserForProps.ContactNumber = endUser.ContactNumber;
             endUserForProps.isLoggedin = true;
+            */
             //SendUserDetailsForProps(endUserForProps);
 
-            return Ok();
+            return Ok(endUser);
         }
     }
 }
