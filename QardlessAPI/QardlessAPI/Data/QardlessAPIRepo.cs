@@ -279,26 +279,29 @@ namespace QardlessAPI.Data
         //For login controller
         public async Task<EndUser?> GetEndUserByEmail(EndUserLoginDto endUserLoginDto)
         {
-            //var endUsers = await GetEndUsers();
-            //_mapper.Map<IEnumerable<EndUserReadFullDto>>(endUsers);
-
-            /*
-
-            EndUser? endUser = await _context.EndUsers
-                .Where(e => e.Email == endUserLoginDto.Email)
-                .FirstOrDefaultAsync();
-
-            if (endUser == null)
-                return null;
-            */
-
-            var sha = SHA256.Create();
-            var asByteArray = Encoding.Default.GetBytes(endUserLoginDto.Password);
-            var hashedPassword = sha.ComputeHash(asByteArray);
-            var convertedHashedPassword = Convert.ToBase64String(hashedPassword);
-
             return await _context.EndUsers.FirstOrDefaultAsync(
-                e => e.Email == endUserLoginDto.Email && e.PasswordHash == convertedHashedPassword);
+                e => e.Email == endUserLoginDto.Email && 
+                e.PasswordHash == HashPassword(endUserLoginDto.Password));
+        }
+
+        public string HashPassword(string Password)
+        {
+            var sha = SHA256.Create();
+            var asByteArray = Encoding.Default.GetBytes(Password);
+            var hashedPassword = sha.ComputeHash(asByteArray);
+            return Convert.ToBase64String(hashedPassword);
+        }
+
+        public void EndUserForProps()
+        {
+            // @TODO: Use Jacs code to send back a DTO instead of the entire End User object
+            //For frontend
+            /*EndUserReadPartialDto endUserForProps = new EndUserReadPartialDto();
+            endUserForProps.Name = endUser.Name;
+            endUserForProps.Email = endUser.Email;
+            endUserForProps.ContactNumber = endUser.ContactNumber;
+            endUserForProps.isLoggedin = true;*/
+            //SendUserDetailsForProps(endUserForProps);
         }
 
         public void PutEndUser(Guid id, EndUser? endUser)

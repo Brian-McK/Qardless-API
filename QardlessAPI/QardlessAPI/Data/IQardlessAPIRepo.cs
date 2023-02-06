@@ -60,6 +60,7 @@ namespace QardlessAPI.Data
         Task<IEnumerable<EndUser?>> GetEndUsers();
         Task<EndUser?> GetEndUser(Guid id);
         Task<EndUser?> GetEndUserByEmail(EndUserLoginDto endUserLoginDto);
+        public string HashPassword(string Password);
         void PutEndUser(Guid id, EndUser endUser);
         void PatchEndUser(Guid id, EndUser endUser);
         void PostEndUser(EndUser endUser);

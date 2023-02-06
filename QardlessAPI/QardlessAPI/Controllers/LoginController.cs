@@ -31,23 +31,10 @@ namespace QardlessAPI.Controllers
 
             EndUser? endUser = await _repo.GetEndUserByEmail(loginUser);
             if (endUser == null)
-            {
                 return Unauthorized();
-            }
 
             endUser.LastLoginDate = DateTime.Now;
             _repo.SaveChanges();
-
-            // @TODO: Use Jacs code to send back a DTO instead of the entire End User object
-            //For frontend
-            /*
-            EndUserReadPartialDto endUserForProps = new EndUserReadPartialDto();
-            endUserForProps.Name = endUser.Name;
-            endUserForProps.Email = endUser.Email;
-            endUserForProps.ContactNumber = endUser.ContactNumber;
-            endUserForProps.isLoggedin = true;
-            */
-            //SendUserDetailsForProps(endUserForProps);
 
             return Ok(endUser);
         }
