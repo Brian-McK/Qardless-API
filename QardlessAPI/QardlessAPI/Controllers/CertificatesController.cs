@@ -75,8 +75,8 @@ namespace QardlessAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Certificate>> PostCertificate(Certificate certificate)
         {
-          if (_context.Certificates == null)
-          return Problem("Entity set 'ApplicationDbContext.Certificates'  is null.");
+            if (_context.Certificates == null)
+            return Problem("Entity set 'ApplicationDbContext.Certificates'  is null.");
           
             _context.Certificates.Add(certificate);
             await _context.SaveChangesAsync();
