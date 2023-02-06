@@ -292,18 +292,6 @@ namespace QardlessAPI.Data
             return Convert.ToBase64String(hashedPassword);
         }
 
-        public void EndUserForProps()
-        {
-            // @TODO: Use Jacs code to send back a DTO instead of the entire End User object
-            //For frontend
-            /*EndUserReadPartialDto endUserForProps = new EndUserReadPartialDto();
-            endUserForProps.Name = endUser.Name;
-            endUserForProps.Email = endUser.Email;
-            endUserForProps.ContactNumber = endUser.ContactNumber;
-            endUserForProps.isLoggedin = true;*/
-            //SendUserDetailsForProps(endUserForProps);
-        }
-
         public void PutEndUser(Guid id, EndUser? endUser)
         {
             // Implemented in the controller
