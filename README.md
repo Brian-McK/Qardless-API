@@ -3,7 +3,7 @@
 <h3 align="center">API created for Qardless  </h3>
 
 <h3 align="center">Languages and Tools:</h3>
-<p align="center"> <a href="https://learn.microsoft.com/en-us/dotnet/csharp/" target="_blank" rel="noreferrer"> <img src="![image](https://user-images.githubusercontent.com/57908336/217081428-37e4b928-966a-43b9-89aa-fe0caeb5f176.png)" alt="c# logo" width="40" height="40"/> </a><a href="https://learn.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-7.0" target="_blank" rel="noreferrer"> <img src="![image](https://user-images.githubusercontent.com/57908336/217081584-3ee6febf-03b2-4b70-b635-25c006f3efc4.png)" alt="reactnative" width="40" height="40"/> </a> </p>
+<p align="center"> <a href="https://learn.microsoft.com/en-us/dotnet/csharp/" target="_blank" rel="noreferrer"> <img src="![image](https://user-images.githubusercontent.com/57908336/217081428-37e4b928-966a-43b9-89aa-fe0caeb5f176.png)" alt="c# logo" width="40" height="40"/> </a><a href="https://learn.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-7.0" target="_blank" rel="noreferrer"> <img src="![image](https://user-images.githubusercontent.com/57908336/217081584-3ee6febf-03b2-4b70-b635-25c006f3efc4.png)" alt="asp dot net core" width="40" height="40"/> </a> </p>
 
 # Getting Started
 
