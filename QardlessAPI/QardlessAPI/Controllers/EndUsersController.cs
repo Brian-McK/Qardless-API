@@ -6,6 +6,7 @@ using System.Text;
 using System.Security.Cryptography;
 using QardlessAPI.Data.Dtos.EndUser;
 using AutoMapper;
+using QardlessAPI.Data.Dtos.Certificate;
 
 namespace QardlessAPI.Controllers
 {
@@ -46,6 +47,18 @@ namespace QardlessAPI.Controllers
                 return NotFound();
 
             return Ok(_mapper.Map<EndUserReadFullDto>(endUser));
+        }
+
+        // GET: api/EndUsers/Certificates/5
+        [HttpGet("{id}/Certificates")]
+        public async Task<ActionResult<Certificate>> GetEndUserCertificates(Guid id)
+        {
+            var endUserCerts = await _repo.GetCertificatesByEndUserId(id);
+
+            if (endUserCerts == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<IEnumerable<CertificateReadFullDto>>(endUserCerts));
         }
 
         // PUT: api/EndUsers/5

@@ -36,6 +36,7 @@ namespace QardlessAPI.Controllers
             endUser.LastLoginDate = DateTime.Now;
 
             EndUserReadPartialDto endUserForProps = new EndUserReadPartialDto();
+            endUserForProps.Id = endUser.Id;
             endUserForProps.Name = endUser.Name;
             endUserForProps.Email = endUser.Email;
             endUserForProps.ContactNumber = endUser.ContactNumber;
