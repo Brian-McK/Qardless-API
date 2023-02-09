@@ -11,14 +11,11 @@ namespace QardlessAPI.Controllers
     public class LogoutController : ControllerBase
     {
         private readonly IQardlessAPIRepo _repo;
-        private readonly IMapper _mapper;
 
-        public LogoutController(IQardlessAPIRepo repo, IMapper mapper)
+        public LogoutController(IQardlessAPIRepo repo)
         {
             _repo = repo ??
                 throw new ArgumentNullException(nameof(repo));
-            _mapper = mapper ??
-               throw new ArgumentNullException(nameof(mapper));
         }
 
         // PUT: api/Logout
