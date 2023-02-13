@@ -27,7 +27,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/EndUsers
         [HttpGet]
-        public async Task<ActionResult<EndUser>> GetEndUsers()
+        public async Task<ActionResult<EndUser>> AllEndUsers()
         {
             var endUsers = await _repo.GetEndUsers();
 
@@ -39,7 +39,7 @@ namespace QardlessAPI.Controllers
         
         // GET: api/EndUsers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<EndUser>> GetEndUser(Guid id)
+        public async Task<ActionResult<EndUser>> EndUserById(Guid id)
         {
             var endUser = await _repo.GetEndUser(id);
 
@@ -50,8 +50,8 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/EndUsers/Certificates/5
-        [HttpGet("{id}/Certificates")]
-        public async Task<ActionResult<Certificate>> GetEndUserCertificates(Guid id)
+        [HttpGet("{id}/certificates")]
+        public async Task<ActionResult<Certificate>> ViewEndUsersCertificates(Guid id)
         {
             var endUserCerts = await _repo.GetCertificatesByEndUserId(id);
 
@@ -62,9 +62,8 @@ namespace QardlessAPI.Controllers
         }
 
         // PUT: api/EndUsers/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEndUser(Guid id, EndUserUpdateDto endUserUpdateDto)
+        public async Task<IActionResult> EditEndUser(Guid id, EndUserUpdateDto endUserUpdateDto)
         {
             if (endUserUpdateDto == null)
                 return BadRequest();
@@ -82,20 +81,20 @@ namespace QardlessAPI.Controllers
         
         // Business logic: Register EndUser
         // POST: api/EndUsers
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost()]
-        public async Task<ActionResult<EndUser>> PostEndUser(EndUserCreateDto endUserForCreation)
+        public async Task<ActionResult<EndUser>> RegisterNewEndUser(EndUserCreateDto endUserForCreation)
         {
             if(endUserForCreation == null)
                 return BadRequest();
 
             var endUser = _mapper.Map<EndUser>(endUserForCreation);
 
-            //Security - Hash user passwords
+            #region Security - Hash user passwords
             var sha = SHA256.Create();
             var asByteArray = Encoding.Default.GetBytes(endUserForCreation.PasswordHash);
             var hashedPassword = sha.ComputeHash(asByteArray);
             var convertedHashedPassword = Convert.ToBase64String(hashedPassword);
+            #endregion
 
             endUser.Id = new Guid();
             endUser.Name = endUserForCreation.Name;
@@ -129,8 +128,8 @@ namespace QardlessAPI.Controllers
             return Ok(endUserForLogout);
         }
 
-            // DELETE: api/EndUsers/5
-            [HttpDelete("{id}")]
+        // DELETE: api/EndUsers/5
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEndUser(Guid id)
         {
             var endUser = await _repo.GetEndUser(id);
