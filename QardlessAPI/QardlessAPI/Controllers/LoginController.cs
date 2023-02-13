@@ -24,7 +24,7 @@ namespace QardlessAPI.Controllers
 
         // POST: api/Login/
         [HttpPost()]
-        public async Task<ActionResult<EndUserReadPartialDto>> EndUserLogin(EndUserLoginDto loginUser)
+        public async Task<ActionResult<EndUserReadPartialDto>> LoginEndUser(EndUserLoginDto loginUser)
         {
             if (loginUser == null)
                 return BadRequest();
