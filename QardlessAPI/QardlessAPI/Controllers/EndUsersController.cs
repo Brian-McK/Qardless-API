@@ -111,9 +111,26 @@ namespace QardlessAPI.Controllers
 
             return CreatedAtAction("GetEndUser", new { id = endUser.Id }, endUser);
         }
-        
-        // DELETE: api/EndUsers/5
-        [HttpDelete("{id}")]
+
+        // Business logic: Logout EndUser
+        // POST: api/EndUsers
+        [HttpPost("/logout")]
+        public async Task<ActionResult<EndUserLogoutDto>> LogoutEndUser(Guid userid)
+        {
+            var endUser = await _repo.GetEndUser(userid);
+
+            if (endUser == null)
+                return BadRequest();
+
+            EndUserLogoutDto endUserForLogout = new EndUserLogoutDto();
+            endUserForLogout.Id = userid;
+            endUserForLogout.isLoggedin = false;
+
+            return Ok(endUserForLogout);
+        }
+
+            // DELETE: api/EndUsers/5
+            [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEndUser(Guid id)
         {
             var endUser = await _repo.GetEndUser(id);
