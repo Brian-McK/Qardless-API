@@ -24,7 +24,7 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/Changelogs
-        [HttpGet]
+        [HttpGet("/changelogs")]
         public async Task<ActionResult<Changelog>> ViewAllChangelogs()
         {
             var changeLogs = await _repo.GetChangelogs();
@@ -36,7 +36,7 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/Changelogs/5
-        [HttpGet("{id}")]
+        [HttpGet("/changelogs/{id}")]
         public async Task<ActionResult<Changelog>> ViewChangelogById(Guid id)
         {
             var changelog = await _repo.GetChangelog(id);
@@ -48,7 +48,7 @@ namespace QardlessAPI.Controllers
         }
 
         // PUT: api/Changelogs/5
-        [HttpPut("{id}")]
+        [HttpPut("/changelogs/{id}")]
         public async Task<IActionResult> UpdateChangelogWasRead(Guid id, ChangelogUpdateDto changelogUpdateDto)
         {
             if (changelogUpdateDto == null)
@@ -68,7 +68,7 @@ namespace QardlessAPI.Controllers
         }
 
         // POST: api/Changelogs
-        [HttpPost]
+        [HttpPost("/changelogs")]
         public async Task<ActionResult<Changelog>> AddNewChangelog(ChangelogCreateDto changelogForCreation)
         {
             if(changelogForCreation == null)
@@ -89,7 +89,7 @@ namespace QardlessAPI.Controllers
         }
 
         // DELETE: api/Changelogs/5
-        [HttpDelete("{id}")]
+        [HttpDelete("/changelogs/{id}")]
         public async Task<IActionResult> DeleteChangelog(Guid id)
         {
             var changelog = await _repo.GetChangelog(id);

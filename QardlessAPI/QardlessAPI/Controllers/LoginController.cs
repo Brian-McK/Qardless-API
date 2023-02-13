@@ -22,8 +22,8 @@ namespace QardlessAPI.Controllers
                 throw new ArgumentNullException(nameof(repo));
         }
 
-        // POST: api/Login/
-        [HttpPost()]
+        // POST: api/login/
+        [HttpPost("/login")]
         public async Task<ActionResult<EndUserReadPartialDto>> LoginEndUser(EndUserLoginDto loginUser)
         {
             if (loginUser == null)

@@ -17,7 +17,7 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/Admins
-        [HttpGet]
+        [HttpGet("/admins")]
         public async Task<ActionResult<IEnumerable<Admin>>> ViewAllAdmins()
         {
           if (_context.Admins == null)
@@ -27,7 +27,7 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/Admins/5
-        [HttpGet("{id}")]
+        [HttpGet("/admins/{id}")]
         public async Task<ActionResult<Admin>> GetAdminById(Guid id)
         {
           if (_context.Admins == null)
@@ -42,7 +42,7 @@ namespace QardlessAPI.Controllers
         }
 
         // PUT: api/Admins/5
-        [HttpPut("{id}")]
+        [HttpPut("/admins/{id}")]
         public async Task<IActionResult> EditAdmin(Guid id, Admin admin)
         {
             if (id != admin.Id)
@@ -66,7 +66,7 @@ namespace QardlessAPI.Controllers
         }
 
         // POST: api/Admins
-        [HttpPost]
+        [HttpPost("/admins")]
         public async Task<ActionResult<Admin>> CreateNewAdmin(Admin admin)
         {
           if (_context.Admins == null)
@@ -79,7 +79,7 @@ namespace QardlessAPI.Controllers
         }
 
         // DELETE: api/Admins/5
-        [HttpDelete("{id}")]
+        [HttpDelete("/admins/{id}")]
         public async Task<IActionResult> DeleteAdmin(Guid id)
         {
             if (_context.Admins == null)

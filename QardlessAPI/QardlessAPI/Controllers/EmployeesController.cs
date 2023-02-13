@@ -17,7 +17,7 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/Employees
-        [HttpGet]
+        [HttpGet("/employees")]
         public async Task<ActionResult<IEnumerable<Employee>>> ViewAllEmployees()
         {
           if (_context.Employees == null)
@@ -27,7 +27,7 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/Employees/5
-        [HttpGet("{id}")]
+        [HttpGet("/employees/{id}")]
         public async Task<ActionResult<Employee>> ViewEmployeeById(Guid id)
         {
           if (_context.Employees == null)
@@ -42,7 +42,7 @@ namespace QardlessAPI.Controllers
         }
 
         // PUT: api/Employees/5
-        [HttpPut("{id}")]
+        [HttpPut("/employees/{id}")]
         public async Task<IActionResult> EditEmployee(Guid id, Employee employee)
         {
             if (id != employee.Id)
@@ -66,7 +66,7 @@ namespace QardlessAPI.Controllers
         }
 
         // POST: api/Employees
-        [HttpPost]
+        [HttpPost("/employees")]
         public async Task<ActionResult<Employee>> AddNewEmployee(Employee employee)
         {
           if (_context.Employees == null)
@@ -79,7 +79,7 @@ namespace QardlessAPI.Controllers
         }
 
         // DELETE: api/Employees/5
-        [HttpDelete("{id}")]
+        [HttpDelete("/employees/{id}")]
         public async Task<IActionResult> DeleteEmployee(Guid id)
         {
             if (_context.Employees == null)

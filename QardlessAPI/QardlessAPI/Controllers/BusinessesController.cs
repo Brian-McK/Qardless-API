@@ -21,7 +21,7 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/Businesses
-        [HttpGet]
+        [HttpGet("/businesses")]
         public async Task<ActionResult<IEnumerable<Business>>> ViewAllBusinesses()
         {
             var businessItems = await _repo.GetBusinesses();
@@ -32,7 +32,7 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/Businesses/5
-        [HttpGet("{id}")]
+        [HttpGet("/businesses/{id}")]
         public async Task<ActionResult<Business>> ViewBusinessById(Guid id)
         {
             var business = await _repo.GetBusiness(id);
@@ -43,7 +43,7 @@ namespace QardlessAPI.Controllers
         }
 
         // PUT: api/Businesses/5
-        [HttpPut("{id}")]
+        [HttpPut("/businesses/{id}")]
         public async Task<IActionResult> EditBusiness(Guid id, BusinessUpdateDto businessUpdateDto)
         {
             if (businessUpdateDto == null)
@@ -85,7 +85,7 @@ namespace QardlessAPI.Controllers
         #endregion
 
         // POST: api/Businesses
-        [HttpPost]
+        [HttpPost("/businesses")]
         public async Task<ActionResult<BusinessReadFullDto>> AddNewBusiness(BusinessCreateDto businessCreateDto)
         {
             if (businessCreateDto == null)
@@ -101,7 +101,7 @@ namespace QardlessAPI.Controllers
         }
 
         // DELETE: api/Businesses/5
-        [HttpDelete("{id}")]
+        [HttpDelete("/businesses/{id}")]
         public async Task<IActionResult> DeleteBusiness(Guid id)
         {
             var businessModelFromRepo = await _repo.GetBusiness(id);

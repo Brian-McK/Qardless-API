@@ -26,7 +26,7 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/EndUsers
-        [HttpGet]
+        [HttpGet("/endusers")]
         public async Task<ActionResult<EndUser>> AllEndUsers()
         {
             var endUsers = await _repo.GetEndUsers();
@@ -38,7 +38,7 @@ namespace QardlessAPI.Controllers
         }
         
         // GET: api/EndUsers/5
-        [HttpGet("{id}")]
+        [HttpGet("/endusers/{id}")]
         public async Task<ActionResult<EndUser>> EndUserById(Guid id)
         {
             var endUser = await _repo.GetEndUser(id);
@@ -50,7 +50,7 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/EndUsers/Certificates/5
-        [HttpGet("{id}/certificates")]
+        [HttpGet("/endusers/{id}/certificates")]
         public async Task<ActionResult<Certificate>> ViewEndUsersCertificates(Guid id)
         {
             var endUserCerts = await _repo.GetCertificatesByEndUserId(id);
@@ -62,7 +62,7 @@ namespace QardlessAPI.Controllers
         }
 
         // PUT: api/EndUsers/5
-        [HttpPut("{id}")]
+        [HttpPut("/endusers/{id}")]
         public async Task<IActionResult> EditEndUser(Guid id, EndUserUpdateDto endUserUpdateDto)
         {
             if (endUserUpdateDto == null)
@@ -81,7 +81,7 @@ namespace QardlessAPI.Controllers
         
         // Business logic: Register EndUser
         // POST: api/EndUsers
-        [HttpPost()]
+        [HttpPost("/endusers")]
         public async Task<ActionResult<EndUser>> RegisterNewEndUser(EndUserCreateDto endUserForCreation)
         {
             if(endUserForCreation == null)
@@ -129,7 +129,7 @@ namespace QardlessAPI.Controllers
         }
 
         // DELETE: api/EndUsers/5
-        [HttpDelete("{id}")]
+        [HttpDelete("/endusers/{id}")]
         public async Task<IActionResult> DeleteEndUser(Guid id)
         {
             var endUser = await _repo.GetEndUser(id);
