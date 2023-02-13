@@ -22,7 +22,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/Businesses
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Business>>> GetBusinesses()
+        public async Task<ActionResult<IEnumerable<Business>>> ViewAllBusinesses()
         {
             var businessItems = await _repo.GetBusinesses();
             if (businessItems == null)
@@ -33,7 +33,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/Businesses/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Business>> GetBusiness(Guid id)
+        public async Task<ActionResult<Business>> ViewBusinessById(Guid id)
         {
             var business = await _repo.GetBusiness(id);
             if (business == null)
@@ -43,9 +43,8 @@ namespace QardlessAPI.Controllers
         }
 
         // PUT: api/Businesses/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBusiness(Guid id, BusinessUpdateDto businessUpdateDto)
+        public async Task<IActionResult> EditBusiness(Guid id, BusinessUpdateDto businessUpdateDto)
         {
             if (businessUpdateDto == null)
             return BadRequest();
@@ -61,8 +60,9 @@ namespace QardlessAPI.Controllers
             return NoContent();
         }
 
+        #region PATCH 
         // PATCH: api/Businesses/5
-        [HttpPatch("{id}")]
+        /*[HttpPatch("{id}")]
         public async Task<IActionResult> PatchBusiness(Guid id, JsonPatchDocument<BusinessUpdateDto> patchDoc)
         {
             var businessModelFromRepo = await _repo.GetBusiness(id);
@@ -81,12 +81,12 @@ namespace QardlessAPI.Controllers
             _repo.SaveChanges();
 
             return NoContent();
-        }
+        }*/
+        #endregion
 
         // POST: api/Businesses
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<BusinessReadFullDto>> PostBusiness(BusinessCreateDto businessCreateDto)
+        public async Task<ActionResult<BusinessReadFullDto>> AddNewBusiness(BusinessCreateDto businessCreateDto)
         {
             if (businessCreateDto == null)
             return BadRequest();
@@ -97,7 +97,7 @@ namespace QardlessAPI.Controllers
 
             var businessReadFullDto = _mapper.Map<BusinessReadFullDto>(businessModel);
 
-            return CreatedAtAction(nameof(GetBusiness), new { Id = businessReadFullDto.Id }, businessReadFullDto);
+            return CreatedAtAction(nameof(ViewBusinessById), new { Id = businessReadFullDto.Id }, businessReadFullDto);
         }
 
         // DELETE: api/Businesses/5
