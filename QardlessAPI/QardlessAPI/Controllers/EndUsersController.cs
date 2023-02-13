@@ -70,11 +70,11 @@ namespace QardlessAPI.Controllers
 
             var endUser = await _repo.GetEndUser(id);
             if (endUser == null)
-                return NotFound();
+                return BadRequest();
 
             _mapper.Map(endUserUpdateDto, endUser);
             _repo.PutEndUser(id, endUser);
-            _repo.SaveChanges();
+            //_repo.SaveChanges();
 
             return Accepted();
         }
@@ -87,7 +87,7 @@ namespace QardlessAPI.Controllers
             if(endUserForCreation == null)
                 return BadRequest();
 
-            var endUser = _mapper.Map<EndUser>(endUserForCreation);
+            var endUser = await Task.Run(() => _mapper.Map<EndUser>(endUserForCreation));
 
             #region Security - Hash user passwords
             var sha = SHA256.Create();

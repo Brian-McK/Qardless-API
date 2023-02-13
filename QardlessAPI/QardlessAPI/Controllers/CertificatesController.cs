@@ -80,7 +80,7 @@ namespace QardlessAPI.Controllers
             if (certificateForCreation == null)
                 return BadRequest();
 
-            var cert = _mapper.Map<Certificate>(certificateForCreation);
+            var cert = await Task.Run(() => _mapper.Map<Certificate>(certificateForCreation));
 
             cert.Id = new Guid();
             cert.CourseTitle = certificateForCreation.CourseTitle;
