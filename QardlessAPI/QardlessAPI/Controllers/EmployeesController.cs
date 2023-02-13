@@ -18,7 +18,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/Employees
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Employee>>> GetEmployee()
+        public async Task<ActionResult<IEnumerable<Employee>>> ViewAllEmployees()
         {
           if (_context.Employees == null)
           return NotFound();
@@ -28,7 +28,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/Employees/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Employee>> GetEmployee(Guid id)
+        public async Task<ActionResult<Employee>> ViewEmployeeById(Guid id)
         {
           if (_context.Employees == null)
           return NotFound();
@@ -42,9 +42,8 @@ namespace QardlessAPI.Controllers
         }
 
         // PUT: api/Employees/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployee(Guid id, Employee employee)
+        public async Task<IActionResult> EditEmployee(Guid id, Employee employee)
         {
             if (id != employee.Id)
             return BadRequest();
@@ -67,9 +66,8 @@ namespace QardlessAPI.Controllers
         }
 
         // POST: api/Employees
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
+        public async Task<ActionResult<Employee>> AddNewEmployee(Employee employee)
         {
           if (_context.Employees == null)
           return Problem("Entity set 'ApplicationDbContext.Employee'  is null.");
