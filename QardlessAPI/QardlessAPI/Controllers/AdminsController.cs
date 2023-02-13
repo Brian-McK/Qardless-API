@@ -18,7 +18,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/Admins
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Admin>>> GetAdmins()
+        public async Task<ActionResult<IEnumerable<Admin>>> ViewAllAdmins()
         {
           if (_context.Admins == null)
               return NotFound();
@@ -28,7 +28,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/Admins/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Admin>> GetAdmin(Guid id)
+        public async Task<ActionResult<Admin>> GetAdminById(Guid id)
         {
           if (_context.Admins == null)
             return NotFound();
@@ -42,9 +42,8 @@ namespace QardlessAPI.Controllers
         }
 
         // PUT: api/Admins/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAdmin(Guid id, Admin admin)
+        public async Task<IActionResult> EditAdmin(Guid id, Admin admin)
         {
             if (id != admin.Id)
                 return BadRequest();
@@ -67,9 +66,8 @@ namespace QardlessAPI.Controllers
         }
 
         // POST: api/Admins
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Admin>> PostAdmin(Admin admin)
+        public async Task<ActionResult<Admin>> CreateNewAdmin(Admin admin)
         {
           if (_context.Admins == null)
           return Problem("Entity set 'ApplicationDbContext.Admins'  is null.");
