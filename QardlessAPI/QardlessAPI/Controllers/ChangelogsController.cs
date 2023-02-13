@@ -25,7 +25,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/Changelogs
         [HttpGet]
-        public async Task<ActionResult<Changelog>> GetChangelogs()
+        public async Task<ActionResult<Changelog>> ViewAllChangelogs()
         {
             var changeLogs = await _repo.GetChangelogs();
 
@@ -37,7 +37,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/Changelogs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Changelog>> GetChangelog(Guid id)
+        public async Task<ActionResult<Changelog>> ViewChangelogById(Guid id)
         {
             var changelog = await _repo.GetChangelog(id);
 
@@ -48,9 +48,8 @@ namespace QardlessAPI.Controllers
         }
 
         // PUT: api/Changelogs/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutChangelog(Guid id, ChangelogUpdateDto changelogUpdateDto)
+        public async Task<IActionResult> UpdateChangelogWasRead(Guid id, ChangelogUpdateDto changelogUpdateDto)
         {
             if (changelogUpdateDto == null)
                 return BadRequest();
@@ -69,9 +68,8 @@ namespace QardlessAPI.Controllers
         }
 
         // POST: api/Changelogs
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Changelog>> PostChangelog(ChangelogCreateDto changelogForCreation)
+        public async Task<ActionResult<Changelog>> AddNewChangelog(ChangelogCreateDto changelogForCreation)
         {
             if(changelogForCreation == null)
                 return BadRequest();
