@@ -30,7 +30,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/Certificates
         [HttpGet]
-        public async Task<ActionResult<Certificate>> GetCertificates()
+        public async Task<ActionResult<Certificate>> ViewAllCertificates()
         {
             var certs = await _repo.GetCertificates();
             
@@ -42,7 +42,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/Certificates/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Certificate>> GetCertificate(Guid id)
+        public async Task<ActionResult<Certificate>> ViewCertificateById(Guid id)
         {
             var cert = await _repo.GetCertificate(id);
 
@@ -53,9 +53,8 @@ namespace QardlessAPI.Controllers
         }
 
         // PUT: api/Certificates/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCertificate(Guid id, CertificateUpdateDto certForUpdateDto)
+        public async Task<IActionResult> EditCertificate(Guid id, CertificateUpdateDto certForUpdateDto)
         {
             if(certForUpdateDto == null)
                 return NotFound();
@@ -75,9 +74,8 @@ namespace QardlessAPI.Controllers
         }
 
         // POST: api/Certificates
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Certificate>> PostCertificate(CertificateCreateDto certificateForCreation)
+        public async Task<ActionResult<Certificate>> AddNewCertificate(CertificateCreateDto certificateForCreation)
         {
             if (certificateForCreation == null)
                 return BadRequest();
