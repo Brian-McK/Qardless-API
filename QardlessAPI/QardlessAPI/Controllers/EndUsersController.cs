@@ -63,7 +63,7 @@ namespace QardlessAPI.Controllers
 
         // PUT: api/EndUsers/5
         [HttpPut("/endusers/{id}")]
-        public async Task<IActionResult> EditEndUser(Guid id, EndUserUpdateDto endUserUpdateDto)
+        public async Task<ActionResult> UpdateEndUserContactDetails(Guid id, EndUserUpdateDto? endUserUpdateDto)
         {
             if (endUserUpdateDto == null)
                 return BadRequest();
@@ -72,11 +72,9 @@ namespace QardlessAPI.Controllers
             if (endUser == null)
                 return BadRequest();
 
-            _mapper.Map(endUserUpdateDto, endUser);
-            _repo.PutEndUser(id, endUser);
-            //_repo.SaveChanges();
+            await Task.Run(() => _repo.PutEndUser(id, endUserUpdateDto));
 
-            return Accepted();
+            return Accepted(endUser);
         }
         
         // Business logic: Register EndUser

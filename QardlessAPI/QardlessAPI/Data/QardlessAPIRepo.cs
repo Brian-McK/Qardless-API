@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data.Dtos.EndUser;
@@ -292,12 +293,18 @@ namespace QardlessAPI.Data
             return Convert.ToBase64String(hashedPassword);
         }
 
-        public void PutEndUser(Guid id, EndUser? endUser)
+        public async Task<EndUser?> PutEndUser(Guid id, EndUserUpdateDto endUserUpdateDto)
         {
-            if (endUser == null)
-                throw new ArgumentNullException(nameof(endUser));
+            EndUser? endUser = await _context.EndUsers.FirstOrDefaultAsync(e => e.Id == id);
 
+            endUser.Name = endUserUpdateDto.Name;
+            endUser.Email = endUserUpdateDto.Email;
+            endUser.ContactNumber = endUserUpdateDto.ContactNumber;
+
+            _context.SaveChanges();
             _context.EndUsers.Add(endUser);
+
+            return await _context.EndUsers.FirstOrDefaultAsync(e => e.Id == id);
         }
 
         /*public void PatchEndUser(Guid id, EndUser? endUser)
