@@ -9,12 +9,7 @@ namespace QardlessAPI.Data.Models
         public Guid Id { get; set; }
 
         [Required]
-        public string FirstName { get; set; }
-
-        public string? MiddleName { get; set; }
-
-        [Required]
-        public string LastName { get; set; }
+        public string Name { get; set; }
 
         [Required]
         public string Email { get; set; }
@@ -25,9 +20,7 @@ namespace QardlessAPI.Data.Models
         [Required]
         public string PasswordHash { get; set; }
 
-        public string? PhoneMobile { get; set; }
-
-        public bool? PhoneMobileVerified { get; set; }
+        public string? ContactNumber { get; set; }
 
         // NOTE: Could be an Enum
         [Required]
