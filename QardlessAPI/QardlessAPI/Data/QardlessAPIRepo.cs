@@ -337,7 +337,7 @@ namespace QardlessAPI.Data
             endUserReadPartialDto.Name = endUser.Name;
             endUserReadPartialDto.Email = endUser.Email;
             endUserReadPartialDto.ContactNumber = endUser.ContactNumber;
-            endUserReadPartialDto.isLoggedin = true;
+            endUserReadPartialDto.isLoggedin = false;
 
             return endUserReadPartialDto;
         }
