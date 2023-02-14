@@ -32,7 +32,7 @@ namespace QardlessAPI.Controllers
         [HttpGet("/certificates")]
         public async Task<ActionResult<Certificate>> ViewAllCertificates()
         {
-            var certs = await _repo.GetCertificates();
+            var certs = await _repo.ListAllCertificates();
             
             if (certs == null)
                 return NotFound();
@@ -44,7 +44,7 @@ namespace QardlessAPI.Controllers
         [HttpGet("/certificates/{id}")]
         public async Task<ActionResult<Certificate>> ViewCertificateById(Guid id)
         {
-            var cert = await _repo.GetCertificate(id);
+            var cert = await _repo.GetCertificateById(id);
 
             if (cert == null)
                 return NotFound();
@@ -54,23 +54,18 @@ namespace QardlessAPI.Controllers
 
         // PUT: api/Certificates/5
         [HttpPut("/certificates/{id}")]
-        public async Task<IActionResult> EditCertificate(Guid id, CertificateUpdateDto certForUpdateDto)
+        public async Task<IActionResult> EditCertificate(Guid id, CertificateUpdateDto? certForUpdateDto)
         {
             if(certForUpdateDto == null)
                 return NotFound();
 
-            var cert = await _repo.GetCertificate(id);
-
+            var cert = await _repo.GetCertificateById(id);
             if (cert == null)
                 return NotFound();
 
-            cert.CreatedDate = DateTime.Now;
+            await Task.Run(() => _repo.UpdateCertificate(id, certForUpdateDto));
 
-            _mapper.Map(certForUpdateDto, cert);
-            _repo.PutCertificate(id, cert);
-            _repo.SaveChanges();
-
-            return Accepted();
+            return Accepted(cert);
         }
 
         // POST: api/Certificates
@@ -92,7 +87,7 @@ namespace QardlessAPI.Controllers
             cert.EndUserId = certificateForCreation.EndUserId;
             cert.BusinessId = certificateForCreation.BusinessId;
 
-            _repo.PostCertificate(cert);
+            _repo.AddNewCertificate(cert);
             _repo.SaveChanges();
 
             return CreatedAtAction("GetCertificate", new { id = cert.Id }, cert);
@@ -102,7 +97,7 @@ namespace QardlessAPI.Controllers
         [HttpDelete("/certificates/{id}")]
         public async Task<IActionResult> DeleteCertificate(Guid id)
         {
-            var cert = await _repo.GetCertificate(id);
+            var cert = await _repo.GetCertificateById(id);
             
             if(cert == null)
                 return NotFound();
@@ -113,9 +108,9 @@ namespace QardlessAPI.Controllers
             return Accepted();
         }
 
-        private bool CertificateExists(Guid id)
+        private bool CheckCertificateExists(Guid id)
         {
-            var cert = _repo.GetCertificate(id);
+            var cert = _repo.GetCertificateById(id);
             if (cert == null)
                 return false;
 

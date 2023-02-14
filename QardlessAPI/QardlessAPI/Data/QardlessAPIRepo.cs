@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using QardlessAPI.Data.Dtos.Certificate;
 using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
+using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -119,7 +121,7 @@ namespace QardlessAPI.Data
         #endregion
 
         #region Certificate
-        public async Task<IEnumerable<Certificate?>> GetCertificates()
+        public async Task<IEnumerable<Certificate?>> ListAllCertificates()
         {
             return await _context.Certificates.ToListAsync();
         }
@@ -130,27 +132,34 @@ namespace QardlessAPI.Data
                 .Where(c => c.EndUserId == id).ToListAsync();
         }
 
-        public async Task<Certificate?> GetCertificate(Guid id)
+        public async Task<Certificate?> GetCertificateById(Guid id)
         {
             return await _context.Certificates.FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public void PutCertificate(Guid id, Certificate? certificate)
+        public async Task<Certificate?> UpdateCertificate(Guid id, CertificateUpdateDto certForUpdateDto)
         {
-            // Implemented in the controller
+            Certificate? cert = await _context.Certificates.FirstOrDefaultAsync(c => c.Id == id);
+
+            cert.CourseTitle = certForUpdateDto.CourseTitle;
+            cert.CertNumber = certForUpdateDto.CertNumber;
+            cert.CourseDate = certForUpdateDto.CourseDate;
+            cert.ExpiryDate = certForUpdateDto.ExpiryDate;
+            cert.PdfUrl = certForUpdateDto.PdfUrl;
+            cert.CreatedDate = DateTime.Now;
+            cert.EndUserId = certForUpdateDto.EndUserId;
+            cert.BusinessId = certForUpdateDto.BusinessId;
+            
+            _context.SaveChanges();
+            _context.Certificates.Add(cert);
+
+            return await _context.Certificates.FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public void PatchCertificate(Guid id, Certificate? certificate)
-        {
-            // Implemented in the controller
-        }
-
-        public void PostCertificate(Certificate? certificate)
+        public void AddNewCertificate(Certificate? certificate)
         {
             if (certificate == null)
-            {
                 throw new ArgumentNullException(nameof(certificate));
-            }
 
             certificate.Id = Guid.NewGuid();
             certificate.CreatedDate = DateTime.Now;
@@ -161,9 +170,7 @@ namespace QardlessAPI.Data
         public void DeleteCertificate(Certificate? certificate)
         {
             if (certificate == null)
-            {
                 throw new ArgumentNullException(nameof(certificate));
-            }
 
             _context.Certificates.Remove(certificate);
         }

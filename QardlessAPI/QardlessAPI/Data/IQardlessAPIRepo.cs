@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Bson;
+using QardlessAPI.Data.Dtos.Certificate;
 using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
 
@@ -28,12 +29,11 @@ namespace QardlessAPI.Data
         #endregion
 
         #region Certificate
-        Task<IEnumerable<Certificate?>> GetCertificates();
+        Task<IEnumerable<Certificate?>> ListAllCertificates();
         Task<IEnumerable<Certificate?>> GetCertificatesByEndUserId(Guid id);
-        Task<Certificate?> GetCertificate(Guid id);
-        void PutCertificate(Guid id, Certificate? certificate);
-        void PatchCertificate(Guid id, Certificate? certificate);
-        void PostCertificate(Certificate? certificate);
+        Task<Certificate?> GetCertificateById(Guid id);
+        Task<Certificate?> UpdateCertificate(Guid id, CertificateUpdateDto certForUpdateDto);
+        void AddNewCertificate(Certificate? certificate);
         void DeleteCertificate(Certificate? certificate);
         #endregion
 
