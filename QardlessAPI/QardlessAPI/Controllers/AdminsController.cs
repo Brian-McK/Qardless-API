@@ -75,7 +75,7 @@ namespace QardlessAPI.Controllers
             _context.Admins.Add(admin);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAdmin", new { id = admin.Id }, admin);
+            return CreatedAtAction("GetAdminById", new { id = admin.Id }, admin);
         }
 
         // DELETE: api/Admins/5
