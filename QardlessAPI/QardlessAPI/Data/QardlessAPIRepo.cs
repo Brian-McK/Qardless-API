@@ -306,15 +306,15 @@ namespace QardlessAPI.Data
             return await _context.EndUsers.FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public string HashPassword(string Password)
+        public string HashPassword(string password)
         {
             var sha = SHA256.Create();
-            var asByteArray = Encoding.Default.GetBytes(Password);
+            var asByteArray = Encoding.Default.GetBytes(password);
             var hashedPassword = sha.ComputeHash(asByteArray);
             return Convert.ToBase64String(hashedPassword);
         }
 
-        public void AddNewEndUser(EndUserCreateDto endUserForCreation)
+        public EndUserReadPartialDto AddNewEndUser(EndUserCreateDto endUserForCreation)
         {
             if (endUserForCreation == null)
                 throw new ArgumentNullException(nameof(endUserForCreation));
@@ -324,13 +324,22 @@ namespace QardlessAPI.Data
             endUser.Name = endUserForCreation.Name;
             endUser.Email = endUserForCreation.Email;
             endUser.EmailVerified = false;
-            endUserForCreation.PasswordHash = HashPassword(endUserForCreation.PasswordHash);
+            endUser.PasswordHash = HashPassword(endUserForCreation.Password);
             endUser.ContactNumber = endUserForCreation.ContactNumber;
             endUser.CreatedDate = DateTime.Now;
             endUser.LastLoginDate = endUser.CreatedDate;
 
-            _context.SaveChanges();
             _context.EndUsers.Add(endUser);
+            _context.SaveChanges();
+
+            EndUserReadPartialDto endUserReadPartialDto = new EndUserReadPartialDto();
+            endUserReadPartialDto.Id = endUser.Id;
+            endUserReadPartialDto.Name = endUser.Name;
+            endUserReadPartialDto.Email = endUser.Email;
+            endUserReadPartialDto.ContactNumber = endUser.ContactNumber;
+            endUserReadPartialDto.isLoggedin = true;
+
+            return endUserReadPartialDto;
         }
 
         public void DeleteEndUser(EndUser? endUser)

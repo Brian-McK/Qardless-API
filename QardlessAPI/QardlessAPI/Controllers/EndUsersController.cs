@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using QardlessAPI.Data;
-using QardlessAPI.Data.Models;
-using System.Text;
-using System.Security.Cryptography;
-using QardlessAPI.Data.Dtos.EndUser;
-using AutoMapper;
 using QardlessAPI.Data.Dtos.Certificate;
+using QardlessAPI.Data.Dtos.EndUser;
+using QardlessAPI.Data.Models;
 
 namespace QardlessAPI.Controllers
 {
@@ -36,7 +33,7 @@ namespace QardlessAPI.Controllers
 
             return Ok(_mapper.Map<IEnumerable<EndUserReadFullDto>>(endUsers));
         }
-        
+
         // GET: api/EndUsers/5
         [HttpGet("/endusers/{id}")]
         public async Task<ActionResult<EndUser>> EndUserById(Guid id)
@@ -63,7 +60,7 @@ namespace QardlessAPI.Controllers
 
         // PUT: api/EndUsers/5
         [HttpPut("/endusers/{id}")]
-        public async Task<ActionResult> UpdateEndUserContactDetails(Guid id, EndUserUpdateDto? endUserUpdateDto)
+        public async Task<ActionResult> UpdateEndUserContactDetails(Guid id, EndUserUpdateDto endUserUpdateDto)
         {
             if (endUserUpdateDto == null)
                 return BadRequest();
@@ -76,18 +73,18 @@ namespace QardlessAPI.Controllers
 
             return Accepted(endUser);
         }
-        
+
         // Business logic: Register EndUser
         // POST: api/EndUsers
         [HttpPost("/endusers")]
         public async Task<ActionResult<EndUserCreateDto?>> RegisterNewEndUser(EndUserCreateDto endUserForCreation)
         {
-            if(endUserForCreation == null)
+            if (endUserForCreation == null)
                 return BadRequest();
 
-            await Task.Run(() => _repo.AddNewEndUser(endUserForCreation));
+            EndUserReadPartialDto endUserReadPartialDto = await Task.Run(() => _repo.AddNewEndUser(endUserForCreation));
 
-            return Accepted(endUserForCreation);
+            return Created("/endusers", endUserReadPartialDto);
         }
 
         // Business logic: Logout EndUser
