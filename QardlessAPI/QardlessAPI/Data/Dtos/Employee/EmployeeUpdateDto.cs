@@ -5,12 +5,7 @@ namespace QardlessAPI.Data.Dtos.Employee
     public class EmployeeUpdateDto
     {
         [Required]
-        public string FirstName { get; set; }
-
-        public string? MiddleName { get; set; }
-
-        [Required]
-        public string LastName { get; set; }
+        public string Name { get; set; }
 
         [Required]
         public string Email { get; set; }
@@ -19,7 +14,7 @@ namespace QardlessAPI.Data.Dtos.Employee
         public bool EmailVerified { get; set; }
 
         [Required]
-        public string PasswordHash { get; set; }
+        public string Password { get; set; }
 
         public string? PhoneMobile { get; set; }
 
