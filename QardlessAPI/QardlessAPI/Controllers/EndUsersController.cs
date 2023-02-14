@@ -29,7 +29,7 @@ namespace QardlessAPI.Controllers
         [HttpGet("/endusers")]
         public async Task<ActionResult<EndUser>> AllEndUsers()
         {
-            var endUsers = await _repo.GetEndUsers();
+            var endUsers = await _repo.ListAllEndUsers();
 
             if (endUsers == null)
                 return NotFound();
@@ -41,7 +41,7 @@ namespace QardlessAPI.Controllers
         [HttpGet("/endusers/{id}")]
         public async Task<ActionResult<EndUser>> EndUserById(Guid id)
         {
-            var endUser = await _repo.GetEndUser(id);
+            var endUser = await _repo.GetEndUserById(id);
 
             if (endUser == null)
                 return NotFound();
@@ -68,11 +68,11 @@ namespace QardlessAPI.Controllers
             if (endUserUpdateDto == null)
                 return BadRequest();
 
-            var endUser = await _repo.GetEndUser(id);
+            var endUser = await _repo.GetEndUserById(id);
             if (endUser == null)
                 return BadRequest();
 
-            await Task.Run(() => _repo.PutEndUser(id, endUserUpdateDto));
+            await Task.Run(() => _repo.UpdateEndUserDetails(id, endUserUpdateDto));
 
             return Accepted(endUser);
         }
@@ -103,7 +103,7 @@ namespace QardlessAPI.Controllers
             endUser.CreatedDate = DateTime.Now;
             endUser.LastLoginDate = endUser.CreatedDate;
 
-            _repo.PostEndUser(endUser);
+            _repo.AddNewEndUser(endUser);
             _repo.SaveChanges();
 
             return CreatedAtAction("GetEndUser", new { id = endUser.Id }, endUser);
@@ -114,7 +114,7 @@ namespace QardlessAPI.Controllers
         [HttpPost("/logout")]
         public async Task<ActionResult<EndUserLogoutDto>> LogoutEndUser(Guid userid)
         {
-            var endUser = await _repo.GetEndUser(userid);
+            var endUser = await _repo.GetEndUserById(userid);
 
             if (endUser == null)
                 return BadRequest();
@@ -130,7 +130,7 @@ namespace QardlessAPI.Controllers
         [HttpDelete("/endusers/{id}")]
         public async Task<IActionResult> DeleteEndUser(Guid id)
         {
-            var endUser = await _repo.GetEndUser(id);
+            var endUser = await _repo.GetEndUserById(id);
             if (endUser == null)
                 return NotFound();
 
@@ -142,7 +142,7 @@ namespace QardlessAPI.Controllers
 
         private bool EndUserExists(Guid id)
         {
-            var endUser = _repo.GetEndUser(id);
+            var endUser = _repo.GetEndUserById(id);
             if (endUser == null)
                 return false;
 

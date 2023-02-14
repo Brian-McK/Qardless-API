@@ -267,12 +267,12 @@ namespace QardlessAPI.Data
         #endregion
 
         #region EndUser
-        public async Task<IEnumerable<EndUser?>> GetEndUsers()
+        public async Task<IEnumerable<EndUser>> ListAllEndUsers()
         {
             return await _context.EndUsers.ToListAsync();
         }
 
-        public async Task<EndUser?> GetEndUser(Guid id)
+        public async Task<EndUser?> GetEndUserById(Guid id)
         {
             return await _context.EndUsers.FirstOrDefaultAsync(e => e.Id == id);
         }
@@ -293,7 +293,7 @@ namespace QardlessAPI.Data
             return Convert.ToBase64String(hashedPassword);
         }
 
-        public async Task<EndUser?> PutEndUser(Guid id, EndUserUpdateDto endUserUpdateDto)
+        public async Task<EndUser?> UpdateEndUserDetails(Guid id, EndUserUpdateDto endUserUpdateDto)
         {
             EndUser? endUser = await _context.EndUsers.FirstOrDefaultAsync(e => e.Id == id);
 
@@ -312,7 +312,7 @@ namespace QardlessAPI.Data
             // Implemented in the controller
         }*/
 
-        public void PostEndUser(EndUser? endUser)
+        public void AddNewEndUser(EndUser? endUser)
         {
             if (endUser == null)
                 throw new ArgumentNullException(nameof(endUser));
