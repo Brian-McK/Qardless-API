@@ -64,9 +64,6 @@ namespace QardlessAPI.Data
         Task<EndUser?> UpdateEndUserDetails(Guid id, EndUserUpdateDto endUserUpdateDto);
         void AddNewEndUser(EndUserCreateDto endUserForCreation);
         void DeleteEndUser(EndUser endUser);
-
-        //void PatchEndUser(Guid id, EndUser endUser);
-
         #endregion
     }
 }

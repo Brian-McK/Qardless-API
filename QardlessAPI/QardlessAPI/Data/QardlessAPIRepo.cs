@@ -299,11 +299,6 @@ namespace QardlessAPI.Data
             return await _context.EndUsers.FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        /*public void PatchEndUser(Guid id, EndUser? endUser)
-        {
-            // Implemented in the controller
-        }*/
-
         public string HashPassword(string Password)
         {
             var sha = SHA256.Create();
@@ -334,9 +329,7 @@ namespace QardlessAPI.Data
         public void DeleteEndUser(EndUser? endUser)
         {
             if (endUser == null)
-            {
                 throw new ArgumentNullException(nameof(endUser));
-            }
 
             _context.EndUsers.Remove(endUser);
         }
