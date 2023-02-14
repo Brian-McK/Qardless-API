@@ -11,14 +11,9 @@ namespace QardlessAPI.Data.Dtos.Employee
         public string Email { get; set; }
 
         [Required]
-        public bool EmailVerified { get; set; }
-
-        [Required]
         public string Password { get; set; }
 
-        public string? PhoneMobile { get; set; }
-
-        public bool? PhoneMobileVerified { get; set; }
+        public string? ContactNumber { get; set; }
 
         [Required]
         public int PrivilegeLevel { get; set; }

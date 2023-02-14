@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data.Dtos.Certificate;
 using QardlessAPI.Data.Dtos.EndUser;
+using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Models;
 using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
@@ -222,7 +223,7 @@ namespace QardlessAPI.Data
         #endregion
 
         #region Employee
-        public async Task<IEnumerable<Employee?>> GetEmployees()
+        public async Task<IEnumerable<Employee>> ListAllEmployees()
         {
             return await _context.Employees.ToListAsync();
         }
@@ -233,43 +234,63 @@ namespace QardlessAPI.Data
                 .Where(e => e.BusinessId == id).ToListAsync();
         }
 
-        public async Task<Employee?> GetEmployee(Guid id)
+        public async Task<Employee?> GetEmployeeById(Guid id)
         {
             return await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public void PutEmployee(Guid id, Employee? employee)
+        public async Task<Employee?> UpdateEmployee(Guid id, EmployeeUpdateDto employeeUpdateDto)
         {
-            // Implemented in the controller
+            Employee? emp = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
+
+            emp.Name = employeeUpdateDto.Name;
+            emp.Email = employeeUpdateDto.Email;
+            emp.ContactNumber = employeeUpdateDto.ContactNumber;
+            emp.PrivilegeLevel = employeeUpdateDto.PrivilegeLevel;
+            emp.BusinessId = employeeUpdateDto.BusinessId;
+
+            _context.SaveChanges();
+            _context.Employees.Add(emp);
+
+            return await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public void PatchEmployee(Guid id, Employee? employee)
+        public EmployeeReadPartialDto AddNewEmployee(EmployeeCreateDto newEmp)
         {
-            // Implemented in the controller
+            if (newEmp == null)
+                throw new ArgumentNullException(nameof(newEmp));
+
+            Employee emp = new Employee();
+            emp.Id = new Guid();
+            emp.Name = newEmp.Name;
+            emp.Email = newEmp.Email;
+            emp.EmailVerified = false;
+            emp.PasswordHash = HashPassword(newEmp.Password);
+            emp.ContactNumber = emp.ContactNumber;
+            emp.ContactNumberVerified = false;
+            emp.CreatedDate = DateTime.Now;
+            emp.PrivilegeLevel = emp.PrivilegeLevel;
+            emp.BusinessId = emp.BusinessId;
+
+            _context.Employees.Add(emp);
+            _context.SaveChanges();
+
+            EmployeeReadPartialDto empPartialRead = new EmployeeReadPartialDto();
+            empPartialRead.Id = emp.Id;
+            empPartialRead.Name = emp.Name;
+            empPartialRead.Email = emp.Email;
+            empPartialRead.ContactNumber = emp.ContactNumber;
+            empPartialRead.BusinessId = emp.BusinessId;
+
+            return empPartialRead;
         }
 
-        public void PostEmployee(Employee? employee)
+        public void DeleteEmployee(Employee? emp)
         {
-            if (employee == null)
-            {
-                throw new ArgumentNullException(nameof(employee));
-            }
+            if (emp == null)
+                throw new ArgumentNullException(nameof(emp));
 
-            employee.Id = Guid.NewGuid();
-            employee.CreatedDate = DateTime.Now;
-            employee.LastLoginDate = employee.CreatedDate;
-
-            _context.Employees.Add(employee);
-        }
-
-        public void DeleteEmployee(Employee? employee)
-        {
-            if (employee == null)
-            {
-                throw new ArgumentNullException(nameof(employee));
-            }
-
-            _context.Employees.Remove(employee);
+            _context.Employees.Remove(emp);
         }
         #endregion
 
@@ -304,14 +325,6 @@ namespace QardlessAPI.Data
             _context.EndUsers.Add(endUser);
 
             return await _context.EndUsers.FirstOrDefaultAsync(e => e.Id == id);
-        }
-
-        public string HashPassword(string password)
-        {
-            var sha = SHA256.Create();
-            var asByteArray = Encoding.Default.GetBytes(password);
-            var hashedPassword = sha.ComputeHash(asByteArray);
-            return Convert.ToBase64String(hashedPassword);
         }
 
         public EndUserReadPartialDto AddNewEndUser(EndUserCreateDto endUserForCreation)
@@ -350,6 +363,16 @@ namespace QardlessAPI.Data
             _context.EndUsers.Remove(endUser);
         }
 
+        #endregion
+
+        #region Security 
+        public string HashPassword(string password)
+        {
+            var sha = SHA256.Create();
+            var asByteArray = Encoding.Default.GetBytes(password);
+            var hashedPassword = sha.ComputeHash(asByteArray);
+            return Convert.ToBase64String(hashedPassword);
+        }
         #endregion
     }
 }

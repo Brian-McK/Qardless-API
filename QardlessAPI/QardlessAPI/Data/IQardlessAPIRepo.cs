@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Bson;
 using QardlessAPI.Data.Dtos.Certificate;
+using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
 
@@ -47,12 +48,11 @@ namespace QardlessAPI.Data
         #endregion
 
         #region Employee
-        Task<IEnumerable<Employee?>> GetEmployees();
+        Task<IEnumerable<Employee>> ListAllEmployees();
         Task<IEnumerable<Employee?>> GetEmployeesByBusinessId(Guid id);
-        Task<Employee?> GetEmployee(Guid id);
-        void PutEmployee(Guid id, Employee? employee);
-        void PatchEmployee(Guid id, Employee? employee);
-        void PostEmployee(Employee? employee);
+        Task<Employee?> GetEmployeeById(Guid id);
+        Task<Employee?> UpdateEmployee(Guid id, EmployeeUpdateDto employeeUpdateDto);
+        EmployeeReadPartialDto AddNewEmployee(EmployeeCreateDto newEmp);
         void DeleteEmployee(Employee? employee);
         #endregion
 

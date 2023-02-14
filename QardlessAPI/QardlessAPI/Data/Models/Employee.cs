@@ -22,6 +22,8 @@ namespace QardlessAPI.Data.Models
 
         public string? ContactNumber { get; set; }
 
+        public bool ContactNumberVerified { get; set; }
+
         // NOTE: Could be an Enum
         [Required]
         public int PrivilegeLevel { get; set; }

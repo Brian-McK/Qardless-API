@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
+using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Models;
 
 namespace QardlessAPI.Controllers
@@ -9,95 +11,108 @@ namespace QardlessAPI.Controllers
     [ApiController]
     public class EmployeesController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IQardlessAPIRepo _repo;
+        private readonly IMapper _mapper;
 
-        public EmployeesController(ApplicationDbContext context)
+        public EmployeesController(IQardlessAPIRepo repo, IMapper mapper)
         {
-            _context = context;
+            _repo = repo ??
+                throw new ArgumentNullException(nameof(repo));
+            _mapper = mapper ??
+               throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/Employees
         [HttpGet("/employees")]
         public async Task<ActionResult<IEnumerable<Employee>>> ViewAllEmployees()
         {
-          if (_context.Employees == null)
-          return NotFound();
+            var emps = await _repo.ListAllCertificates();
 
-            return await _context.Employees.ToListAsync();
+            if (emps == null) 
+                return NotFound();
+
+            return Ok(_mapper.Map<IEnumerable<EmployeeReadFullDto>>(emps));
         }
 
         // GET: api/Employees/5
         [HttpGet("/employees/{id}")]
         public async Task<ActionResult<Employee>> ViewEmployeeById(Guid id)
         {
-          if (_context.Employees == null)
-          return NotFound();
+            var emp = await _repo.GetEmployeeById(id);
 
-            var employee = await _context.Employees.FindAsync(id);
+            if( emp ==null) 
+                return BadRequest();
 
-            if (employee == null)
-            return NotFound();
-
-            return employee;
+            return Ok(_mapper.Map<EmployeeReadFullDto>(emp));
         }
+
+        //Task<IEnumerable<Employee?>> GetEmployeesById(Guid id); //TODO: Businesses controller
 
         // PUT: api/Employees/5
         [HttpPut("/employees/{id}")]
-        public async Task<IActionResult> EditEmployee(Guid id, Employee employee)
+        public async Task<IActionResult> UpdateEmployeeDetails(Guid id, EmployeeUpdateDto employeeUpdateDto)
         {
-            if (id != employee.Id)
-            return BadRequest();
+            if(employeeUpdateDto == null )
+                return BadRequest();
 
-            _context.Entry(employee).State = EntityState.Modified;
+            var emp = await _repo.GetEmployeeById(id);
+            if(emp == null)
+                return BadRequest();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EmployeeExists(id))
-                    return NotFound();
-                else
-                    throw;
-            }
+            await Task.Run(() => _repo.UpdateEmployee(id, employeeUpdateDto));
 
-            return NoContent();
+            return Accepted(emp);
         }
 
+        // Register Employee
         // POST: api/Employees
         [HttpPost("/employees")]
-        public async Task<ActionResult<Employee>> AddNewEmployee(Employee employee)
+        public async Task<ActionResult<EmployeeCreateDto>> RegisterNewEmployee(EmployeeCreateDto employeeCreateDto)
         {
-          if (_context.Employees == null)
-          return Problem("Entity set 'ApplicationDbContext.Employee'  is null.");
+            if (employeeCreateDto == null)
+                return BadRequest();
 
-            _context.Employees.Add(employee);
-            await _context.SaveChangesAsync();
+            EmployeeReadPartialDto empReadPartialDto = await Task.Run(() => _repo.AddNewEmployee(employeeCreateDto));
 
-            return CreatedAtAction("GetEmployee", new { id = employee.Id }, employee);
+            return Created("/employees", empReadPartialDto);
+        }
+
+        // Business logic: Logout Employee
+        // POST: api/Employees
+        [HttpPost("/logout")]
+        public async Task<ActionResult<EmployeeLogoutDto>> LogoutEmployee(Guid id)
+        {
+            var emp = await _repo.GetEmployeeById(id);
+            if (emp == null)
+                return BadRequest();
+
+            EmployeeLogoutDto empForLogout = new EmployeeLogoutDto();
+            empForLogout.Id = id;
+            empForLogout.isLoggedin = false;
+
+            return Ok(empForLogout);
         }
 
         // DELETE: api/Employees/5
         [HttpDelete("/employees/{id}")]
         public async Task<IActionResult> DeleteEmployee(Guid id)
         {
-            if (_context.Employees == null)
-            return NotFound();
+            var emp = await _repo.GetEmployeeById(id);
+            if (emp == null)
+                return NotFound();
 
-            var employee = await _context.Employees.FindAsync(id);
-            if (employee == null)
-            return NotFound();
+            _repo.DeleteEmployee(emp);
+            _repo.SaveChanges();
 
-            _context.Employees.Remove(employee);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return Accepted();
         }
 
-        private bool EmployeeExists(Guid id)
+        private bool CheckEmployeeExists(Guid id)
         {
-            return (_context.Employees?.Any(e => e.Id == id)).GetValueOrDefault();
+            var emp = _repo.GetEmployeeById(id);
+            if (emp == null)
+                return false;
+            return true;
         }
     }
 }

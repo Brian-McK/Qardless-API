@@ -46,7 +46,7 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<EndUserReadFullDto>(endUser));
         }
 
-        // GET: api/EndUsers/Certificates/5
+        // GET: api/EndUsers/5/Certificates/
         [HttpGet("/endusers/{id}/certificates")]
         public async Task<ActionResult<Certificate>> ViewEndUsersCertificates(Guid id)
         {
