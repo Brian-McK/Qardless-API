@@ -80,33 +80,14 @@ namespace QardlessAPI.Controllers
         // Business logic: Register EndUser
         // POST: api/EndUsers
         [HttpPost("/endusers")]
-        public async Task<ActionResult<EndUser>> RegisterNewEndUser(EndUserCreateDto endUserForCreation)
+        public async Task<ActionResult<EndUserCreateDto?>> RegisterNewEndUser(EndUserCreateDto endUserForCreation)
         {
             if(endUserForCreation == null)
                 return BadRequest();
 
-            var endUser = await Task.Run(() => _mapper.Map<EndUser>(endUserForCreation));
+            await Task.Run(() => _repo.AddNewEndUser(endUserForCreation));
 
-            #region Security - Hash user passwords
-            var sha = SHA256.Create();
-            var asByteArray = Encoding.Default.GetBytes(endUserForCreation.PasswordHash);
-            var hashedPassword = sha.ComputeHash(asByteArray);
-            var convertedHashedPassword = Convert.ToBase64String(hashedPassword);
-            #endregion
-
-            endUser.Id = new Guid();
-            endUser.Name = endUserForCreation.Name;
-            endUser.Email = endUserForCreation.Email;
-            endUser.EmailVerified = false;
-            endUser.PasswordHash = convertedHashedPassword;
-            endUser.ContactNumber = endUserForCreation.ContactNumber;
-            endUser.CreatedDate = DateTime.Now;
-            endUser.LastLoginDate = endUser.CreatedDate;
-
-            _repo.AddNewEndUser(endUser);
-            _repo.SaveChanges();
-
-            return CreatedAtAction("GetEndUser", new { id = endUser.Id }, endUser);
+            return Accepted(endUserForCreation);
         }
 
         // Business logic: Logout EndUser
@@ -140,7 +121,7 @@ namespace QardlessAPI.Controllers
             return Accepted();
         }
 
-        private bool EndUserExists(Guid id)
+        private bool CheckEndUserExists(Guid id)
         {
             var endUser = _repo.GetEndUserById(id);
             if (endUser == null)

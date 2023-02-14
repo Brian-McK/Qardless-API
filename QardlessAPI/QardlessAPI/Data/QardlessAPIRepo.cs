@@ -285,14 +285,6 @@ namespace QardlessAPI.Data
                 e.PasswordHash == HashPassword(endUserLoginDto.Password));
         }
 
-        public string HashPassword(string Password)
-        {
-            var sha = SHA256.Create();
-            var asByteArray = Encoding.Default.GetBytes(Password);
-            var hashedPassword = sha.ComputeHash(asByteArray);
-            return Convert.ToBase64String(hashedPassword);
-        }
-
         public async Task<EndUser?> UpdateEndUserDetails(Guid id, EndUserUpdateDto endUserUpdateDto)
         {
             EndUser? endUser = await _context.EndUsers.FirstOrDefaultAsync(e => e.Id == id);
@@ -312,11 +304,30 @@ namespace QardlessAPI.Data
             // Implemented in the controller
         }*/
 
-        public void AddNewEndUser(EndUser? endUser)
+        public string HashPassword(string Password)
         {
-            if (endUser == null)
-                throw new ArgumentNullException(nameof(endUser));
-     
+            var sha = SHA256.Create();
+            var asByteArray = Encoding.Default.GetBytes(Password);
+            var hashedPassword = sha.ComputeHash(asByteArray);
+            return Convert.ToBase64String(hashedPassword);
+        }
+
+        public void AddNewEndUser(EndUserCreateDto endUserForCreation)
+        {
+            if (endUserForCreation == null)
+                throw new ArgumentNullException(nameof(endUserForCreation));
+
+            EndUser endUser = new EndUser();
+            endUser.Id = new Guid();
+            endUser.Name = endUserForCreation.Name;
+            endUser.Email = endUserForCreation.Email;
+            endUser.EmailVerified = false;
+            endUserForCreation.PasswordHash = HashPassword(endUserForCreation.PasswordHash);
+            endUser.ContactNumber = endUserForCreation.ContactNumber;
+            endUser.CreatedDate = DateTime.Now;
+            endUser.LastLoginDate = endUser.CreatedDate;
+
+            _context.SaveChanges();
             _context.EndUsers.Add(endUser);
         }
 
