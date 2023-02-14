@@ -294,13 +294,16 @@ namespace QardlessAPI.Data
 
         public void PutEndUser(Guid id, EndUser? endUser)
         {
-            // Implemented in the controller
+            if (endUser == null)
+                throw new ArgumentNullException(nameof(endUser));
+
+            _context.EndUsers.Add(endUser);
         }
 
-        public void PatchEndUser(Guid id, EndUser? endUser)
+        /*public void PatchEndUser(Guid id, EndUser? endUser)
         {
             // Implemented in the controller
-        }
+        }*/
 
         public void PostEndUser(EndUser? endUser)
         {
