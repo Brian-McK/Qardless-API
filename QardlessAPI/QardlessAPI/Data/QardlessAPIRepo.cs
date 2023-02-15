@@ -10,6 +10,7 @@ using QardlessAPI.Data.Models;
 using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
 using System.Text;
+using System.Reflection.Metadata.Ecma335;
 
 namespace QardlessAPI.Data
 {
@@ -358,10 +359,10 @@ namespace QardlessAPI.Data
         // Password check for login 
         public bool CheckEndUserPassword(EndUser endUser, LoginDto login)
         {
-            if(endUser.PasswordHash != HashPassword(login.Password))
-                return false;
+            if(endUser.PasswordHash == HashPassword(login.Password))
+                return true;
 
-            return true;
+            return false;
         }
 
         public void DeleteEndUser(EndUser? endUser)
@@ -370,6 +371,25 @@ namespace QardlessAPI.Data
                 throw new ArgumentNullException(nameof(endUser));
 
             _context.EndUsers.Remove(endUser);
+        }
+
+        #endregion
+
+        #region Login 
+
+        public EndUserReadPartialDto SendEndUserForProps(EndUser endUser)
+        {
+            EndUserReadPartialDto endUserForProps = new EndUserReadPartialDto();
+            endUserForProps.Id = endUser.Id;
+            endUserForProps.Name = endUser.Name;
+            endUserForProps.Email = endUser.Email;
+            endUserForProps.ContactNumber = endUser.ContactNumber;
+            endUserForProps.isLoggedin = true;
+
+            endUser.LastLoginDate = DateTime.Now;
+            SaveChanges();
+
+            return endUserForProps;
         }
 
         #endregion
@@ -383,5 +403,6 @@ namespace QardlessAPI.Data
             return Convert.ToBase64String(hashedPassword);
         }
         #endregion
+
     }
 }

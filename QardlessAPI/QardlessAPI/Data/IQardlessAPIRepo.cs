@@ -67,5 +67,11 @@ namespace QardlessAPI.Data
         bool CheckEndUserPassword(EndUser endUser, LoginDto login);
         void DeleteEndUser(EndUser endUser);
         #endregion
+
+        #region Login
+        EndUserReadPartialDto SendEndUserForProps(EndUser endUser);
+
+        #endregion
+
     }
 }
