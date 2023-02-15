@@ -18,9 +18,9 @@ namespace QardlessAPI.Controllers
         public EndUsersController(IQardlessAPIRepo repo, IMapper mapper)
         {
             _repo = repo ??
-                throw new ArgumentNullException(nameof(repo));
+                    throw new ArgumentNullException(nameof(repo));
             _mapper = mapper ??
-               throw new ArgumentNullException(nameof(mapper));
+                      throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/EndUsers
@@ -91,18 +91,21 @@ namespace QardlessAPI.Controllers
         // Business logic: Logout EndUser
         // POST: api/EndUsers
         [HttpPost("/endusers/logout")]
-        public async Task<ActionResult<LogoutDto>> LogoutEndUser(Guid userid)
+        public async Task<ActionResult<EndUserLogoutResponseDto>> LogoutEndUser(
+            [FromBody] EndUserLogoutRequestDto endUserLogoutRequest)
         {
-            var endUser = await _repo.GetEndUserById(userid);
+            var endUser = await _repo.GetEndUserById(endUserLogoutRequest.Id);
 
             if (endUser == null)
                 return BadRequest();
 
-            LogoutDto endUserForLogout = new LogoutDto();
-            endUserForLogout.Id = userid;
-            endUserForLogout.isLoggedin = false;
+            var endUserLogoutResponse = new EndUserLogoutResponseDto
+            {
+                Id = endUserLogoutRequest.Id,
+                IsLoggedIn = false
+            };
 
-            return Ok(endUserForLogout);
+            return Ok(endUserLogoutResponse);
         }
 
         // DELETE: api/EndUsers/5
