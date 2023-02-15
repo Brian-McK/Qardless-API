@@ -37,7 +37,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/Changelogs/5
         [HttpGet("/changelogs/{id}")]
-        public async Task<ActionResult<Changelog>> ViewChangelogById(Guid id)
+        public async Task<ActionResult<Changelog>> ChangelogById(Guid id)
         {
             var changelog = await _repo.GetChangelog(id);
 
@@ -85,7 +85,7 @@ namespace QardlessAPI.Controllers
             _repo.PostChangelog(changelog);
             _repo.SaveChanges();
 
-            return CreatedAtAction("GetChangelogById", new { id = changelog.Id }, changelog);
+            return CreatedAtAction("ChangelogById", new { id = changelog.Id }, changelog);
         }
 
         // DELETE: api/Changelogs/5
