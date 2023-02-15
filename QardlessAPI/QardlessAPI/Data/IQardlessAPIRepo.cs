@@ -52,8 +52,10 @@ namespace QardlessAPI.Data
         Task<IEnumerable<Employee>> ListAllEmployees();
         Task<IEnumerable<Employee?>> GetEmployeesByBusinessId(Guid id);
         Task<Employee?> GetEmployeeById(Guid id);
+        Task<Employee?> GetEmployeeByEmail(LoginDto empLoginDto);
         Task<Employee?> UpdateEmployee(Guid id, EmployeeUpdateDto employeeUpdateDto);
         EmployeeReadPartialDto AddNewEmployee(EmployeeCreateDto newEmp);
+        bool CheckEmpPassword(Employee emp, LoginDto login);
         void DeleteEmployee(Employee? employee);
         #endregion
 
@@ -70,6 +72,7 @@ namespace QardlessAPI.Data
 
         #region Login
         EndUserReadPartialDto SendEndUserForProps(EndUser endUser);
+        EmployeeReadPartialDto SendEmpForProps(Employee emp);
 
         #endregion
 

@@ -24,7 +24,6 @@ namespace QardlessAPI.Data.Dtos.Employee
         [Required]
         public int PrivilegeLevel { get; set; }
 
-        [Required]
         public Guid BusinessId { get; set; }
     }
 }

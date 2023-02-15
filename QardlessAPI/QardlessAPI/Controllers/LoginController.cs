@@ -8,6 +8,7 @@ using QardlessAPI.Data.Models;
 using System.Text;
 using System.Security.Cryptography;
 using AutoMapper;
+using QardlessAPI.Data.Dtos.Employee;
 
 namespace QardlessAPI.Controllers
 {
@@ -37,6 +38,23 @@ namespace QardlessAPI.Controllers
             
             EndUserReadPartialDto endUserForProps = _repo.SendEndUserForProps(endUser);
             return Ok(endUserForProps);
+        }
+
+
+        // POST: api/login/
+        [HttpPost("/employees/login")]
+        public async Task<ActionResult<EmployeeReadPartialDto>> LoginEmployee(LoginDto loginEmp)
+        {
+            Employee? emp = await _repo.GetEmployeeByEmail(loginEmp);
+
+            if (loginEmp == null || emp == null)
+                return BadRequest();
+
+            if (!_repo.CheckEmpPassword(emp, loginEmp))
+                return Unauthorized();
+
+            EmployeeReadPartialDto empForProps = _repo.SendEmpForProps(emp);
+            return Ok(empForProps);
         }
     }
 }

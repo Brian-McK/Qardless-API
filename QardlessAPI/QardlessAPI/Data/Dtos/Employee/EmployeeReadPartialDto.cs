@@ -7,5 +7,6 @@
         public string Email { get; set; }
         public string? ContactNumber { get; set; }
         public Guid BusinessId { get; set; }
+        public bool isLoggedin { get; set; }
     }
 }

@@ -241,6 +241,12 @@ namespace QardlessAPI.Data
             return await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
         }
 
+        //For Login Controller
+        public async Task<Employee?> GetEmployeeByEmail(LoginDto empLoginDto)
+        {
+            return await _context.Employees.FirstOrDefaultAsync(e => e.Email == empLoginDto.Email);
+        }
+
         public async Task<Employee?> UpdateEmployee(Guid id, EmployeeUpdateDto employeeUpdateDto)
         {
             Employee? emp = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
@@ -275,7 +281,7 @@ namespace QardlessAPI.Data
             emp.BusinessId = emp.BusinessId;
 
             _context.Employees.Add(emp);
-            _context.SaveChanges();
+            //_context.SaveChanges();
 
             EmployeeReadPartialDto empPartialRead = new EmployeeReadPartialDto();
             empPartialRead.Id = emp.Id;
@@ -287,6 +293,15 @@ namespace QardlessAPI.Data
             return empPartialRead;
         }
 
+        // Password check for login 
+        public bool CheckEmpPassword(Employee emp, LoginDto login)
+        {
+            if (emp.PasswordHash == HashPassword(login.Password))
+                return true;
+
+            return false;
+        }
+
         public void DeleteEmployee(Employee? emp)
         {
             if (emp == null)
@@ -295,6 +310,7 @@ namespace QardlessAPI.Data
             _context.Employees.Remove(emp);
         }
         #endregion
+
 
         #region EndUser
         public async Task<IEnumerable<EndUser>> ListAllEndUsers()
@@ -390,6 +406,22 @@ namespace QardlessAPI.Data
             SaveChanges();
 
             return endUserForProps;
+        }
+
+        public EmployeeReadPartialDto SendEmpForProps(Employee emp)
+        {
+            EmployeeReadPartialDto empForProps = new EmployeeReadPartialDto();
+            empForProps.Id = emp.Id;
+            empForProps.Name = emp.Name;
+            empForProps.Email = emp.Email;
+            empForProps.ContactNumber = emp.ContactNumber;
+            empForProps.BusinessId = emp.BusinessId;
+            empForProps.isLoggedin = true;
+
+            emp.LastLoginDate = DateTime.Now;
+            SaveChanges();
+
+            return empForProps;
         }
 
         #endregion
