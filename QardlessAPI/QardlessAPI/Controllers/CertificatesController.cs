@@ -42,7 +42,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/Certificates/5
         [HttpGet("/certificates/{id}")]
-        public async Task<ActionResult<Certificate>> ViewCertificateById(Guid id)
+        public async Task<ActionResult<Certificate>> CertificateById(Guid id)
         {
             var cert = await _repo.GetCertificateById(id);
 
@@ -90,7 +90,7 @@ namespace QardlessAPI.Controllers
             _repo.AddNewCertificate(cert);
             _repo.SaveChanges();
 
-            return CreatedAtAction("GetCertificateById", new { id = cert.Id }, cert);
+            return CreatedAtAction("CertificateById", new { id = cert.Id }, cert);
         }
 
         // DELETE: api/Certificates/5
