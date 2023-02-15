@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Dtos.Certificate;
 using QardlessAPI.Data.Dtos.EndUser;
+using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Models;
 
 namespace QardlessAPI.Controllers
@@ -90,14 +91,14 @@ namespace QardlessAPI.Controllers
         // Business logic: Logout EndUser
         // POST: api/EndUsers
         [HttpPost("/endusers/logout")]
-        public async Task<ActionResult<EndUserLogoutDto>> LogoutEndUser(Guid userid)
+        public async Task<ActionResult<LogoutDto>> LogoutEndUser(Guid userid)
         {
             var endUser = await _repo.GetEndUserById(userid);
 
             if (endUser == null)
                 return BadRequest();
 
-            EndUserLogoutDto endUserForLogout = new EndUserLogoutDto();
+            LogoutDto endUserForLogout = new LogoutDto();
             endUserForLogout.Id = userid;
             endUserForLogout.isLoggedin = false;
 

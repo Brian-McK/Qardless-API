@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Dtos.Employee;
+using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Models;
 
 namespace QardlessAPI.Controllers
@@ -80,13 +81,13 @@ namespace QardlessAPI.Controllers
         // Business logic: Logout Employee
         // POST: api/Employees
         [HttpPost("/employees/logout")]
-        public async Task<ActionResult<EmployeeLogoutDto>> LogoutEmployee(Guid id)
+        public async Task<ActionResult<LogoutDto>> LogoutEmployee(Guid id)
         {
             var emp = await _repo.GetEmployeeById(id);
             if (emp == null)
                 return BadRequest();
 
-            EmployeeLogoutDto empForLogout = new EmployeeLogoutDto();
+            LogoutDto empForLogout = new LogoutDto();
             empForLogout.Id = id;
             empForLogout.isLoggedin = false;
 

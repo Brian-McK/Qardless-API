@@ -1,6 +1,6 @@
-﻿namespace QardlessAPI.Data.Dtos.EndUser
+﻿namespace QardlessAPI.Data.Dtos.Authentication
 {
-    public class EndUserLogoutDto
+    public class LogoutDto
     {
         public Guid Id { get; set; }
         public bool isLoggedin { get; set; }

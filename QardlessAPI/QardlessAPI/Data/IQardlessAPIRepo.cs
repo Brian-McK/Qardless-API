@@ -3,6 +3,7 @@ using Newtonsoft.Json.Bson;
 using QardlessAPI.Data.Dtos.Certificate;
 using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Dtos.EndUser;
+using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Models;
 
 namespace QardlessAPI.Data
@@ -59,7 +60,7 @@ namespace QardlessAPI.Data
         #region EndUser
         Task<IEnumerable<EndUser>> ListAllEndUsers();
         Task<EndUser?> GetEndUserById(Guid id);
-        Task<EndUser?> GetEndUserByEmail(EndUserLoginDto endUserLoginDto);
+        Task<EndUser?> GetEndUserByEmail(LoginDto endUserLoginDto);
         public string HashPassword(string Password);
         Task<EndUser?> UpdateEndUserDetails(Guid id, EndUserUpdateDto endUserUpdateDto);
         EndUserReadPartialDto AddNewEndUser(EndUserCreateDto endUserForCreation);

@@ -1,10 +1,8 @@
-﻿namespace QardlessAPI.Data.Dtos.EndUser
+﻿namespace QardlessAPI.Data.Dtos.Authentication
 {
-    public class EndUserLoginDto
+    public class LoginDto
     {
         public string Email { get; set; }
-
         public string Password { get; set; }
-
     }
 }

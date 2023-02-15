@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data.Dtos.Certificate;
 using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Dtos.Employee;
+using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Models;
 using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
@@ -306,7 +307,7 @@ namespace QardlessAPI.Data
         }
 
         //For login controller
-        public async Task<EndUser?> GetEndUserByEmail(EndUserLoginDto endUserLoginDto)
+        public async Task<EndUser?> GetEndUserByEmail(LoginDto endUserLoginDto)
         {
             return await _context.EndUsers.FirstOrDefaultAsync(
                 e => e.Email == endUserLoginDto.Email && 

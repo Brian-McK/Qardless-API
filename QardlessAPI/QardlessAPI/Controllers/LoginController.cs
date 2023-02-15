@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Dtos.EndUser;
+using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Models;
 using System.Text;
 using System.Security.Cryptography;
@@ -24,7 +25,7 @@ namespace QardlessAPI.Controllers
 
         // POST: api/login/
         [HttpPost("/login")]
-        public async Task<ActionResult<EndUserReadPartialDto>> LoginEndUser(EndUserLoginDto loginUser)
+        public async Task<ActionResult<EndUserReadPartialDto>> LoginEndUser(LoginDto loginUser)
         {
             if (loginUser == null)
                 return BadRequest();
