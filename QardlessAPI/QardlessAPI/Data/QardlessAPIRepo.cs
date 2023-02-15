@@ -268,28 +268,32 @@ namespace QardlessAPI.Data
             if (newEmp == null)
                 throw new ArgumentNullException(nameof(newEmp));
 
-            Employee emp = new Employee();
-            emp.Id = new Guid();
-            emp.Name = newEmp.Name;
-            emp.Email = newEmp.Email;
-            emp.EmailVerified = false;
-            emp.PasswordHash = HashPassword(newEmp.Password);
-            emp.ContactNumber = emp.ContactNumber;
-            emp.ContactNumberVerified = false;
-            emp.CreatedDate = DateTime.Now;
-            emp.PrivilegeLevel = emp.PrivilegeLevel;
-            emp.BusinessId = emp.BusinessId;
-
+            Employee emp = new Employee
+            {
+                Id = new Guid(),
+                Name = newEmp.Name,
+                Email = newEmp.Email,
+                EmailVerified = false,
+                PasswordHash = HashPassword(newEmp.Password),
+                ContactNumber = newEmp.ContactNumber,
+                ContactNumberVerified = false,
+                CreatedDate = DateTime.Now,
+                PrivilegeLevel = newEmp.PrivilegeLevel,
+                BusinessId = newEmp.BusinessId
+            };
+            
             _context.Employees.Add(emp);
             //_context.SaveChanges();
 
-            EmployeeReadPartialDto empPartialRead = new EmployeeReadPartialDto();
-            empPartialRead.Id = emp.Id;
-            empPartialRead.Name = emp.Name;
-            empPartialRead.Email = emp.Email;
-            empPartialRead.ContactNumber = emp.ContactNumber;
-            empPartialRead.BusinessId = emp.BusinessId;
-
+            EmployeeReadPartialDto empPartialRead = new EmployeeReadPartialDto
+            {
+                Id = emp.Id,
+                Name = emp.Name,
+                Email = emp.Email,
+                ContactNumber = emp.ContactNumber,
+                BusinessId = emp.BusinessId
+            };
+            
             return empPartialRead;
         }
 
@@ -310,7 +314,6 @@ namespace QardlessAPI.Data
             _context.Employees.Remove(emp);
         }
         #endregion
-
 
         #region EndUser
         public async Task<IEnumerable<EndUser>> ListAllEndUsers()
@@ -349,26 +352,30 @@ namespace QardlessAPI.Data
             if (endUserForCreation == null)
                 throw new ArgumentNullException(nameof(endUserForCreation));
 
-            EndUser endUser = new EndUser();
-            endUser.Id = new Guid();
-            endUser.Name = endUserForCreation.Name;
-            endUser.Email = endUserForCreation.Email;
-            endUser.EmailVerified = false;
-            endUser.PasswordHash = HashPassword(endUserForCreation.Password);
-            endUser.ContactNumber = endUserForCreation.ContactNumber;
-            endUser.CreatedDate = DateTime.Now;
-            endUser.LastLoginDate = endUser.CreatedDate;
+            EndUser endUser = new EndUser
+            {
+                Id = new Guid(),
+                Name = endUserForCreation.Name,
+                Email = endUserForCreation.Email,
+                EmailVerified = false,
+                PasswordHash = HashPassword(endUserForCreation.Password),
+                ContactNumber = endUserForCreation.ContactNumber,
+                CreatedDate = DateTime.Now,
+                LastLoginDate = DateTime.Now
+            };
 
             _context.EndUsers.Add(endUser);
             _context.SaveChanges();
 
-            EndUserReadPartialDto endUserReadPartialDto = new EndUserReadPartialDto();
-            endUserReadPartialDto.Id = endUser.Id;
-            endUserReadPartialDto.Name = endUser.Name;
-            endUserReadPartialDto.Email = endUser.Email;
-            endUserReadPartialDto.ContactNumber = endUser.ContactNumber;
-            endUserReadPartialDto.isLoggedin = false;
-
+            EndUserReadPartialDto endUserReadPartialDto = new EndUserReadPartialDto
+            {
+                Id = endUser.Id,
+                Name = endUser.Name,
+                Email = endUser.Email,
+                ContactNumber = endUser.ContactNumber,
+                isLoggedin = false
+            };
+           
             return endUserReadPartialDto;
         }
 
@@ -395,12 +402,14 @@ namespace QardlessAPI.Data
 
         public EndUserReadPartialDto SendEndUserForProps(EndUser endUser)
         {
-            EndUserReadPartialDto endUserForProps = new EndUserReadPartialDto();
-            endUserForProps.Id = endUser.Id;
-            endUserForProps.Name = endUser.Name;
-            endUserForProps.Email = endUser.Email;
-            endUserForProps.ContactNumber = endUser.ContactNumber;
-            endUserForProps.isLoggedin = true;
+            EndUserReadPartialDto endUserForProps = new EndUserReadPartialDto
+            {
+                Id = endUser.Id,
+                Name = endUser.Name,
+                Email = endUser.Email,
+                ContactNumber = endUser.ContactNumber,
+                isLoggedin = true
+            };
 
             endUser.LastLoginDate = DateTime.Now;
             SaveChanges();
@@ -410,13 +419,15 @@ namespace QardlessAPI.Data
 
         public EmployeeReadPartialDto SendEmpForProps(Employee emp)
         {
-            EmployeeReadPartialDto empForProps = new EmployeeReadPartialDto();
-            empForProps.Id = emp.Id;
-            empForProps.Name = emp.Name;
-            empForProps.Email = emp.Email;
-            empForProps.ContactNumber = emp.ContactNumber;
-            empForProps.BusinessId = emp.BusinessId;
-            empForProps.isLoggedin = true;
+            EmployeeReadPartialDto empForProps = new EmployeeReadPartialDto
+            {
+                Id = emp.Id,
+                Name = emp.Name,
+                Email = emp.Email,
+                ContactNumber = emp.ContactNumber,
+                BusinessId = emp.BusinessId,
+                isLoggedin = true
+            };
 
             emp.LastLoginDate = DateTime.Now;
             SaveChanges();
