@@ -64,6 +64,7 @@ namespace QardlessAPI.Data
         public string HashPassword(string Password);
         Task<EndUser?> UpdateEndUserDetails(Guid id, EndUserUpdateDto endUserUpdateDto);
         EndUserReadPartialDto AddNewEndUser(EndUserCreateDto endUserForCreation);
+        bool CheckEndUserPassword(EndUser endUser, LoginDto login);
         void DeleteEndUser(EndUser endUser);
         #endregion
     }

@@ -310,8 +310,7 @@ namespace QardlessAPI.Data
         public async Task<EndUser?> GetEndUserByEmail(LoginDto endUserLoginDto)
         {
             return await _context.EndUsers.FirstOrDefaultAsync(
-                e => e.Email == endUserLoginDto.Email && 
-                e.PasswordHash == HashPassword(endUserLoginDto.Password));
+                e => e.Email == endUserLoginDto.Email);
         }
 
         public async Task<EndUser?> UpdateEndUserDetails(Guid id, EndUserUpdateDto endUserUpdateDto)
@@ -354,6 +353,15 @@ namespace QardlessAPI.Data
             endUserReadPartialDto.isLoggedin = false;
 
             return endUserReadPartialDto;
+        }
+
+        // Password check for login 
+        public bool CheckEndUserPassword(EndUser endUser, LoginDto login)
+        {
+            if(endUser.PasswordHash != HashPassword(login.Password))
+                return false;
+
+            return true;
         }
 
         public void DeleteEndUser(EndUser? endUser)
