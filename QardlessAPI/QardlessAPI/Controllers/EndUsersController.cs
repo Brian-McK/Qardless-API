@@ -89,7 +89,7 @@ namespace QardlessAPI.Controllers
 
         // Business logic: Logout EndUser
         // POST: api/EndUsers
-        [HttpPost("/logout")]
+        [HttpPost("/endusers/logout")]
         public async Task<ActionResult<EndUserLogoutDto>> LogoutEndUser(Guid userid)
         {
             var endUser = await _repo.GetEndUserById(userid);
