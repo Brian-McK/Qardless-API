@@ -85,7 +85,7 @@ namespace QardlessAPI.Controllers
             _repo.PostChangelog(changelog);
             _repo.SaveChanges();
 
-            return CreatedAtAction("GetChangelog", new { id = changelog.Id }, changelog);
+            return CreatedAtAction("GetChangelogById", new { id = changelog.Id }, changelog);
         }
 
         // DELETE: api/Changelogs/5

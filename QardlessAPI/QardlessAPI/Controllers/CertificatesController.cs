@@ -90,7 +90,7 @@ namespace QardlessAPI.Controllers
             _repo.AddNewCertificate(cert);
             _repo.SaveChanges();
 
-            return CreatedAtAction("GetCertificate", new { id = cert.Id }, cert);
+            return CreatedAtAction("GetCertificateById", new { id = cert.Id }, cert);
         }
 
         // DELETE: api/Certificates/5
