@@ -1,8 +1,8 @@
 ﻿namespace QardlessAPI.Data.Dtos.Authentication
 {
-    public class LogoutDto
+    public class LogoutResponseDto
     {
         public Guid Id { get; set; }
-        public bool isLoggedin { get; set; }
+        public bool IsLoggedIn { get; set; }
     }
 }

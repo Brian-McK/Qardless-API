@@ -81,17 +81,20 @@ namespace QardlessAPI.Controllers
         // Business logic: Logout Employee
         // POST: api/Employees
         [HttpPost("/employees/logout")]
-        public async Task<ActionResult<LogoutDto>> LogoutEmployee(Guid id)
+        public async Task<ActionResult<LogoutResponseDto>> LogoutEmployee(
+            [FromBody] LogoutRequestDto employeeLogoutRequest)
         {
-            var emp = await _repo.GetEmployeeById(id);
+            var emp = await _repo.GetEmployeeById(employeeLogoutRequest.Id);
             if (emp == null)
                 return BadRequest();
 
-            LogoutDto empForLogout = new LogoutDto();
-            empForLogout.Id = id;
-            empForLogout.isLoggedin = false;
+            LogoutResponseDto employeeLogoutResponse = new LogoutResponseDto
+            {
+                Id = employeeLogoutRequest.Id,
+                IsLoggedIn = false
+            };
 
-            return Ok(empForLogout);
+            return Ok(employeeLogoutResponse);
         }
 
         // DELETE: api/Employees/5
