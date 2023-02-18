@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Models;
+using QardlessAPI.Data.Dtos.Admin;
+using QardlessAPI.Data.Dtos.Authentication;
 
 namespace QardlessAPI.Controllers
 {
@@ -9,95 +12,103 @@ namespace QardlessAPI.Controllers
     [ApiController]
     public class AdminsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IQardlessAPIRepo _repo;
+        private readonly IMapper _mapper;
 
-        public AdminsController(ApplicationDbContext context)
+        public AdminsController(IQardlessAPIRepo repo, IMapper mapper)
         {
-            _context = context;
+            _repo = repo ??
+                    throw new ArgumentNullException(nameof(repo));
+            _mapper = mapper ??
+                      throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/Admins
         [HttpGet("/admins")]
-        public async Task<ActionResult<IEnumerable<Admin>>> ViewAllAdmins()
+        public async Task<ActionResult<IEnumerable<Admin>>> AllAdmins()
         {
-          if (_context.Admins == null)
-              return NotFound();
-         
-            return await _context.Admins.ToListAsync();
+            var admins = await _repo.ListAllAdmins();
+
+            if(admins == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<IEnumerable<AdminReadDto>>(admins));
         }
 
         // GET: api/Admins/5
         [HttpGet("/admins/{id}")]
-        public async Task<ActionResult<Admin>> GetAdminById(Guid id)
+        public async Task<ActionResult<Admin>> AdminById(Guid id)
         {
-          if (_context.Admins == null)
-            return NotFound();
-          
-            var admin = await _context.Admins.FindAsync(id);
+            var admin = await _repo.GetAdminById(id);
+            
+            if(admin== null) return NotFound();
 
-            if (admin == null)
-                return NotFound();
-
-            return admin;
+            return Ok(_mapper.Map<AdminReadDto>(admin));
         }
 
         // PUT: api/Admins/5
         [HttpPut("/admins/{id}")]
-        public async Task<IActionResult> EditAdmin(Guid id, Admin admin)
+        public async Task<ActionResult> UpdateAdmin(Guid id, AdminUpdateDto adminUpdateDto)
         {
-            if (id != admin.Id)
-                return BadRequest();
+            if(adminUpdateDto == null) return BadRequest();
 
-            _context.Entry(admin).State = EntityState.Modified;
+            var admin = await _repo.GetAdminById(id);
+            if(admin == null) return BadRequest();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AdminExists(id))
-                    return NotFound();
-                else
-                    throw;
-            }
+            await Task.Run(() => _repo.UpdateAdminDetails(id, adminUpdateDto));
 
-            return NoContent();
+            return Accepted(admin);
         }
 
-        // POST: api/Admins
+        // POST: api/Admins    (REGISTER)
         [HttpPost("/admins")]
-        public async Task<ActionResult<Admin>> CreateNewAdmin(Admin admin)
+        public async Task<ActionResult<AdminCreateDto?>> RegisterNewAdmin(AdminCreateDto newAdmin)
         {
-          if (_context.Admins == null)
-          return Problem("Entity set 'ApplicationDbContext.Admins'  is null.");
+            if(newAdmin == null) return BadRequest();
 
-            _context.Admins.Add(admin);
-            await _context.SaveChangesAsync();
+            AdminPartialDto adminPartialDto = await Task.Run(() => _repo.AddNewAdmin(newAdmin));
 
-            return CreatedAtAction("GetAdminById", new { id = admin.Id }, admin);
+            return Created("/admins", adminPartialDto);
+        }
+
+        //LOGOUT
+        // POST: api/admins/logout
+        [HttpPost("/endusers/logout")]
+        public async Task<ActionResult<LogoutResponseDto>> LogoutAdmin(
+            [FromBody] LogoutRequestDto adminLogoutRequest)
+        {
+            var admin = await _repo.GetAdminById(adminLogoutRequest.Id);
+            if (admin == null) return BadRequest();
+
+            LogoutResponseDto adminLogoutResponse = new LogoutResponseDto
+            {
+                Id = adminLogoutRequest.Id,
+                IsLoggedIn = false
+            };
+
+            return Ok(adminLogoutResponse);
         }
 
         // DELETE: api/Admins/5
         [HttpDelete("/admins/{id}")]
         public async Task<IActionResult> DeleteAdmin(Guid id)
         {
-            if (_context.Admins == null)
-            return NotFound();
+            var admin = await _repo.GetAdminById(id);
+            if (admin == null) return BadRequest();
 
-            var admin = await _context.Admins.FindAsync(id);
-            if (admin == null)
-            return NotFound();
+            _repo.DeleteAdmin(admin);
+            _repo.SaveChanges();
 
-            _context.Admins.Remove(admin);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return Accepted();
         }
 
-        private bool AdminExists(Guid id)
+        private bool CheckAdminExists(Guid id)
         {
-            return (_context.Admins?.Any(e => e.Id == id)).GetValueOrDefault();
+            var admin = _repo.GetAdminById(id);
+            if (admin == null) 
+                return false;
+
+            return true;
         }
     }
 }

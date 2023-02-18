@@ -1,12 +1,11 @@
-﻿namespace QardlessAPI.Data.Dtos.Employee
+﻿namespace QardlessAPI.Data.Dtos.Admin
 {
-    public class EmployeeReadPartialDto
+    public class AdminPartialDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string? ContactNumber { get; set; }
-        public Guid BusinessId { get; set; }
         public bool IsLoggedIn { get; set; }
     }
 }

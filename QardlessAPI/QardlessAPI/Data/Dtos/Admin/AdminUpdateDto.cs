@@ -5,10 +5,7 @@ namespace QardlessAPI.Data.Dtos.Admin
     public class AdminUpdateDto
     {
         [Required]
-        public string FirstName { get; set; }
-
-        [Required]
-        public string LastName { get; set; }
+        public string Name { get; set; }
 
         [Required]
         public string Email { get; set; }
@@ -17,12 +14,12 @@ namespace QardlessAPI.Data.Dtos.Admin
         public bool EmailVerified { get; set; }
 
         [Required]
-        public string PasswordHash { get; set; }
+        public string Password { get; set; }
 
-        public string PhoneMobile { get; set; }
+        public string ContactNumber { get; set; }
 
         [Required]
-        public bool PhoneMobileVerified { get; set; }
+        public bool ContactNumberVerified { get; set; }
 
         public DateTime LastLoginDate { get; set; }
     }

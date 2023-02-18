@@ -11,6 +11,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
 using System.Text;
 using System.Reflection.Metadata.Ecma335;
+using QardlessAPI.Data.Dtos.Admin;
 
 namespace QardlessAPI.Data
 {
@@ -33,46 +34,82 @@ namespace QardlessAPI.Data
         }
 
         #region Admin
-        public async Task<IEnumerable<Admin?>> GetAdmins()
+        public async Task<IEnumerable<Admin>> ListAllAdmins()
         {
             return await _context.Admins.ToListAsync();
         }
 
-        public async Task<Admin?> GetAdmin(Guid id)
+        public async Task<Admin?> GetAdminById(Guid id)
         {
             return await _context.Admins.FirstOrDefaultAsync(a => a.Id == id);
         }
 
-        public void PutAdmin(Guid id, Admin? admin)
+        //for login
+        public async Task<Admin?> GetAdminByEmail(LoginDto adminLoginDto)
         {
-            // Implemented in the controller
+            return await _context.Admins.FirstOrDefaultAsync(
+                e => e.Email == adminLoginDto.Email);
         }
 
-        public void PatchAdmin(Guid id, Admin? admin)
+        public async Task<Admin?> UpdateAdminDetails(Guid id, AdminUpdateDto adminForUpdate)
         {
-            // Implemented in the controller
+            Admin? admin = await _context.Admins.FirstOrDefaultAsync(e => e.Id == id);
+
+            admin.Name = adminForUpdate.Name;
+            admin.Email = adminForUpdate.Email;
+            admin.ContactNumber = adminForUpdate.ContactNumber;
+
+            _context.SaveChanges();
+            _context.Admins.Add(admin);
+
+            return await _context.Admins.FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public void PostAdmin(Admin? admin)
+        public AdminPartialDto AddNewAdmin(AdminCreateDto newAdmin)
         {
-            if (admin == null)
+            if (newAdmin == null)
+                throw new ArgumentNullException(nameof(newAdmin));
+
+            Admin admin = new Admin
             {
-                throw new ArgumentNullException(nameof(admin));
-            }
-
-            admin.Id = Guid.NewGuid();
-            admin.CreatedDate = DateTime.Now;
-            admin.LastLoginDate = admin.CreatedDate;
+                Id = new Guid(),
+                Name = newAdmin.Name,
+                Email = newAdmin.Email,
+                EmailVerified = false,
+                PasswordHash = HashPassword(newAdmin.Password),
+                ContactNumber = newAdmin.ContactNumber,
+                ContactNumberVerified = false,
+                CreatedDate = DateTime.Now,
+                LastLoginDate = DateTime.Now
+            };
 
             _context.Admins.Add(admin);
+            _context.SaveChanges();
+
+            AdminPartialDto adminPartial = new AdminPartialDto
+            {
+                Id = admin.Id,
+                Name = admin.Name,
+                Email = admin.Email,
+                ContactNumber = admin.ContactNumber,
+                IsLoggedIn = false
+            };
+
+            return adminPartial;
+        }
+
+        // Password check for login
+        public bool CheckAdminPassword(Admin admin, LoginDto login)
+        {
+            if(admin.PasswordHash == HashPassword(login.Password))
+                return true;
+            return false;
         }
 
         public void DeleteAdmin(Admin? admin)
         {
             if (admin == null)
-            {
                 throw new ArgumentNullException(nameof(admin));
-            }
 
             _context.Admins.Remove(admin);
         }
@@ -373,7 +410,7 @@ namespace QardlessAPI.Data
                 Name = endUser.Name,
                 Email = endUser.Email,
                 ContactNumber = endUser.ContactNumber,
-                isLoggedin = false
+                IsLoggedIn = false
             };
            
             return endUserReadPartialDto;
@@ -408,7 +445,7 @@ namespace QardlessAPI.Data
                 Name = endUser.Name,
                 Email = endUser.Email,
                 ContactNumber = endUser.ContactNumber,
-                isLoggedin = true
+                IsLoggedIn = true
             };
 
             endUser.LastLoginDate = DateTime.Now;
@@ -426,7 +463,7 @@ namespace QardlessAPI.Data
                 Email = emp.Email,
                 ContactNumber = emp.ContactNumber,
                 BusinessId = emp.BusinessId,
-                isLoggedin = true
+                IsLoggedIn = true
             };
 
             emp.LastLoginDate = DateTime.Now;

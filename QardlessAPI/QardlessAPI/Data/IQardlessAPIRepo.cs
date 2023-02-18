@@ -5,6 +5,7 @@ using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Models;
+using QardlessAPI.Data.Dtos.Admin;
 
 namespace QardlessAPI.Data
 {
@@ -13,11 +14,12 @@ namespace QardlessAPI.Data
         bool SaveChanges();
 
         #region Admin
-        Task<IEnumerable<Admin?>> GetAdmins();
-        Task<Admin?> GetAdmin(Guid id);
-        void PutAdmin(Guid id, Admin? admin);
-        void PatchAdmin(Guid id, Admin? admin);
-        void PostAdmin(Admin? admin);
+        Task<IEnumerable<Admin>> ListAllAdmins();
+        Task<Admin?> GetAdminById(Guid id);
+        Task<Admin?> GetAdminByEmail(LoginDto adminLoginDto);
+        Task<Admin?> UpdateAdminDetails(Guid id, AdminUpdateDto adminForUpdate);
+        AdminPartialDto AddNewAdmin(AdminCreateDto newAdmin);
+        bool CheckAdminPassword(Admin admin, LoginDto login);
         void DeleteAdmin(Admin? admin);
         #endregion
 
@@ -63,7 +65,6 @@ namespace QardlessAPI.Data
         Task<IEnumerable<EndUser>> ListAllEndUsers();
         Task<EndUser?> GetEndUserById(Guid id);
         Task<EndUser?> GetEndUserByEmail(LoginDto endUserLoginDto);
-        public string HashPassword(string Password);
         Task<EndUser?> UpdateEndUserDetails(Guid id, EndUserUpdateDto endUserUpdateDto);
         EndUserReadPartialDto AddNewEndUser(EndUserCreateDto endUserForCreation);
         bool CheckEndUserPassword(EndUser endUser, LoginDto login);
@@ -73,6 +74,11 @@ namespace QardlessAPI.Data
         #region Login
         EndUserReadPartialDto SendEndUserForProps(EndUser endUser);
         EmployeeReadPartialDto SendEmpForProps(Employee emp);
+
+        #endregion
+
+        #region Security
+        public string HashPassword(string Password);
 
         #endregion
 
