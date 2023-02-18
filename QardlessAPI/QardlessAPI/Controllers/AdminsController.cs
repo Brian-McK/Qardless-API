@@ -73,7 +73,7 @@ namespace QardlessAPI.Controllers
 
         //LOGOUT
         // POST: api/admins/logout
-        [HttpPost("/endusers/logout")]
+        [HttpPost("/admins/logout")]
         public async Task<ActionResult<LogoutResponseDto>> LogoutAdmin(
             [FromBody] LogoutRequestDto adminLogoutRequest)
         {
