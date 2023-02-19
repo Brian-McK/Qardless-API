@@ -134,9 +134,9 @@ namespace QardlessAPI.Data
         {
             Business? business = await _context.Businesses.FirstOrDefaultAsync(b => b.Id == id);
 
-            business.Title = business.Title;
-            business.Email = business.Email;
-            business.Phone = business.Phone;
+            business.Title = businessUpdate.Title;
+            business.Email = businessUpdate.Email;
+            business.Phone = businessUpdate.Phone;
 
             _context.SaveChanges();
             _context.Businesses.Add(business);

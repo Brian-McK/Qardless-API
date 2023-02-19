@@ -46,7 +46,7 @@ namespace QardlessAPI.Controllers
 
         // PUT: api/Businesses/5
         [HttpPut("/businesses/{id}")]
-        public async Task<IActionResult> UpdateBusinessContactDetails(Guid id, BusinessUpdateDto businessUpdateDto)
+        public async Task<ActionResult> UpdateBusinessContactDetails(Guid id, BusinessUpdateDto businessUpdateDto)
         {
             if (businessUpdateDto == null)
                 return BadRequest();
