@@ -493,6 +493,23 @@ namespace QardlessAPI.Data
             return empForProps;
         }
 
+        public AdminPartialDto SendAdminForProps(Admin admin)
+        {
+            AdminPartialDto adminForProps = new AdminPartialDto
+            {
+                Id = admin.Id,
+                Name = admin.Name,
+                Email = admin.Email,
+                ContactNumber = admin.ContactNumber,
+                IsLoggedIn = true
+            };
+
+            admin.LastLoginDate = DateTime.Now;
+            SaveChanges();
+
+            return adminForProps;
+        }
+
         #endregion
 
         #region Security 

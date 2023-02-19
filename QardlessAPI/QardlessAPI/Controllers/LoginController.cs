@@ -9,6 +9,7 @@ using System.Text;
 using System.Security.Cryptography;
 using AutoMapper;
 using QardlessAPI.Data.Dtos.Employee;
+using QardlessAPI.Data.Dtos.Admin;
 
 namespace QardlessAPI.Controllers
 {
@@ -24,7 +25,7 @@ namespace QardlessAPI.Controllers
                 throw new ArgumentNullException(nameof(repo));
         }
 
-        // POST: api/login/
+        // POST: api/endusers/login/
         [HttpPost("/endusers/login")]
         public async Task<ActionResult<EndUserReadPartialDto>> LoginEndUser(LoginDto loginUser)
         {
@@ -41,7 +42,7 @@ namespace QardlessAPI.Controllers
         }
 
 
-        // POST: api/login/
+        // POST: api/employees/login/
         [HttpPost("/employees/login")]
         public async Task<ActionResult<EmployeeReadPartialDto>> LoginEmployee(LoginDto loginEmp)
         {
@@ -55,6 +56,22 @@ namespace QardlessAPI.Controllers
 
             EmployeeReadPartialDto empForProps = _repo.SendEmpForProps(emp);
             return Ok(empForProps);
+        }
+
+        // POST: api/admins/login/
+        [HttpPost("/admins/login")]
+        public async Task<ActionResult<AdminPartialDto>> LoginAdmin(LoginDto loginAdmin)
+        {
+            Admin? admin = await _repo.GetAdminByEmail(loginAdmin);
+
+            if (loginAdmin == null || admin == null)
+                return BadRequest();
+
+            if (!_repo.CheckAdminPassword(admin, loginAdmin))
+                return Unauthorized();
+
+            AdminPartialDto adminForProps = _repo.SendAdminForProps(admin);
+            return Ok(adminForProps);
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Models;
 using QardlessAPI.Data.Dtos.Admin;
@@ -25,7 +24,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/Admins
         [HttpGet("/admins")]
-        public async Task<ActionResult<IEnumerable<Admin>>> AllAdmins()
+        public async Task<ActionResult<Admin>> AllAdmins()
         {
             var admins = await _repo.ListAllAdmins();
 
@@ -41,14 +40,14 @@ namespace QardlessAPI.Controllers
         {
             var admin = await _repo.GetAdminById(id);
             
-            if(admin== null) return NotFound();
+            if(admin== null) return BadRequest();
 
             return Ok(_mapper.Map<AdminReadDto>(admin));
         }
 
         // PUT: api/Admins/5
         [HttpPut("/admins/{id}")]
-        public async Task<ActionResult> UpdateAdmin(Guid id, AdminUpdateDto adminUpdateDto)
+        public async Task<ActionResult> UpdateAdminContactDetails(Guid id, AdminUpdateDto adminUpdateDto)
         {
             if(adminUpdateDto == null) return BadRequest();
 

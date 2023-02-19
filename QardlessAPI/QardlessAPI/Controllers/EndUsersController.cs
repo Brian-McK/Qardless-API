@@ -99,7 +99,7 @@ namespace QardlessAPI.Controllers
             if (endUser == null)
                 return BadRequest();
 
-            var endUserLogoutResponse = new LogoutResponseDto
+            LogoutResponseDto endUserLogoutResponse = new LogoutResponseDto
             {
                 Id = endUserLogoutRequest.Id,
                 IsLoggedIn = false

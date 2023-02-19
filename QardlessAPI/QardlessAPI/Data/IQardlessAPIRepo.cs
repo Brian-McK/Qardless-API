@@ -76,6 +76,7 @@ namespace QardlessAPI.Data
         #region Login
         EndUserReadPartialDto SendEndUserForProps(EndUser endUser);
         EmployeeReadPartialDto SendEmpForProps(Employee emp);
+        AdminPartialDto SendAdminForProps(Admin admin);
 
         #endregion
 
