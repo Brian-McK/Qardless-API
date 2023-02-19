@@ -311,6 +311,7 @@ namespace QardlessAPI.Data
 
             emp.Name = employeeUpdateDto.Name;
             emp.Email = employeeUpdateDto.Email;
+            emp.PasswordHash = HashPassword(employeeUpdateDto.Password);
             emp.ContactNumber = employeeUpdateDto.ContactNumber;
             emp.PrivilegeLevel = employeeUpdateDto.PrivilegeLevel;
             emp.BusinessId = employeeUpdateDto.BusinessId;
