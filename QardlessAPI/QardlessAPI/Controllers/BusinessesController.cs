@@ -16,111 +16,81 @@ namespace QardlessAPI.Controllers
 
         public BusinessesController(IQardlessAPIRepo repo, IMapper mapper)
         {
-            _repo = repo;
-            _mapper = mapper;
+            _repo = repo ??
+                throw new ArgumentNullException(nameof(repo));
+            _mapper = mapper ??
+               throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/Businesses
         [HttpGet("/businesses")]
         public async Task<ActionResult<IEnumerable<Business>>> ViewAllBusinesses()
         {
-            var businessItems = await _repo.GetBusinesses();
-            if (businessItems == null)
-            return NotFound();
+            var businesses = await _repo.ListAllBusinesses();
+            
+            if (businesses == null) return NotFound();
 
-            return Ok(_mapper.Map<IEnumerable<BusinessReadPartialDto>>(businessItems));
+            return Ok(_mapper.Map<IEnumerable<BusinessReadPartialDto>>(businesses));
         }
 
         // GET: api/Businesses/5
         [HttpGet("/businesses/{id}")]
-        public async Task<ActionResult<Business>> ViewBusinessById(Guid id)
+        public async Task<ActionResult<Business>> BusinessById(Guid id)
         {
-            var business = await _repo.GetBusiness(id);
-            if (business == null)
-            return NotFound();
+            var business = await _repo.GetBusinessById(id);
+            
+            if (business == null) return BadRequest();
             
             return Ok(_mapper.Map<BusinessReadFullDto>(business));
         }
 
         // PUT: api/Businesses/5
         [HttpPut("/businesses/{id}")]
-        public async Task<IActionResult> EditBusiness(Guid id, BusinessUpdateDto businessUpdateDto)
+        public async Task<IActionResult> UpdateBusinessContactDetails(Guid id, BusinessUpdateDto businessUpdateDto)
         {
             if (businessUpdateDto == null)
-            return BadRequest();
+                return BadRequest();
 
-            var businessModelFromRepo = await _repo.GetBusiness(id);
-            if (businessModelFromRepo == null)
-            return NotFound();
+            var business = await _repo.GetBusinessById(id);
+            if (business == null)
+                return BadRequest();
 
-            _mapper.Map(businessUpdateDto, businessModelFromRepo);
-            _repo.PutBusiness(id, businessModelFromRepo);
-            _repo.SaveChanges();
+            await Task.Run(() => _repo.UpdateBusinessDetails(id, businessUpdateDto));
 
-            return NoContent();
+            return Accepted(business);
         }
-
-        #region PATCH 
-        // PATCH: api/Businesses/5
-        /*[HttpPatch("{id}")]
-        public async Task<IActionResult> PatchBusiness(Guid id, JsonPatchDocument<BusinessUpdateDto> patchDoc)
-        {
-            var businessModelFromRepo = await _repo.GetBusiness(id);
-
-            if (businessModelFromRepo == null)
-            return NotFound();
-            
-            var businessToPatch = _mapper.Map<BusinessUpdateDto>(businessModelFromRepo);
-            patchDoc.ApplyTo(businessToPatch, ModelState);
-            
-            if(!TryValidateModel(businessToPatch))
-            return ValidationProblem(ModelState);
-
-            _mapper.Map(businessToPatch, businessModelFromRepo);
-            _repo.PatchBusiness(id, businessModelFromRepo);
-            _repo.SaveChanges();
-
-            return NoContent();
-        }*/
-        #endregion
 
         // POST: api/Businesses
         [HttpPost("/businesses")]
-        public async Task<ActionResult<BusinessReadFullDto>> AddNewBusiness(BusinessCreateDto businessCreateDto)
+        public async Task<ActionResult<BusinessCreateDto?>> RegisterNewBusiness(BusinessCreateDto businessCreateDto)
         {
             if (businessCreateDto == null)
-            return BadRequest();
+                return BadRequest();
 
-            var businessModel = _mapper.Map<Business>(businessCreateDto);
-            _repo.PostBusiness(businessModel);
-            _repo.SaveChanges();
+            BusinessReadPartialDto businessReadPartialDto = await Task.Run(() => _repo.AddNewBusiness(businessCreateDto));
 
-            var businessReadFullDto = _mapper.Map<BusinessReadFullDto>(businessModel);
-
-            return CreatedAtAction(nameof(ViewBusinessById), new { Id = businessReadFullDto.Id }, businessReadFullDto);
+            return Created("/businesses", businessReadPartialDto);
         }
 
         // DELETE: api/Businesses/5
         [HttpDelete("/businesses/{id}")]
         public async Task<IActionResult> DeleteBusiness(Guid id)
         {
-            var businessModelFromRepo = await _repo.GetBusiness(id);
-            if (businessModelFromRepo == null)
-            {
+            var business = await _repo.GetBusinessById(id);
+            if (business == null)
                 return NotFound();
-            }
 
-            _repo.DeleteBusiness(businessModelFromRepo);
+            _repo.DeleteBusiness(business);
             _repo.SaveChanges();
 
-            return NoContent();
+            return Accepted();
         }
 
-        private bool BusinessExists(Guid id)
+        private bool CheckBusinessExists(Guid id)
         {
-            var businessModelFromRepo = _repo.GetBusiness(id);
-            if (businessModelFromRepo == null)
-            return false;
+            var business = _repo.GetBusinessById(id);
+            if (business == null)
+                return false;
             
             return true;
         }

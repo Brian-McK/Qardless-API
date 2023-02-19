@@ -1,17 +1,14 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using QardlessAPI.Data.Dtos.Certificate;
-using QardlessAPI.Data.Dtos.EndUser;
-using QardlessAPI.Data.Dtos.Employee;
+using QardlessAPI.Data.Dtos.Admin;
 using QardlessAPI.Data.Dtos.Authentication;
+using QardlessAPI.Data.Dtos.Business;
+using QardlessAPI.Data.Dtos.Certificate;
+using QardlessAPI.Data.Dtos.Employee;
+using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
-using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
 using System.Text;
-using System.Reflection.Metadata.Ecma335;
-using QardlessAPI.Data.Dtos.Admin;
 
 namespace QardlessAPI.Data
 {
@@ -116,45 +113,69 @@ namespace QardlessAPI.Data
         #endregion
 
         #region Business
-        public async Task<IEnumerable<Business?>> GetBusinesses()
+        public async Task<IEnumerable<Business>> ListAllBusinesses()
         {
             return await _context.Businesses.ToListAsync();
         }
 
-        public async Task<Business?> GetBusiness(Guid id)
+        public async Task<Business?> GetBusinessById(Guid id)
         {
-            return await _context.Businesses.FirstOrDefaultAsync(a => a.Id == id);
+            return await _context.Businesses.FirstOrDefaultAsync(b => b.Id == id);
         }
 
-        public void PutBusiness(Guid id, Business? business)
+        // For login
+        public async Task<Business?> GetBusinessByEmail(LoginDto businessLogin)
         {
-            // Implemented in the controller
+            return await _context.Businesses.FirstOrDefaultAsync(
+                e => e.Email == businessLogin.Email);
         }
 
-        public void PatchBusiness(Guid id, Business? business)
+        public async Task<Business?> UpdateBusinessDetails(Guid id, BusinessUpdateDto businessUpdate)
         {
-            // Implemented in the controller
+            Business? business = await _context.Businesses.FirstOrDefaultAsync(b => b.Id == id);
+
+            business.Title = business.Title;
+            business.Email = business.Email;
+            business.Phone = business.Phone;
+
+            _context.SaveChanges();
+            _context.Businesses.Add(business);
+
+            return await _context.Businesses.FirstOrDefaultAsync(b => b.Id == id);
         }
 
-        public void PostBusiness(Business? business)
+        public BusinessReadPartialDto AddNewBusiness(BusinessCreateDto businessForCreation)
         {
-            if (business == null)
+            if (businessForCreation == null)
+                throw new ArgumentNullException(nameof(businessForCreation));
+
+            Business business = new Business()
             {
-                throw new ArgumentNullException(nameof(business));
-            }
-
-            business.Id = Guid.NewGuid();
-            business.CreatedDate = DateTime.Now;
+                Id = new Guid(),
+                Title = businessForCreation.Title,
+                Email = businessForCreation.Email,
+                Phone = businessForCreation.Phone,
+                CreatedDate = DateTime.Now
+            };
 
             _context.Businesses.Add(business);
+            _context.SaveChanges();
+
+            BusinessReadPartialDto businessReadPartialDto = new BusinessReadPartialDto
+            {
+                Id = business.Id,
+                Title = business.Title,
+                Email = business.Email,
+                Phone = business.Phone
+            };
+
+            return businessReadPartialDto;
         }
 
         public void DeleteBusiness(Business? business)
         {
             if (business == null)
-            {
                 throw new ArgumentNullException(nameof(business));
-            }
 
             _context.Businesses.Remove(business);
         }

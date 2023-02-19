@@ -42,7 +42,7 @@ namespace QardlessAPI.Controllers
             var endUser = await _repo.GetEndUserById(id);
 
             if (endUser == null)
-                return NotFound();
+                return BadRequest();
 
             return Ok(_mapper.Map<EndUserReadFullDto>(endUser));
         }

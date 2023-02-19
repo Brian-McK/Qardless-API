@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Bson;
+using QardlessAPI.Data.Dtos.Admin;
+using QardlessAPI.Data.Dtos.Authentication;
+using QardlessAPI.Data.Dtos.Business;
 using QardlessAPI.Data.Dtos.Certificate;
 using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Dtos.EndUser;
-using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Models;
-using QardlessAPI.Data.Dtos.Admin;
 
 namespace QardlessAPI.Data
 {
@@ -24,12 +25,13 @@ namespace QardlessAPI.Data
         #endregion
 
         #region Business
-        Task<IEnumerable<Business?>> GetBusinesses();
-        Task<Business?> GetBusiness(Guid id);
-        void PutBusiness(Guid id, Business? business);
-        void PatchBusiness(Guid id, Business? business);
-        void PostBusiness(Business? business);
+        Task<IEnumerable<Business>> ListAllBusinesses();
+        Task<Business?> GetBusinessById(Guid id);
+        Task<Business?> GetBusinessByEmail(LoginDto businessLogin);
+        Task<Business?> UpdateBusinessDetails(Guid id, BusinessUpdateDto businessUpdate);
+        BusinessReadPartialDto AddNewBusiness(BusinessCreateDto businessForCreation);
         void DeleteBusiness(Business? business);
+
         #endregion
 
         #region Certificate
