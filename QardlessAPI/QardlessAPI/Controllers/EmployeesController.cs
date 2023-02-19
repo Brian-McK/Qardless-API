@@ -25,7 +25,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/Employees
         [HttpGet("/employees")]
-        public async Task<ActionResult<Employee>> ViewAllEmployees()
+        public async Task<ActionResult<Employee>> AllEmployees()
         {
             var emps = await _repo.ListAllEmployees();
 
