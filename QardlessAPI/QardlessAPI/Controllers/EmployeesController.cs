@@ -68,7 +68,7 @@ namespace QardlessAPI.Controllers
         // Register Employee
         // POST: api/Employees
         [HttpPost("/employees")]
-        public async Task<ActionResult<EmployeeCreateDto>> RegisterNewEmployee(EmployeeCreateDto employeeCreateDto)
+        public async Task<ActionResult<EmployeeCreateDto?>> RegisterNewEmployee(EmployeeCreateDto employeeCreateDto)
         {
             if (employeeCreateDto == null)
                 return BadRequest();

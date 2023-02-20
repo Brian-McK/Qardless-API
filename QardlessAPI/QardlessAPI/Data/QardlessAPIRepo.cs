@@ -342,7 +342,7 @@ namespace QardlessAPI.Data
             };
             
             _context.Employees.Add(emp);
-            //_context.SaveChanges();
+            _context.SaveChanges();
 
             EmployeeReadPartialDto empPartialRead = new EmployeeReadPartialDto
             {
