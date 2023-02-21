@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using QardlessAPI.Data;
-using QardlessAPI.Data.Models;
-using System.Text;
-using System.Security.Cryptography;
-using QardlessAPI.Data.Dtos.EndUser;
-using AutoMapper;
 using QardlessAPI.Data.Dtos.Certificate;
+using QardlessAPI.Data.Dtos.EndUser;
+using QardlessAPI.Data.Dtos.Authentication;
+using QardlessAPI.Data.Models;
 
 namespace QardlessAPI.Controllers
 {
@@ -20,38 +18,38 @@ namespace QardlessAPI.Controllers
         public EndUsersController(IQardlessAPIRepo repo, IMapper mapper)
         {
             _repo = repo ??
-                throw new ArgumentNullException(nameof(repo));
+                    throw new ArgumentNullException(nameof(repo));
             _mapper = mapper ??
-               throw new ArgumentNullException(nameof(mapper));
+                      throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/EndUsers
-        [HttpGet]
-        public async Task<ActionResult<EndUser>> GetEndUsers()
+        [HttpGet("/endusers")]
+        public async Task<ActionResult<EndUser>> AllEndUsers()
         {
-            var endUsers = await _repo.GetEndUsers();
+            var endUsers = await _repo.ListAllEndUsers();
 
             if (endUsers == null)
                 return NotFound();
 
             return Ok(_mapper.Map<IEnumerable<EndUserReadFullDto>>(endUsers));
         }
-        
+
         // GET: api/EndUsers/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<EndUser>> GetEndUser(Guid id)
+        [HttpGet("/endusers/{id}")]
+        public async Task<ActionResult<EndUser>> EndUserById(Guid id)
         {
-            var endUser = await _repo.GetEndUser(id);
+            var endUser = await _repo.GetEndUserById(id);
 
             if (endUser == null)
-                return NotFound();
+                return BadRequest();
 
             return Ok(_mapper.Map<EndUserReadFullDto>(endUser));
         }
 
-        // GET: api/EndUsers/Certificates/5
-        [HttpGet("{id}/Certificates")]
-        public async Task<ActionResult<Certificate>> GetEndUserCertificates(Guid id)
+        // GET: api/EndUsers/5/Certificates/
+        [HttpGet("/endusers/{id}/certificates")]
+        public async Task<ActionResult<Certificate>> ViewEndUsersCertificates(Guid id)
         {
             var endUserCerts = await _repo.GetCertificatesByEndUserId(id);
 
@@ -62,61 +60,59 @@ namespace QardlessAPI.Controllers
         }
 
         // PUT: api/EndUsers/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEndUser(Guid id, EndUserUpdateDto endUserUpdateDto)
+        [HttpPut("/endusers/{id}")]
+        public async Task<ActionResult> UpdateEndUserContactDetails(Guid id, EndUserUpdateDto endUserUpdateDto)
         {
             if (endUserUpdateDto == null)
                 return BadRequest();
 
-            var endUser = await _repo.GetEndUser(id);
+            var endUser = await _repo.GetEndUserById(id);
             if (endUser == null)
-                return NotFound();
-
-            _mapper.Map(endUserUpdateDto, endUser);
-            _repo.PutEndUser(id, endUser);
-            _repo.SaveChanges();
-
-            return Accepted();
-        }
-        
-        // Business logic: Register EndUser
-        // POST: api/EndUsers
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost()]
-        public async Task<ActionResult<EndUser>> PostEndUser(EndUserCreateDto endUserForCreation)
-        {
-            if(endUserForCreation == null)
                 return BadRequest();
 
-            var endUser = _mapper.Map<EndUser>(endUserForCreation);
+            await Task.Run(() => _repo.UpdateEndUserDetails(id, endUserUpdateDto));
 
-            //Security - Hash user passwords
-            var sha = SHA256.Create();
-            var asByteArray = Encoding.Default.GetBytes(endUserForCreation.PasswordHash);
-            var hashedPassword = sha.ComputeHash(asByteArray);
-            var convertedHashedPassword = Convert.ToBase64String(hashedPassword);
-
-            endUser.Id = new Guid();
-            endUser.Name = endUserForCreation.Name;
-            endUser.Email = endUserForCreation.Email;
-            endUser.EmailVerified = false;
-            endUser.PasswordHash = convertedHashedPassword;
-            endUser.ContactNumber = endUserForCreation.ContactNumber;
-            endUser.CreatedDate = DateTime.Now;
-            endUser.LastLoginDate = endUser.CreatedDate;
-
-            _repo.PostEndUser(endUser);
-            _repo.SaveChanges();
-
-            return CreatedAtAction("GetEndUser", new { id = endUser.Id }, endUser);
+            return Accepted(endUser);
         }
-        
+
+        // Business logic: Register EndUser
+        // POST: api/EndUsers
+        [HttpPost("/endusers")]
+        public async Task<ActionResult<EndUserCreateDto?>> RegisterNewEndUser(EndUserCreateDto endUserForCreation)
+        {
+            if (endUserForCreation == null)
+                return BadRequest();
+
+            EndUserReadPartialDto endUserReadPartialDto = await Task.Run(() => _repo.AddNewEndUser(endUserForCreation));
+
+            return Created("/endusers", endUserReadPartialDto);
+        }
+
+        // Business logic: Logout EndUser
+        // POST: api/EndUsers
+        [HttpPost("/endusers/logout")]
+        public async Task<ActionResult<LogoutResponseDto>> LogoutEndUser(
+            [FromBody] LogoutRequestDto endUserLogoutRequest)
+        {
+            var endUser = await _repo.GetEndUserById(endUserLogoutRequest.Id);
+
+            if (endUser == null)
+                return BadRequest();
+
+            LogoutResponseDto endUserLogoutResponse = new LogoutResponseDto
+            {
+                Id = endUserLogoutRequest.Id,
+                IsLoggedIn = false
+            };
+
+            return Ok(endUserLogoutResponse);
+        }
+
         // DELETE: api/EndUsers/5
-        [HttpDelete("{id}")]
+        [HttpDelete("/endusers/{id}")]
         public async Task<IActionResult> DeleteEndUser(Guid id)
         {
-            var endUser = await _repo.GetEndUser(id);
+            var endUser = await _repo.GetEndUserById(id);
             if (endUser == null)
                 return NotFound();
 
@@ -126,9 +122,9 @@ namespace QardlessAPI.Controllers
             return Accepted();
         }
 
-        private bool EndUserExists(Guid id)
+        private bool CheckEndUserExists(Guid id)
         {
-            var endUser = _repo.GetEndUser(id);
+            var endUser = _repo.GetEndUserById(id);
             if (endUser == null)
                 return false;
 

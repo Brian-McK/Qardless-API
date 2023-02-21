@@ -11,10 +11,7 @@ namespace QardlessAPI.Data.Dtos.EndUser
         public string Email { get; set; }
 
         [Required]
-        public bool EmailVerified { get; set; }
-
-        [Required]
-        public string PasswordHash { get; set; }
+        public string Password { get; set; }
 
         public string? ContactNumber { get; set; }
     }

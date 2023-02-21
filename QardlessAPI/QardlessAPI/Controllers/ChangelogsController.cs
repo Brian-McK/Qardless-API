@@ -24,8 +24,8 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/Changelogs
-        [HttpGet]
-        public async Task<ActionResult<Changelog>> GetChangelogs()
+        [HttpGet("/changelogs")]
+        public async Task<ActionResult<Changelog>> ViewAllChangelogs()
         {
             var changeLogs = await _repo.GetChangelogs();
 
@@ -36,8 +36,8 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/Changelogs/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Changelog>> GetChangelog(Guid id)
+        [HttpGet("/changelogs/{id}")]
+        public async Task<ActionResult<Changelog>> ChangelogById(Guid id)
         {
             var changelog = await _repo.GetChangelog(id);
 
@@ -48,9 +48,8 @@ namespace QardlessAPI.Controllers
         }
 
         // PUT: api/Changelogs/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutChangelog(Guid id, ChangelogUpdateDto changelogUpdateDto)
+        [HttpPut("/changelogs/{id}")]
+        public async Task<IActionResult> UpdateChangelogWasRead(Guid id, ChangelogUpdateDto changelogUpdateDto)
         {
             if (changelogUpdateDto == null)
                 return BadRequest();
@@ -69,9 +68,8 @@ namespace QardlessAPI.Controllers
         }
 
         // POST: api/Changelogs
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Changelog>> PostChangelog(ChangelogCreateDto changelogForCreation)
+        [HttpPost("/changelogs")]
+        public async Task<ActionResult<Changelog>> AddNewChangelog(ChangelogCreateDto changelogForCreation)
         {
             if(changelogForCreation == null)
                 return BadRequest();
@@ -87,11 +85,11 @@ namespace QardlessAPI.Controllers
             _repo.PostChangelog(changelog);
             _repo.SaveChanges();
 
-            return CreatedAtAction("GetChangelog", new { id = changelog.Id }, changelog);
+            return CreatedAtAction("ChangelogById", new { id = changelog.Id }, changelog);
         }
 
         // DELETE: api/Changelogs/5
-        [HttpDelete("{id}")]
+        [HttpDelete("/changelogs/{id}")]
         public async Task<IActionResult> DeleteChangelog(Guid id)
         {
             var changelog = await _repo.GetChangelog(id);

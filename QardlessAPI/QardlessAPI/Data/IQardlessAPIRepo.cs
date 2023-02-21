@@ -1,5 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Bson;
+using QardlessAPI.Data.Dtos.Admin;
+using QardlessAPI.Data.Dtos.Authentication;
+using QardlessAPI.Data.Dtos.Business;
+using QardlessAPI.Data.Dtos.Certificate;
+using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
 
@@ -10,30 +15,31 @@ namespace QardlessAPI.Data
         bool SaveChanges();
 
         #region Admin
-        Task<IEnumerable<Admin?>> GetAdmins();
-        Task<Admin?> GetAdmin(Guid id);
-        void PutAdmin(Guid id, Admin? admin);
-        void PatchAdmin(Guid id, Admin? admin);
-        void PostAdmin(Admin? admin);
+        Task<IEnumerable<Admin>> ListAllAdmins();
+        Task<Admin?> GetAdminById(Guid id);
+        Task<Admin?> GetAdminByEmail(LoginDto adminLoginDto);
+        Task<Admin?> UpdateAdminDetails(Guid id, AdminUpdateDto adminForUpdate);
+        AdminPartialDto AddNewAdmin(AdminCreateDto newAdmin);
+        bool CheckAdminPassword(Admin admin, LoginDto login);
         void DeleteAdmin(Admin? admin);
         #endregion
 
         #region Business
-        Task<IEnumerable<Business?>> GetBusinesses();
-        Task<Business?> GetBusiness(Guid id);
-        void PutBusiness(Guid id, Business? business);
-        void PatchBusiness(Guid id, Business? business);
-        void PostBusiness(Business? business);
+        Task<IEnumerable<Business>> ListAllBusinesses();
+        Task<Business?> GetBusinessById(Guid id);
+        Task<Business?> GetBusinessByEmail(LoginDto businessLogin);
+        Task<Business?> UpdateBusinessDetails(Guid id, BusinessUpdateDto businessUpdate);
+        BusinessReadPartialDto AddNewBusiness(BusinessCreateDto businessForCreation);
         void DeleteBusiness(Business? business);
+
         #endregion
 
         #region Certificate
-        Task<IEnumerable<Certificate?>> GetCertificates();
+        Task<IEnumerable<Certificate?>> ListAllCertificates();
         Task<IEnumerable<Certificate?>> GetCertificatesByEndUserId(Guid id);
-        Task<Certificate?> GetCertificate(Guid id);
-        void PutCertificate(Guid id, Certificate? certificate);
-        void PatchCertificate(Guid id, Certificate? certificate);
-        void PostCertificate(Certificate? certificate);
+        Task<Certificate?> GetCertificateById(Guid id);
+        Task<Certificate?> UpdateCertificate(Guid id, CertificateUpdateDto certForUpdateDto);
+        void AddNewCertificate(Certificate? certificate);
         void DeleteCertificate(Certificate? certificate);
         #endregion
 
@@ -47,25 +53,37 @@ namespace QardlessAPI.Data
         #endregion
 
         #region Employee
-        Task<IEnumerable<Employee?>> GetEmployees();
+        Task<IEnumerable<Employee>> ListAllEmployees();
         Task<IEnumerable<Employee?>> GetEmployeesByBusinessId(Guid id);
-        Task<Employee?> GetEmployee(Guid id);
-        void PutEmployee(Guid id, Employee? employee);
-        void PatchEmployee(Guid id, Employee? employee);
-        void PostEmployee(Employee? employee);
+        Task<Employee?> GetEmployeeById(Guid id);
+        Task<Employee?> GetEmployeeByEmail(LoginDto empLoginDto);
+        Task<Employee?> UpdateEmployee(Guid id, EmployeeUpdateDto employeeUpdateDto);
+        EmployeeReadPartialDto AddNewEmployee(EmployeeCreateDto newEmp);
+        bool CheckEmpPassword(Employee emp, LoginDto login);
         void DeleteEmployee(Employee? employee);
         #endregion
 
         #region EndUser
-        Task<IEnumerable<EndUser?>> GetEndUsers();
-        Task<EndUser?> GetEndUser(Guid id);
-        Task<EndUser?> GetEndUserByEmail(EndUserLoginDto endUserLoginDto);
-        public string HashPassword(string Password);
-        void PutEndUser(Guid id, EndUser endUser);
-        void PatchEndUser(Guid id, EndUser endUser);
-        void PostEndUser(EndUser endUser);
+        Task<IEnumerable<EndUser>> ListAllEndUsers();
+        Task<EndUser?> GetEndUserById(Guid id);
+        Task<EndUser?> GetEndUserByEmail(LoginDto endUserLoginDto);
+        Task<EndUser?> UpdateEndUserDetails(Guid id, EndUserUpdateDto endUserUpdateDto);
+        EndUserReadPartialDto AddNewEndUser(EndUserCreateDto endUserForCreation);
+        bool CheckEndUserPassword(EndUser endUser, LoginDto login);
         void DeleteEndUser(EndUser endUser);
+        #endregion
+
+        #region Login
+        EndUserReadPartialDto SendEndUserForProps(EndUser endUser);
+        EmployeeReadPartialDto SendEmpForProps(Employee emp);
+        AdminPartialDto SendAdminForProps(Admin admin);
 
         #endregion
+
+        #region Security
+        public string HashPassword(string Password);
+
+        #endregion
+
     }
 }

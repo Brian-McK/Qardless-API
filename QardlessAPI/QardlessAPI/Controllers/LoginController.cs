@@ -3,10 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Dtos.EndUser;
+using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Models;
 using System.Text;
 using System.Security.Cryptography;
 using AutoMapper;
+using QardlessAPI.Data.Dtos.Employee;
+using QardlessAPI.Data.Dtos.Admin;
 
 namespace QardlessAPI.Controllers
 {
@@ -22,29 +25,53 @@ namespace QardlessAPI.Controllers
                 throw new ArgumentNullException(nameof(repo));
         }
 
-        // POST: api/Login/
-        [HttpPost()]
-        public async Task<ActionResult<EndUserReadPartialDto>> EndUserLogin(EndUserLoginDto loginUser)
+        // POST: api/endusers/login/
+        [HttpPost("/endusers/login")]
+        public async Task<ActionResult<EndUserReadPartialDto>> LoginEndUser(LoginDto loginUser)
         {
-            if (loginUser == null)
+            EndUser? endUser = await _repo.GetEndUserByEmail(loginUser);
+
+            if (loginUser == null || endUser == null)
                 return BadRequest();
 
-            EndUser? endUser = await _repo.GetEndUserByEmail(loginUser);
-            if (endUser == null)
+            if (!_repo.CheckEndUserPassword(endUser, loginUser))
+                return Unauthorized();
+            
+            EndUserReadPartialDto endUserForProps = _repo.SendEndUserForProps(endUser);
+            return Ok(endUserForProps);
+        }
+
+
+        // POST: api/employees/login/
+        [HttpPost("/employees/login")]
+        public async Task<ActionResult<EmployeeReadPartialDto>> LoginEmployee(LoginDto loginEmp)
+        {
+            Employee? emp = await _repo.GetEmployeeByEmail(loginEmp);
+
+            if (loginEmp == null || emp == null)
+                return BadRequest();
+
+            if (!_repo.CheckEmpPassword(emp, loginEmp))
                 return Unauthorized();
 
-            endUser.LastLoginDate = DateTime.Now;
+            EmployeeReadPartialDto empForProps = _repo.SendEmpForProps(emp);
+            return Ok(empForProps);
+        }
 
-            EndUserReadPartialDto endUserForProps = new EndUserReadPartialDto();
-            endUserForProps.Id = endUser.Id;
-            endUserForProps.Name = endUser.Name;
-            endUserForProps.Email = endUser.Email;
-            endUserForProps.ContactNumber = endUser.ContactNumber;
-            endUserForProps.isLoggedin = true;
+        // POST: api/admins/login/
+        [HttpPost("/admins/login")]
+        public async Task<ActionResult<AdminPartialDto>> LoginAdmin(LoginDto loginAdmin)
+        {
+            Admin? admin = await _repo.GetAdminByEmail(loginAdmin);
 
-            _repo.SaveChanges();
+            if (loginAdmin == null || admin == null)
+                return BadRequest();
 
-            return Ok(endUserForProps);
+            if (!_repo.CheckAdminPassword(admin, loginAdmin))
+                return Unauthorized();
+
+            AdminPartialDto adminForProps = _repo.SendAdminForProps(admin);
+            return Ok(adminForProps);
         }
     }
 }

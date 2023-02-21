@@ -29,10 +29,10 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/Certificates
-        [HttpGet]
-        public async Task<ActionResult<Certificate>> GetCertificates()
+        [HttpGet("/certificates")]
+        public async Task<ActionResult<Certificate>> ViewAllCertificates()
         {
-            var certs = await _repo.GetCertificates();
+            var certs = await _repo.ListAllCertificates();
             
             if (certs == null)
                 return NotFound();
@@ -41,10 +41,10 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/Certificates/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Certificate>> GetCertificate(Guid id)
+        [HttpGet("/certificates/{id}")]
+        public async Task<ActionResult<Certificate>> CertificateById(Guid id)
         {
-            var cert = await _repo.GetCertificate(id);
+            var cert = await _repo.GetCertificateById(id);
 
             if (cert == null)
                 return NotFound();
@@ -53,36 +53,29 @@ namespace QardlessAPI.Controllers
         }
 
         // PUT: api/Certificates/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCertificate(Guid id, CertificateUpdateDto certForUpdateDto)
+        [HttpPut("/certificates/{id}")]
+        public async Task<IActionResult> EditCertificate(Guid id, CertificateUpdateDto? certForUpdateDto)
         {
             if(certForUpdateDto == null)
                 return NotFound();
 
-            var cert = await _repo.GetCertificate(id);
-
+            var cert = await _repo.GetCertificateById(id);
             if (cert == null)
                 return NotFound();
 
-            cert.CreatedDate = DateTime.Now;
+            await Task.Run(() => _repo.UpdateCertificate(id, certForUpdateDto));
 
-            _mapper.Map(certForUpdateDto, cert);
-            _repo.PutCertificate(id, cert);
-            _repo.SaveChanges();
-
-            return Accepted();
+            return Accepted(cert);
         }
 
         // POST: api/Certificates
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Certificate>> PostCertificate(CertificateCreateDto certificateForCreation)
+        [HttpPost("/certificates")]
+        public async Task<ActionResult<Certificate>> AddNewCertificate(CertificateCreateDto certificateForCreation)
         {
             if (certificateForCreation == null)
                 return BadRequest();
 
-            var cert = _mapper.Map<Certificate>(certificateForCreation);
+            var cert = await Task.Run(() => _mapper.Map<Certificate>(certificateForCreation));
 
             cert.Id = new Guid();
             cert.CourseTitle = certificateForCreation.CourseTitle;
@@ -94,17 +87,17 @@ namespace QardlessAPI.Controllers
             cert.EndUserId = certificateForCreation.EndUserId;
             cert.BusinessId = certificateForCreation.BusinessId;
 
-            _repo.PostCertificate(cert);
+            _repo.AddNewCertificate(cert);
             _repo.SaveChanges();
 
-            return CreatedAtAction("GetCertificate", new { id = cert.Id }, cert);
+            return CreatedAtAction("CertificateById", new { id = cert.Id }, cert);
         }
 
         // DELETE: api/Certificates/5
-        [HttpDelete("{id}")]
+        [HttpDelete("/certificates/{id}")]
         public async Task<IActionResult> DeleteCertificate(Guid id)
         {
-            var cert = await _repo.GetCertificate(id);
+            var cert = await _repo.GetCertificateById(id);
             
             if(cert == null)
                 return NotFound();
@@ -115,9 +108,9 @@ namespace QardlessAPI.Controllers
             return Accepted();
         }
 
-        private bool CertificateExists(Guid id)
+        private bool CheckCertificateExists(Guid id)
         {
-            var cert = _repo.GetCertificate(id);
+            var cert = _repo.GetCertificateById(id);
             if (cert == null)
                 return false;
 
