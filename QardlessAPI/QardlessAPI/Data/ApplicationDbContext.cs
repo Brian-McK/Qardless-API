@@ -20,5 +20,18 @@ namespace QardlessAPI.Data
         public DbSet<Changelog> Changelogs { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<EndUser> EndUsers { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<EndUser>()
+                .HasMany(c => c.EndUserCerts)
+                .WithOne()
+                .HasForeignKey(c => c.Id)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<EndUser>()
+                .Navigation(c => c.EndUserCerts)
+                .UsePropertyAccessMode(PropertyAccessMode.Property);
+        }
     }
 }
