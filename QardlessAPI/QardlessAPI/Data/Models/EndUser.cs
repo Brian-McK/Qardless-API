@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QardlessAPI.Data.Models
 {
@@ -25,5 +27,8 @@ namespace QardlessAPI.Data.Models
         public DateTime CreatedDate { get; set; }
 
         public DateTime LastLoginDate { get; set; }
+
+        public List<Certificate> EndUserCerts { get; set; }
+
     }
 }

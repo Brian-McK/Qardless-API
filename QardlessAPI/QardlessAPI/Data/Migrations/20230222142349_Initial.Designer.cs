@@ -12,7 +12,7 @@ using QardlessAPI.Data;
 namespace QardlessAPI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230218135416_Initial")]
+    [Migration("20230222142349_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -92,7 +92,6 @@ namespace QardlessAPI.Data.Migrations
             modelBuilder.Entity("QardlessAPI.Data.Models.Certificate", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("BusinessId")
@@ -125,8 +124,6 @@ namespace QardlessAPI.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BusinessId");
-
-                    b.HasIndex("EndUserId");
 
                     b.ToTable("Certificates");
                 });
@@ -245,15 +242,13 @@ namespace QardlessAPI.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("QardlessAPI.Data.Models.EndUser", "EndUser")
-                        .WithMany()
-                        .HasForeignKey("EndUserId")
+                    b.HasOne("QardlessAPI.Data.Models.EndUser", null)
+                        .WithMany("EndUserCerts")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Business");
-
-                    b.Navigation("EndUser");
                 });
 
             modelBuilder.Entity("QardlessAPI.Data.Models.Employee", b =>
@@ -265,6 +260,11 @@ namespace QardlessAPI.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Business");
+                });
+
+            modelBuilder.Entity("QardlessAPI.Data.Models.EndUser", b =>
+                {
+                    b.Navigation("EndUserCerts");
                 });
 #pragma warning restore 612, 618
         }
