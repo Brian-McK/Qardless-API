@@ -12,8 +12,8 @@ using QardlessAPI.Data;
 namespace QardlessAPI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230224133955_Initial")]
-    partial class Initial
+    [Migration("20230224142246_Update")]
+    partial class Update
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

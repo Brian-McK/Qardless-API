@@ -26,6 +26,8 @@ namespace QardlessAPI.Data.Models
         [Required]
         public DateTime CreatedDate { get; set; }
 
+        [Required]
+        [ForeignKey("EndUserId")]
         public Guid EndUserId { get; set; }
 
         [Required]
