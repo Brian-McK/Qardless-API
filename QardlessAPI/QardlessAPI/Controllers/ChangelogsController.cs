@@ -25,7 +25,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/Changelogs
         [HttpGet("/changelogs")]
-        public async Task<ActionResult<Changelog>> ViewAllChangelogs()
+        public async Task<ActionResult<FlaggedIssue>> ViewAllChangelogs()
         {
             var changeLogs = await _repo.GetChangelogs();
 
@@ -37,7 +37,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/Changelogs/5
         [HttpGet("/changelogs/{id}")]
-        public async Task<ActionResult<Changelog>> ChangelogById(Guid id)
+        public async Task<ActionResult<FlaggedIssue>> ChangelogById(Guid id)
         {
             var changelog = await _repo.GetChangelog(id);
 
@@ -69,12 +69,12 @@ namespace QardlessAPI.Controllers
 
         // POST: api/Changelogs
         [HttpPost("/changelogs")]
-        public async Task<ActionResult<Changelog>> AddNewChangelog(ChangelogCreateDto changelogForCreation)
+        public async Task<ActionResult<FlaggedIssue>> AddNewChangelog(ChangelogCreateDto changelogForCreation)
         {
             if(changelogForCreation == null)
                 return BadRequest();
 
-            var changelog = _mapper.Map<Changelog>(changelogForCreation);
+            var changelog = _mapper.Map<FlaggedIssue>(changelogForCreation);
 
             changelog.Id = Guid.NewGuid();
             changelog.Type = changelogForCreation.Type;

@@ -237,28 +237,28 @@ namespace QardlessAPI.Data
         }
         #endregion
 
-        #region Changelog
-        public async Task<IEnumerable<Changelog?>> GetChangelogs()
+        #region FlaggedIssue
+        public async Task<IEnumerable<FlaggedIssue?>> GetChangelogs()
         {
             return await _context.Changelogs.ToListAsync();
         }
 
-        public async Task<Changelog?> GetChangelog(Guid id)
+        public async Task<FlaggedIssue?> GetChangelog(Guid id)
         {
             return await _context.Changelogs.FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public void PutChangelog(Guid id, Changelog? changelog)
+        public void PutChangelog(Guid id, FlaggedIssue? changelog)
         {
             // Implemented in the controller
         }
 
-        public void PatchChangelog(Guid id, Changelog? changelog)
+        public void PatchChangelog(Guid id, FlaggedIssue? changelog)
         {
             // Implemented in the controller
         }
 
-        public void PostChangelog(Changelog? changelog)
+        public void PostChangelog(FlaggedIssue? changelog)
         {
             if (changelog == null)
             {
@@ -271,7 +271,7 @@ namespace QardlessAPI.Data
             _context.Changelogs.Add(changelog);
         }
 
-        public void DeleteChangelog(Changelog? changelog)
+        public void DeleteChangelog(FlaggedIssue? changelog)
         {
             if (changelog == null)
             {

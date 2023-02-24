@@ -43,13 +43,13 @@ namespace QardlessAPI.Data
         void DeleteCertificate(Certificate? certificate);
         #endregion
 
-        #region Changelog
-        Task<IEnumerable<Changelog?>> GetChangelogs();
-        Task<Changelog?> GetChangelog(Guid id);
-        void PutChangelog(Guid id, Changelog? changelog);
-        void PatchChangelog(Guid id, Changelog? changelog);
-        void PostChangelog(Changelog? changelog);
-        void DeleteChangelog(Changelog? changelog);
+        #region FlaggedIssue
+        Task<IEnumerable<FlaggedIssue?>> GetChangelogs();
+        Task<FlaggedIssue?> GetChangelog(Guid id);
+        void PutChangelog(Guid id, FlaggedIssue? changelog);
+        void PatchChangelog(Guid id, FlaggedIssue? changelog);
+        void PostChangelog(FlaggedIssue? changelog);
+        void DeleteChangelog(FlaggedIssue? changelog);
         #endregion
 
         #region Employee
