@@ -238,47 +238,42 @@ namespace QardlessAPI.Data
         #endregion
 
         #region FlaggedIssue
-        public async Task<IEnumerable<FlaggedIssue?>> GetChangelogs()
+        public async Task<IEnumerable<FlaggedIssue?>> GetFlaggedIssues()
         {
-            return await _context.Changelogs.ToListAsync();
+            return await _context.FlaggedIssues.ToListAsync();
         }
 
-        public async Task<FlaggedIssue?> GetChangelog(Guid id)
+        public async Task<FlaggedIssue?> GetFlaggedIssue(Guid id)
         {
-            return await _context.Changelogs.FirstOrDefaultAsync(c => c.Id == id);
+            return await _context.FlaggedIssues.FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public void PutChangelog(Guid id, FlaggedIssue? changelog)
+        public void PutFlaggedIssue(Guid id, FlaggedIssue? flaggedIssue)
         {
             // Implemented in the controller
         }
 
-        public void PatchChangelog(Guid id, FlaggedIssue? changelog)
+        public void PostFlaggedIssue(FlaggedIssue? flaggedIssue)
         {
-            // Implemented in the controller
-        }
-
-        public void PostChangelog(FlaggedIssue? changelog)
-        {
-            if (changelog == null)
+            if (flaggedIssue == null)
             {
-                throw new ArgumentNullException(nameof(changelog));
+                throw new ArgumentNullException(nameof(flaggedIssue));
             }
 
-            changelog.Id = Guid.NewGuid();
-            changelog.CreatedDate = DateTime.Now;
+            flaggedIssue.Id = Guid.NewGuid();
+            flaggedIssue.CreatedAt = DateTime.Now;
 
-            _context.Changelogs.Add(changelog);
+            _context.FlaggedIssues.Add(flaggedIssue);
         }
 
-        public void DeleteChangelog(FlaggedIssue? changelog)
+        public void DeleteFlaggedIssue(FlaggedIssue? flaggedIssue)
         {
-            if (changelog == null)
+            if (flaggedIssue == null)
             {
-                throw new ArgumentNullException(nameof(changelog));
+                throw new ArgumentNullException(nameof(flaggedIssue));
             }
 
-            _context.Changelogs.Remove(changelog);
+            _context.FlaggedIssues.Remove(flaggedIssue);
         }
         #endregion
 

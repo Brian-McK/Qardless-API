@@ -44,12 +44,11 @@ namespace QardlessAPI.Data
         #endregion
 
         #region FlaggedIssue
-        Task<IEnumerable<FlaggedIssue?>> GetChangelogs();
-        Task<FlaggedIssue?> GetChangelog(Guid id);
-        void PutChangelog(Guid id, FlaggedIssue? changelog);
-        void PatchChangelog(Guid id, FlaggedIssue? changelog);
-        void PostChangelog(FlaggedIssue? changelog);
-        void DeleteChangelog(FlaggedIssue? changelog);
+        Task<IEnumerable<FlaggedIssue?>> GetFlaggedIssues();
+        Task<FlaggedIssue?> GetFlaggedIssue(Guid id);
+        void PutFlaggedIssue(Guid id, FlaggedIssue? flaggedIssue);
+        void PostFlaggedIssue(FlaggedIssue? flaggedIssue);
+        void DeleteFlaggedIssue(FlaggedIssue? flaggedIssue);
         #endregion
 
         #region Employee

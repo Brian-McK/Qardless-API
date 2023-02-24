@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using QardlessAPI.Data.Dtos.Changelog;
+using QardlessAPI.Data.Dtos.FlaggedIssue;
 using QardlessAPI.Data.Models;
 
 namespace QardlessAPI.Data.Profiles
@@ -9,19 +9,19 @@ namespace QardlessAPI.Data.Profiles
         public FlaggedIssueProfile()
         {
             // GET Full
-            CreateMap<FlaggedIssue, ChangelogReadDto>();
+            CreateMap<FlaggedIssue, FlaggedIssueReadDto>();
 
             // GET Partial
             //CreateMap<>();
 
             // POST
-            CreateMap<ChangelogCreateDto, FlaggedIssue>();
+            CreateMap<FlaggedIssueCreateDto, FlaggedIssue>();
 
             // PUT
-            CreateMap<ChangelogUpdateDto, FlaggedIssue>();
+            CreateMap<FlaggedIssueUpdateDto, FlaggedIssue>();
 
             // PATCH
-            CreateMap<FlaggedIssue, ChangelogUpdateDto>();
+            CreateMap<FlaggedIssue, FlaggedIssueUpdateDto>();
         }
     }
 }
