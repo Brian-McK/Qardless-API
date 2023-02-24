@@ -12,7 +12,7 @@ using QardlessAPI.Data;
 namespace QardlessAPI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230222142349_Initial")]
+    [Migration("20230224133955_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
