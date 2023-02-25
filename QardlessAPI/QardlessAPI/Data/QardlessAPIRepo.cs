@@ -3,6 +3,7 @@ using QardlessAPI.Data.Dtos.Admin;
 using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Dtos.Business;
 using QardlessAPI.Data.Dtos.Certificate;
+using QardlessAPI.Data.Dtos.Course;
 using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
@@ -227,6 +228,21 @@ namespace QardlessAPI.Data
             _context.SaveChanges();
         }
 
+        // WEB APP - ASSIGN/UNASSIGN CERT
+        public void AssignCert(CertToAssignDto certToAssign)
+        {
+            if (certToAssign == null)
+                throw new ArgumentNullException(nameof(certToAssign));
+
+            Certificate? cert = _context.Certificates.FirstOrDefault(c => c.CertNumber == certToAssign.CertNumber);
+            EndUser? endUser = _context.EndUsers.FirstOrDefault(e => e.Email == certToAssign.EndUserEmail);
+
+            if (!certToAssign.ToAssign)
+                endUser.EndUserCerts.Remove(cert);
+
+            endUser.EndUserCerts.Add(cert);
+        }
+
         public void DeleteCertificate(Certificate? certificate)
         {
             if (certificate == null)
@@ -235,6 +251,68 @@ namespace QardlessAPI.Data
             _context.Certificates.Remove(certificate);
         }
         #endregion
+
+        #region Course 
+
+        public async Task<IEnumerable<Course>> ListAllCourses()
+        {
+            return await _context.Courses.ToListAsync();
+        }
+
+        public async Task<Course?> GetCourseById(Guid id)
+        {
+            return await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<Course?> UpdateCourseDetails(Guid id, CourseReadDto courseForUpdate)
+        {
+            Course? course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
+
+            course.Title = courseForUpdate.Title;
+            course.CourseDate = courseForUpdate.CourseDate;
+            course.Expiry = courseForUpdate.Expiry;
+
+            _context.SaveChanges();
+            _context.Courses.Add(course);
+
+            return await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public CourseReadDto AddNewCourse(CourseReadDto newCourse)
+        {
+            if (newCourse == null)
+                    throw new ArgumentNullException(nameof(newCourse));
+
+            Course course = new Course()
+            {
+                Id = new Guid(),
+                BusinessId = newCourse.BusinessId,
+                Title = newCourse.Title,
+                CourseDate = newCourse.CourseDate,
+                Expiry = newCourse.Expiry
+            };
+
+            _context.Courses.Add(course);
+            _context.SaveChanges();
+
+            CourseReadDto courseDto = new CourseReadDto()
+            {
+                BusinessId = course.BusinessId,
+                Title = course.Title,
+                CourseDate = course.CourseDate,
+                Expiry = course.Expiry
+            };
+            
+            return courseDto;
+        }
+
+        public void DeleteCourse(Course? course)
+        {
+            if(course == null) throw new ArgumentNullException(nameof(course));
+            _context .Courses.Remove(course);
+        }
+
+        #endregion#
 
         #region FlaggedIssue
         public async Task<IEnumerable<FlaggedIssue?>> GetFlaggedIssues()

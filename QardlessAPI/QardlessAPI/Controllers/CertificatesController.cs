@@ -80,6 +80,19 @@ namespace QardlessAPI.Controllers
             return Created("/certificates", certificateForCreation);
         }
 
+        // WEB APP - BUSINESS LOGIC - ASSIGN CERT TO ENDUSER 
+        // PUT : api/enduser/7/cert
+        [HttpPut("enduser/{id}/certificates")]
+        public async Task<ActionResult> AssignCertToEndUser(CertToAssignDto certToAssign)
+        {
+            if (certToAssign == null)
+                return BadRequest();
+
+            await Task.Run(() => _repo.AssignCert(certToAssign));
+
+            return Ok();
+        }
+
         // DELETE: api/Certificates/5
         [HttpDelete("/certificates/{id}")]
         public async Task<IActionResult> DeleteCertificate(Guid id)
