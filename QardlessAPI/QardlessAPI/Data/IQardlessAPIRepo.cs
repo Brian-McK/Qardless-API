@@ -39,7 +39,7 @@ namespace QardlessAPI.Data
         Task<IEnumerable<Certificate?>> GetCertificatesByEndUserId(Guid id);
         Task<Certificate?> GetCertificateById(Guid id);
         Task<Certificate?> UpdateCertificate(Guid id, CertificateUpdateDto certForUpdateDto);
-        void AddNewCertificate(Certificate? certificate);
+        void AddNewCertificate(CertificateCreateDto certForCreation);
         void DeleteCertificate(Certificate? certificate);
         #endregion
 

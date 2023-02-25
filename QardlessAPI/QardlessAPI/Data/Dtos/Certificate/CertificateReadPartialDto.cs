@@ -3,6 +3,10 @@
     public class CertificateReadPartialDto
     {
         public Guid Id { get; set; }
-        public string PdfUrl { get; set; }
+
+        public Guid CourseId { get; set; }
+
+        public Guid EndUserId { get; set; }
+
     }
 }
