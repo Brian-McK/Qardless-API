@@ -88,6 +88,19 @@ namespace QardlessAPI.Controllers
             return Created("/endusers", endUserReadPartialDto);
         }
 
+        // Business logic: Assign cert to enduser
+        // PUT : api/enduser/7/cert
+        [HttpPut("enduser/{id}/certificates")]
+        public async Task<ActionResult> AssignCertToEndUser(CertToAssignDto certToAssign)
+        {
+            if(certToAssign == null)
+                return BadRequest();
+
+            await Task.Run(() => _repo.AssignCert(certToAssign));
+
+            return Ok();
+        }
+
         // Business logic: Logout EndUser
         // POST: api/EndUsers
         [HttpPost("/endusers/logout")]

@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QardlessAPI.Data.Models
 {
-    public class Changelog
+    public class FlaggedIssue
     {
         [Key]
         public Guid Id { get; set; }
 
-        // NOTE: Could be an Enum
         [Required]
         public string Type { get; set; }
 
@@ -18,6 +18,10 @@ namespace QardlessAPI.Data.Models
         public bool WasRead { get; set; }
 
         [Required]
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedAt { get; set; }
+
+        [Required]
+        [ForeignKey("EndUserId")]
+        public Guid EndUserId { get; set; }
     }
 }

@@ -8,14 +8,14 @@ namespace QardlessAPI.Data.Models
         public Guid Id { get; set; }
 
         [Required]
-        public string Title { get; set; }
+        public string Name { get; set; }
 
         [Required]
         public string Email { get; set; }
 
-        public string? Phone { get; set; }
+        public string Contact { get; set; }
 
         [Required]
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

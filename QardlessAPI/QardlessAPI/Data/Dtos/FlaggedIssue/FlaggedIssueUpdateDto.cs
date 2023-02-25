@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace QardlessAPI.Data.Dtos.Changelog
+namespace QardlessAPI.Data.Dtos.FlaggedIssue
 {
-    public class ChangelogUpdateDto
+    public class FlaggedIssueUpdateDto
     {
         [Required]
         public bool WasRead { get; set; }

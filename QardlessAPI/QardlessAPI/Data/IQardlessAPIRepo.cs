@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Bson;
-using QardlessAPI.Data.Dtos.Admin;
+﻿using QardlessAPI.Data.Dtos.Admin;
 using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Dtos.Business;
 using QardlessAPI.Data.Dtos.Certificate;
@@ -39,17 +37,16 @@ namespace QardlessAPI.Data
         Task<IEnumerable<Certificate?>> GetCertificatesByEndUserId(Guid id);
         Task<Certificate?> GetCertificateById(Guid id);
         Task<Certificate?> UpdateCertificate(Guid id, CertificateUpdateDto certForUpdateDto);
-        void AddNewCertificate(Certificate? certificate);
+        void AddNewCertificate(CertificateCreateDto certForCreation);
         void DeleteCertificate(Certificate? certificate);
         #endregion
 
-        #region Changelog
-        Task<IEnumerable<Changelog?>> GetChangelogs();
-        Task<Changelog?> GetChangelog(Guid id);
-        void PutChangelog(Guid id, Changelog? changelog);
-        void PatchChangelog(Guid id, Changelog? changelog);
-        void PostChangelog(Changelog? changelog);
-        void DeleteChangelog(Changelog? changelog);
+        #region FlaggedIssue
+        Task<IEnumerable<FlaggedIssue?>> GetFlaggedIssues();
+        Task<FlaggedIssue?> GetFlaggedIssue(Guid id);
+        void PutFlaggedIssue(Guid id, FlaggedIssue? flaggedIssue);
+        void PostFlaggedIssue(FlaggedIssue? flaggedIssue);
+        void DeleteFlaggedIssue(FlaggedIssue? flaggedIssue);
         #endregion
 
         #region Employee

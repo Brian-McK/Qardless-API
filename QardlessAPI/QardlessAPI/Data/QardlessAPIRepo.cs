@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data.Dtos.Admin;
 using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Dtos.Business;
@@ -15,14 +14,11 @@ namespace QardlessAPI.Data
     public class QardlessAPIRepo : IQardlessAPIRepo
     {
         private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
 
-        public QardlessAPIRepo(ApplicationDbContext context, IMapper mapper)
+        public QardlessAPIRepo(ApplicationDbContext context)
         {
             _context = context ??
                 throw new ArgumentNullException(nameof(context)); 
-            _mapper = mapper ??
-               throw new ArgumentNullException(nameof(mapper));
         }
 
         public bool SaveChanges()
@@ -72,11 +68,9 @@ namespace QardlessAPI.Data
                 Id = new Guid(),
                 Name = newAdmin.Name,
                 Email = newAdmin.Email,
-                EmailVerified = false,
                 PasswordHash = HashPassword(newAdmin.Password),
                 ContactNumber = newAdmin.ContactNumber,
-                ContactNumberVerified = false,
-                CreatedDate = DateTime.Now,
+                CreatedAt = DateTime.Now,
                 LastLoginDate = DateTime.Now
             };
 
@@ -134,9 +128,9 @@ namespace QardlessAPI.Data
         {
             Business? business = await _context.Businesses.FirstOrDefaultAsync(b => b.Id == id);
 
-            business.Title = businessUpdate.Title;
+            business.Name = businessUpdate.Name;
             business.Email = businessUpdate.Email;
-            business.Phone = businessUpdate.Phone;
+            business.Contact = businessUpdate.Contact;
 
             _context.SaveChanges();
             _context.Businesses.Add(business);
@@ -152,10 +146,10 @@ namespace QardlessAPI.Data
             Business business = new Business()
             {
                 Id = new Guid(),
-                Title = businessForCreation.Title,
+                Name = businessForCreation.Name,
                 Email = businessForCreation.Email,
-                Phone = businessForCreation.Phone,
-                CreatedDate = DateTime.Now
+                Contact = businessForCreation.Contact,
+                CreatedAt = DateTime.Now
             };
 
             _context.Businesses.Add(business);
@@ -164,9 +158,9 @@ namespace QardlessAPI.Data
             BusinessReadPartialDto businessReadPartialDto = new BusinessReadPartialDto
             {
                 Id = business.Id,
-                Title = business.Title,
+                Name = business.Name,
                 Email = business.Email,
-                Phone = business.Phone
+                Contact = business.Contact
             };
 
             return businessReadPartialDto;
@@ -202,14 +196,11 @@ namespace QardlessAPI.Data
         {
             Certificate? cert = await _context.Certificates.FirstOrDefaultAsync(c => c.Id == id);
 
-            cert.CourseTitle = certForUpdateDto.CourseTitle;
-            cert.CertNumber = certForUpdateDto.CertNumber;
-            cert.CourseDate = certForUpdateDto.CourseDate;
-            cert.ExpiryDate = certForUpdateDto.ExpiryDate;
-            cert.PdfUrl = certForUpdateDto.PdfUrl;
-            cert.CreatedDate = DateTime.Now;
+            cert.CourseId = certForUpdateDto.CourseId;
             cert.EndUserId = certForUpdateDto.EndUserId;
-            cert.BusinessId = certForUpdateDto.BusinessId;
+            cert.CertNumber = certForUpdateDto.CertNumber;
+            cert.PdfUrl = certForUpdateDto.PdfUrl;
+            cert.CreatedAt = DateTime.Now;
             
             _context.SaveChanges();
             _context.Certificates.Add(cert);
@@ -217,15 +208,23 @@ namespace QardlessAPI.Data
             return await _context.Certificates.FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public void AddNewCertificate(Certificate? certificate)
+        // WEB APP  - CREATE CERT
+        public void AddNewCertificate(CertificateCreateDto certForCreation)
         {
-            if (certificate == null)
-                throw new ArgumentNullException(nameof(certificate));
+            if (certForCreation == null)
+                throw new ArgumentNullException(nameof(certForCreation));
 
-            certificate.Id = Guid.NewGuid();
-            certificate.CreatedDate = DateTime.Now;
+            Certificate cert = new Certificate
+            {
+                Id = new Guid(),
+                CourseId = certForCreation.CourseId,
+                CertNumber = certForCreation.CertNumber,
+                PdfUrl = certForCreation.PdfUrl,
+                CreatedAt = DateTime.Now
+            };
 
-            _context.Certificates.Add(certificate);
+            _context.Certificates.Add(cert);
+            _context.SaveChanges();
         }
 
         public void DeleteCertificate(Certificate? certificate)
@@ -237,48 +236,43 @@ namespace QardlessAPI.Data
         }
         #endregion
 
-        #region Changelog
-        public async Task<IEnumerable<Changelog?>> GetChangelogs()
+        #region FlaggedIssue
+        public async Task<IEnumerable<FlaggedIssue?>> GetFlaggedIssues()
         {
-            return await _context.Changelogs.ToListAsync();
+            return await _context.FlaggedIssues.ToListAsync();
         }
 
-        public async Task<Changelog?> GetChangelog(Guid id)
+        public async Task<FlaggedIssue?> GetFlaggedIssue(Guid id)
         {
-            return await _context.Changelogs.FirstOrDefaultAsync(c => c.Id == id);
+            return await _context.FlaggedIssues.FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public void PutChangelog(Guid id, Changelog? changelog)
+        public void PutFlaggedIssue(Guid id, FlaggedIssue? flaggedIssue)
         {
             // Implemented in the controller
         }
 
-        public void PatchChangelog(Guid id, Changelog? changelog)
+        public void PostFlaggedIssue(FlaggedIssue? flaggedIssue)
         {
-            // Implemented in the controller
-        }
-
-        public void PostChangelog(Changelog? changelog)
-        {
-            if (changelog == null)
+            if (flaggedIssue == null)
             {
-                throw new ArgumentNullException(nameof(changelog));
+                throw new ArgumentNullException(nameof(flaggedIssue));
             }
 
-            changelog.Id = Guid.NewGuid();
-            changelog.CreatedDate = DateTime.Now;
+            flaggedIssue.Id = Guid.NewGuid();
+            flaggedIssue.CreatedAt = DateTime.Now;
 
-            _context.Changelogs.Add(changelog);
+            _context.FlaggedIssues.Add(flaggedIssue);
         }
 
-        public void DeleteChangelog(Changelog? changelog)
+        public void DeleteFlaggedIssue(FlaggedIssue? flaggedIssue)
         {
-            if (changelog == null)
+            if (flaggedIssue == null)
             {
-                throw new ArgumentNullException(nameof(changelog));
+                throw new ArgumentNullException(nameof(flaggedIssue));
             }
 
-            _context.Changelogs.Remove(changelog);
+            _context.FlaggedIssues.Remove(flaggedIssue);
         }
         #endregion
 
@@ -332,11 +326,9 @@ namespace QardlessAPI.Data
                 Id = new Guid(),
                 Name = newEmp.Name,
                 Email = newEmp.Email,
-                EmailVerified = false,
                 PasswordHash = HashPassword(newEmp.Password),
                 ContactNumber = newEmp.ContactNumber,
-                ContactNumberVerified = false,
-                CreatedDate = DateTime.Now,
+                CreatedAt = DateTime.Now,
                 PrivilegeLevel = newEmp.PrivilegeLevel,
                 BusinessId = newEmp.BusinessId
             };
@@ -419,7 +411,7 @@ namespace QardlessAPI.Data
                 EmailVerified = false,
                 PasswordHash = HashPassword(endUserForCreation.Password),
                 ContactNumber = endUserForCreation.ContactNumber,
-                CreatedDate = DateTime.Now,
+                CreatedAt = DateTime.Now,
                 LastLoginDate = DateTime.Now
             };
 

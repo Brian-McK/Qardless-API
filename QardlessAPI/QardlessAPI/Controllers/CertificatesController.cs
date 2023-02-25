@@ -70,27 +70,14 @@ namespace QardlessAPI.Controllers
 
         // POST: api/Certificates
         [HttpPost("/certificates")]
-        public async Task<ActionResult<Certificate>> AddNewCertificate(CertificateCreateDto certificateForCreation)
+        public async Task<ActionResult<Certificate?>> AddNewCertificate(CertificateCreateDto certificateForCreation)
         {
             if (certificateForCreation == null)
                 return BadRequest();
 
-            var cert = await Task.Run(() => _mapper.Map<Certificate>(certificateForCreation));
+            await Task.Run(() => _repo.AddNewCertificate(certificateForCreation));
 
-            cert.Id = new Guid();
-            cert.CourseTitle = certificateForCreation.CourseTitle;
-            cert.CertNumber = certificateForCreation.CertNumber;
-            cert.CourseDate = certificateForCreation.CourseDate;
-            cert.ExpiryDate = certificateForCreation.ExpiryDate;
-            cert.PdfUrl = certificateForCreation.PdfUrl;
-            cert.CreatedDate = DateTime.Now;
-            cert.EndUserId = certificateForCreation.EndUserId;
-            cert.BusinessId = certificateForCreation.BusinessId;
-
-            _repo.AddNewCertificate(cert);
-            _repo.SaveChanges();
-
-            return CreatedAtAction("CertificateById", new { id = cert.Id }, cert);
+            return Created("/certificates", certificateForCreation);
         }
 
         // DELETE: api/Certificates/5

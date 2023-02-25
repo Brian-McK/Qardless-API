@@ -5,6 +5,9 @@ namespace QardlessAPI.Data.Dtos.Employee
     public class EmployeeUpdateDto
     {
         [Required]
+        public Guid BusinessId { get; set; }
+        
+        [Required]
         public string Name { get; set; }
 
         [Required]
@@ -19,8 +22,5 @@ namespace QardlessAPI.Data.Dtos.Employee
         public int PrivilegeLevel { get; set; }
 
         public DateTime LastLoginDate { get; set; }
-
-        [Required]
-        public Guid BusinessId { get; set; }
     }
 }

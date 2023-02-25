@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace QardlessAPI.Data.Dtos.Changelog
+namespace QardlessAPI.Data.Dtos.FlaggedIssue
 {
-    public class ChangelogCreateDto
+    public class FlaggedIssueCreateDto
     {
         [Required]
         public string Type { get; set; }
