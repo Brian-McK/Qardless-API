@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data.Dtos.Admin;
 using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Dtos.Business;
@@ -15,14 +14,11 @@ namespace QardlessAPI.Data
     public class QardlessAPIRepo : IQardlessAPIRepo
     {
         private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
 
-        public QardlessAPIRepo(ApplicationDbContext context, IMapper mapper)
+        public QardlessAPIRepo(ApplicationDbContext context)
         {
             _context = context ??
                 throw new ArgumentNullException(nameof(context)); 
-            _mapper = mapper ??
-               throw new ArgumentNullException(nameof(mapper));
         }
 
         public bool SaveChanges()
