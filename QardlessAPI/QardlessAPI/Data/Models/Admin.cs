@@ -18,7 +18,7 @@ namespace QardlessAPI.Data.Models
 
         public string ContactNumber { get; set; }
 
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public DateTime LastLoginDate { get; set; }
     }

@@ -12,7 +12,7 @@ using QardlessAPI.Data;
 namespace QardlessAPI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230225130413_Update")]
+    [Migration("20230225131155_Update")]
     partial class Update
     {
         /// <inheritdoc />
@@ -35,7 +35,7 @@ namespace QardlessAPI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")

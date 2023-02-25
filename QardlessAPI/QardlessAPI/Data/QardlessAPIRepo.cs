@@ -70,7 +70,7 @@ namespace QardlessAPI.Data
                 Email = newAdmin.Email,
                 PasswordHash = HashPassword(newAdmin.Password),
                 ContactNumber = newAdmin.ContactNumber,
-                CreatedDate = DateTime.Now,
+                CreatedAt = DateTime.Now,
                 LastLoginDate = DateTime.Now
             };
 
