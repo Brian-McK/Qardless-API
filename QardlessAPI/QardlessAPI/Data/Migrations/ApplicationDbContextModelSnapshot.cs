@@ -32,18 +32,12 @@ namespace QardlessAPI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("ContactNumberVerified")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("EmailVerified")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("LastLoginDate")
                         .HasColumnType("datetime2");
@@ -67,17 +61,18 @@ namespace QardlessAPI.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<string>("Contact")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -92,28 +87,18 @@ namespace QardlessAPI.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("BusinessId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("CertNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CourseDate")
-                        .HasColumnType("datetime2");
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CourseTitle")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("EndUserId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ExpiryDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("PdfUrl")
                         .IsRequired()
@@ -121,36 +106,9 @@ namespace QardlessAPI.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BusinessId");
-
                     b.HasIndex("EndUserId");
 
                     b.ToTable("Certificates");
-                });
-
-            modelBuilder.Entity("QardlessAPI.Data.Models.Changelog", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("WasRead")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Changelogs");
                 });
 
             modelBuilder.Entity("QardlessAPI.Data.Models.Employee", b =>
@@ -163,20 +121,15 @@ namespace QardlessAPI.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ContactNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("ContactNumberVerified")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("EmailVerified")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("LastLoginDate")
                         .HasColumnType("datetime2");
@@ -194,8 +147,6 @@ namespace QardlessAPI.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BusinessId");
-
                     b.ToTable("Employees");
                 });
 
@@ -208,7 +159,7 @@ namespace QardlessAPI.Data.Migrations
                     b.Property<string>("ContactNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
@@ -234,34 +185,46 @@ namespace QardlessAPI.Data.Migrations
                     b.ToTable("EndUsers");
                 });
 
+            modelBuilder.Entity("QardlessAPI.Data.Models.FlaggedIssue", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("EndUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("WasRead")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FlaggedIssues");
+                });
+
             modelBuilder.Entity("QardlessAPI.Data.Models.Certificate", b =>
                 {
-                    b.HasOne("QardlessAPI.Data.Models.Business", "Business")
-                        .WithMany()
-                        .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("QardlessAPI.Data.Models.EndUser", "EndUser")
-                        .WithMany()
+                    b.HasOne("QardlessAPI.Data.Models.EndUser", null)
+                        .WithMany("EndUserCerts")
                         .HasForeignKey("EndUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Business");
-
-                    b.Navigation("EndUser");
                 });
 
-            modelBuilder.Entity("QardlessAPI.Data.Models.Employee", b =>
+            modelBuilder.Entity("QardlessAPI.Data.Models.EndUser", b =>
                 {
-                    b.HasOne("QardlessAPI.Data.Models.Business", "Business")
-                        .WithMany()
-                        .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Business");
+                    b.Navigation("EndUserCerts");
                 });
 #pragma warning restore 612, 618
         }
