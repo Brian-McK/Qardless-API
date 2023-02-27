@@ -214,11 +214,17 @@ namespace QardlessAPI.Data
         {
             if (certForCreation == null)
                 throw new ArgumentNullException(nameof(certForCreation));
+            
+            var endUser = FindEndUserByEmail(certForCreation.EndUserEmail).Result;
 
-            Certificate cert = new Certificate
+            if (endUser == null)
+                throw new ArgumentNullException(nameof(certForCreation));
+
+            var cert = new Certificate
             {
                 Id = new Guid(),
                 CourseId = certForCreation.CourseId,
+                EndUserId = endUser.Id,
                 CertNumber = certForCreation.CertNumber,
                 PdfUrl = certForCreation.PdfUrl,
                 CreatedAt = DateTime.Now
@@ -447,6 +453,16 @@ namespace QardlessAPI.Data
         public async Task<EndUser?> GetEndUserById(Guid id)
         {
             return await _context.EndUsers.FirstOrDefaultAsync(e => e.Id == id);
+        }
+
+        public Task <EndUser?> FindEndUserByEmail(string email)
+        {
+            var user = _context.EndUsers.Where(e => e.Email == email).Select(e => e);
+
+            var e =  _context.EndUsers.FirstOrDefault(e => e.Email.Contains(email));
+
+            return Task.FromResult(e);
+
         }
 
         //For login controller

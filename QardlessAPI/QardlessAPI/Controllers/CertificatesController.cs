@@ -74,9 +74,9 @@ namespace QardlessAPI.Controllers
         {
             if (certificateForCreation == null)
                 return BadRequest();
-
+            
             await Task.Run(() => _repo.AddNewCertificate(certificateForCreation));
-
+            
             return Created("/certificates", certificateForCreation);
         }
 

@@ -78,6 +78,7 @@ namespace QardlessAPI.Data
         #region EndUser
         Task<IEnumerable<EndUser>> ListAllEndUsers();
         Task<EndUser?> GetEndUserById(Guid id);
+        Task<EndUser?> FindEndUserByEmail(string email);
         Task<EndUser?> GetEndUserByEmail(LoginDto endUserLoginDto);
         Task<EndUser?> UpdateEndUserDetails(Guid id, EndUserUpdateDto endUserUpdateDto);
         EndUserReadPartialDto AddNewEndUser(EndUserCreateDto endUserForCreation);
@@ -96,6 +97,6 @@ namespace QardlessAPI.Data
         public string HashPassword(string Password);
 
         #endregion
-
+        
     }
 }
