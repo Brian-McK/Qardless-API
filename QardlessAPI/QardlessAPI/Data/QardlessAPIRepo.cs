@@ -269,11 +269,11 @@ namespace QardlessAPI.Data
             Course? course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
 
             course.Title = courseForUpdate.Title;
-            course.CourseDate = courseForUpdate.CourseDate;
-            course.Expiry = courseForUpdate.Expiry;
-
-            _context.SaveChanges();
+            course.CourseDate = DateTime.ParseExact(courseForUpdate.CourseDate, "dd/MM/yyyy", null);
+            course.Expiry = DateTime.ParseExact(courseForUpdate.Expiry, "dd/MM/yyyy", null);
+            
             _context.Courses.Add(course);
+            _context.SaveChanges();
 
             return await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
         }
@@ -282,28 +282,20 @@ namespace QardlessAPI.Data
         {
             if (newCourse == null)
                     throw new ArgumentNullException(nameof(newCourse));
-
-            Course course = new Course()
+            
+            var course = new Course()
             {
                 Id = new Guid(),
                 BusinessId = newCourse.BusinessId,
                 Title = newCourse.Title,
-                CourseDate = newCourse.CourseDate,
-                Expiry = newCourse.Expiry
+                CourseDate = DateTime.ParseExact(newCourse.CourseDate, "dd/MM/yyyy", null),
+                Expiry = DateTime.ParseExact(newCourse.CourseDate, "dd/MM/yyyy", null),
             };
 
             _context.Courses.Add(course);
             _context.SaveChanges();
 
-            CourseReadDto courseDto = new CourseReadDto()
-            {
-                BusinessId = course.BusinessId,
-                Title = course.Title,
-                CourseDate = course.CourseDate,
-                Expiry = course.Expiry
-            };
-            
-            return courseDto;
+            return newCourse;
         }
 
         public void DeleteCourse(Course? course)

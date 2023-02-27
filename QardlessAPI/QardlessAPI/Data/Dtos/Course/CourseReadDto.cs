@@ -2,10 +2,9 @@
 {
     public class CourseReadDto
     {
-        public Guid Id { get; set; }
         public Guid BusinessId { get; set; }
         public string Title { get; set; }
-        public DateOnly CourseDate { get; set; }
-        public DateOnly Expiry { get; set; }
+        public string CourseDate { get; set; }
+        public string Expiry { get; set; }
     }
 }
