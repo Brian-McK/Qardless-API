@@ -261,7 +261,9 @@ namespace QardlessAPI.Data
 
         public async Task<Course?> GetCourseById(Guid id)
         {
-            return await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
+            var course = await _context.Courses.FindAsync(id);
+
+            return course;
         }
 
         public async Task<Course?> UpdateCourseDetails(Guid id, CourseReadDto courseForUpdate)

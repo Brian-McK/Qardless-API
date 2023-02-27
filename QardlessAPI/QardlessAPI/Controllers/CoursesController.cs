@@ -40,9 +40,7 @@ namespace QardlessAPI.Controllers
         {
             var course = await _repo.GetCourseById(id);
 
-            if (course == null) return BadRequest();
-
-            return Ok(_mapper.Map<CourseReadDto>(course));
+            return Ok(course);
         }
 
         // PUT: api/Courses/5
