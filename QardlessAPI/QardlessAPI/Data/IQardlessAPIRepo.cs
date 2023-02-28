@@ -41,7 +41,7 @@ namespace QardlessAPI.Data
 
         // WEB APP - GOAL 6
         void AddNewCertificate(CertificateCreateDto certForCreation);
-        void AssignCert(CertToAssignDto certToAssign);
+        void AssignCert(Certificate certificate);
 
         void DeleteCertificate(Certificate? certificate);
         #endregion

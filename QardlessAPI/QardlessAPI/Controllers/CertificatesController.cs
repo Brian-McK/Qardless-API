@@ -70,7 +70,7 @@ namespace QardlessAPI.Controllers
 
         // POST: api/Certificates
         [HttpPost("/certificates")]
-        public async Task<ActionResult<Certificate?>> AddNewCertificate(CertificateCreateDto certificateForCreation)
+        public async Task<ActionResult<CertificateCreateDto?>> AddNewCertificate(CertificateCreateDto certificateForCreation)
         {
             if (certificateForCreation == null)
                 return BadRequest();
@@ -79,8 +79,12 @@ namespace QardlessAPI.Controllers
             
             return Created("/certificates", certificateForCreation);
         }
-
-        // WEB APP - BUSINESS LOGIC - ASSIGN CERT TO ENDUSER 
+        
+        // Commented out the below code as we dont need a controller to assign a cert. The assign a cert is
+        // done in the create a certificate. We then populate the certificate list in the end user object. Kept this
+        // commented if we need still need it.
+        
+        /*// WEB APP - BUSINESS LOGIC - ASSIGN CERT TO ENDUSER 
         // PUT : api/enduser/7/cert
         [HttpPut("enduser/{id}/certificates")]
         public async Task<ActionResult> AssignCertToEndUser(CertToAssignDto certToAssign)
@@ -91,7 +95,7 @@ namespace QardlessAPI.Controllers
             await Task.Run(() => _repo.AssignCert(certToAssign));
 
             return Ok();
-        }
+        }*/
 
         // DELETE: api/Certificates/5
         [HttpDelete("/certificates/{id}")]

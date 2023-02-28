@@ -218,7 +218,7 @@ namespace QardlessAPI.Data
             var endUser = FindEndUserByEmail(certForCreation.EndUserEmail).Result;
 
             if (endUser == null)
-                throw new ArgumentNullException(nameof(certForCreation));
+                throw new ArgumentNullException(nameof(endUser));
 
             var cert = new Certificate
             {
@@ -231,22 +231,29 @@ namespace QardlessAPI.Data
             };
 
             _context.Certificates.Add(cert);
-            _context.SaveChanges();
+            
+            AssignCert(cert);
         }
 
         // WEB APP - ASSIGN/UNASSIGN CERT
-        public void AssignCert(CertToAssignDto certToAssign)
+        public void AssignCert(Certificate certificate)
         {
-            if (certToAssign == null)
-                throw new ArgumentNullException(nameof(certToAssign));
+            var cert =  _context.Certificates.Find(certificate.Id);
+            
+            if(cert == null)
+                throw new ArgumentNullException(nameof(cert));
+            
+            if(!certificate.Equals(cert))
+                throw new Exception("Created certificate doesnt match");
 
-            Certificate? cert = _context.Certificates.FirstOrDefault(c => c.CertNumber == certToAssign.CertNumber);
-            EndUser? endUser = _context.EndUsers.FirstOrDefault(e => e.Email == certToAssign.EndUserEmail);
-
-            if (!certToAssign.ToAssign)
-                endUser.EndUserCerts.Remove(cert);
-
+            var endUser = _context.EndUsers.Include(i => i.EndUserCerts).FirstOrDefault(e => e.Id == cert.EndUserId);
+            
+            if(endUser == null)
+                throw new ArgumentNullException(nameof(endUser));
+            
             endUser.EndUserCerts.Add(cert);
+            
+            _context.SaveChanges();
         }
 
         public void DeleteCertificate(Certificate? certificate)
