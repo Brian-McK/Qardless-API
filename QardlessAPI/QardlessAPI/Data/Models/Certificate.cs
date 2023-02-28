@@ -7,14 +7,18 @@ namespace QardlessAPI.Data.Models
     {
         [Key]
         public Guid Id { get; set; }
-
+        
         [Required]
-        [ForeignKey("CourseId")]
         public Guid CourseId { get; set; }
-
+        
+        [ForeignKey("CourseId")]
+        public virtual Course Course { get; set; }
+        
         [Required]
-        [ForeignKey("EndUserId")]
         public Guid EndUserId { get; set; }
+        
+        [ForeignKey("EndUserId")]
+        public virtual EndUser EndUser { get; set; }
 
         [Required]
         public string CertNumber { get; set; }

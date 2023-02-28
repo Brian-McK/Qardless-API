@@ -32,7 +32,7 @@ namespace QardlessAPI.Controllers
             if (endUsers == null)
                 return NotFound();
 
-            return Ok(_mapper.Map<IEnumerable<EndUserReadFullDto>>(endUsers));
+            return Ok(endUsers);
         }
 
         // GET: api/EndUsers/5

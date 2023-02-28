@@ -179,18 +179,24 @@ namespace QardlessAPI.Data
         #region Certificate
         public async Task<IEnumerable<Certificate?>> ListAllCertificates()
         {
-            return await _context.Certificates.ToListAsync();
+            return await _context.Certificates
+                .Include(c => c.Course)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Certificate?>> GetCertificatesByEndUserId(Guid id)
         {
             return await _context.Certificates
+                .Include(c => c.Course)
                 .Where(c => c.EndUserId == id).ToListAsync();
         }
 
         public async Task<Certificate?> GetCertificateById(Guid id)
         {
-            return await _context.Certificates.FirstOrDefaultAsync(c => c.Id == id);
+            return await _context.Certificates
+                .Include(c => c.Course)
+                .Include(e => e.EndUser)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<Certificate?> UpdateCertificate(Guid id, CertificateUpdateDto certForUpdateDto)
@@ -232,7 +238,9 @@ namespace QardlessAPI.Data
 
             _context.Certificates.Add(cert);
             
-            AssignCert(cert);
+            _context.SaveChanges();
+            
+            // AssignCert(cert);
         }
 
         // WEB APP - ASSIGN/UNASSIGN CERT
@@ -269,7 +277,9 @@ namespace QardlessAPI.Data
 
         public async Task<IEnumerable<Course>> ListAllCourses()
         {
-            return await _context.Courses.ToListAsync();
+            return await _context.Courses
+                .Include(b => b.Business)
+                .ToListAsync();
         }
 
         public async Task<Course?> GetCourseById(Guid id)
@@ -364,7 +374,9 @@ namespace QardlessAPI.Data
         #region Employee
         public async Task<IEnumerable<Employee>> ListAllEmployees()
         {
-            return await _context.Employees.ToListAsync();
+            return await _context.Employees
+                .Include(b => b.Business)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Employee?>> GetEmployeesByBusinessId(Guid id)
@@ -375,7 +387,9 @@ namespace QardlessAPI.Data
 
         public async Task<Employee?> GetEmployeeById(Guid id)
         {
-            return await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
+            return await _context.Employees
+                .Include(b => b.Business)
+                .FirstOrDefaultAsync(e => e.Id == id);
         }
 
         //For Login Controller
@@ -454,7 +468,9 @@ namespace QardlessAPI.Data
         #region EndUser
         public async Task<IEnumerable<EndUser>> ListAllEndUsers()
         {
-            return await _context.EndUsers.ToListAsync();
+            return await _context.EndUsers
+                .Include(e => e.EndUserCerts)
+                .ToListAsync();
         }
 
         public async Task<EndUser?> GetEndUserById(Guid id)

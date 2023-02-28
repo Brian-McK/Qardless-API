@@ -37,7 +37,7 @@ namespace QardlessAPI.Controllers
             if (certs == null)
                 return NotFound();
 
-            return Ok(_mapper.Map<IEnumerable<CertificateReadFullDto>>(certs));
+            return Ok(certs);
         }
 
         // GET: api/Certificates/5

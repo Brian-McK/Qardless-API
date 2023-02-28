@@ -26,6 +26,6 @@ namespace QardlessAPI.Data.Models
 
         public DateTime LastLoginDate { get; set; }
 
-        public List<Certificate> EndUserCerts { get; set; }
+        public virtual List<Certificate> EndUserCerts { get; set; }
     }
 }
