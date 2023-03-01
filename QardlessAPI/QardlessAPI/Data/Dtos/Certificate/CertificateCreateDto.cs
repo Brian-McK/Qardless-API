@@ -5,6 +5,8 @@ namespace QardlessAPI.Data.Dtos.Certificate
     public class CertificateCreateDto
     {
         public Guid CourseId { get; set; }
+        
+        public string EndUserEmail { get; set; }
 
         public string CertNumber { get; set; }
 

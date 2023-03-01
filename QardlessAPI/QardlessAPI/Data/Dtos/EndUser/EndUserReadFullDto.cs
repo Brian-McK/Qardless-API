@@ -9,5 +9,6 @@
         public string? ContactNumber { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime LastLoginDate { get; set; }
+        public List<Models.Certificate> EndUserCerts { get; set; }
     }
 }

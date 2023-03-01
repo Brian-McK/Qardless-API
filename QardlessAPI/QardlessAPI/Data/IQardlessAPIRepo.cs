@@ -2,6 +2,7 @@
 using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Dtos.Business;
 using QardlessAPI.Data.Dtos.Certificate;
+using QardlessAPI.Data.Dtos.Course;
 using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
@@ -37,8 +38,22 @@ namespace QardlessAPI.Data
         Task<IEnumerable<Certificate?>> GetCertificatesByEndUserId(Guid id);
         Task<Certificate?> GetCertificateById(Guid id);
         Task<Certificate?> UpdateCertificate(Guid id, CertificateUpdateDto certForUpdateDto);
+
+        // WEB APP - GOAL 6
         void AddNewCertificate(CertificateCreateDto certForCreation);
+        void AssignCert(Certificate certificate);
+
         void DeleteCertificate(Certificate? certificate);
+        #endregion
+
+        #region Course 
+
+        Task<IEnumerable<Course>> ListAllCourses();
+        Task<Course?> GetCourseById(Guid id);
+        Task<Course?> UpdateCourseDetails(Guid id, CourseReadDto courseForUpdate);
+        CourseReadDto AddNewCourse(CourseReadDto newCourse);
+        void DeleteCourse(Course? course);
+
         #endregion
 
         #region FlaggedIssue
@@ -63,6 +78,7 @@ namespace QardlessAPI.Data
         #region EndUser
         Task<IEnumerable<EndUser>> ListAllEndUsers();
         Task<EndUser?> GetEndUserById(Guid id);
+        Task<EndUser?> FindEndUserByEmail(string email);
         Task<EndUser?> GetEndUserByEmail(LoginDto endUserLoginDto);
         Task<EndUser?> UpdateEndUserDetails(Guid id, EndUserUpdateDto endUserUpdateDto);
         EndUserReadPartialDto AddNewEndUser(EndUserCreateDto endUserForCreation);
@@ -81,6 +97,6 @@ namespace QardlessAPI.Data
         public string HashPassword(string Password);
 
         #endregion
-
+        
     }
 }

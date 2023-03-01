@@ -27,12 +27,12 @@ namespace QardlessAPI.Controllers
         [HttpGet("/employees")]
         public async Task<ActionResult<Employee>> AllEmployees()
         {
-            var emps = await _repo.ListAllEmployees();
+            var employees = await _repo.ListAllEmployees();
 
-            if (emps == null) 
+            if (employees == null) 
                 return NotFound();
 
-            return Ok(_mapper.Map<IEnumerable<EmployeeReadFullDto>>(emps));
+            return Ok(employees);
         }
 
         // GET: api/Employees/5
@@ -44,7 +44,7 @@ namespace QardlessAPI.Controllers
             if( emp ==null) 
                 return BadRequest();
 
-            return Ok(_mapper.Map<EmployeeReadFullDto>(emp));
+            return Ok(emp);
         }
 
         //Task<IEnumerable<Employee?>> GetEmployeesById(Guid id); //TODO: Businesses controller

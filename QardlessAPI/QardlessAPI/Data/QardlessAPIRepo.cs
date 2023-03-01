@@ -3,6 +3,7 @@ using QardlessAPI.Data.Dtos.Admin;
 using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Dtos.Business;
 using QardlessAPI.Data.Dtos.Certificate;
+using QardlessAPI.Data.Dtos.Course;
 using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
@@ -178,18 +179,23 @@ namespace QardlessAPI.Data
         #region Certificate
         public async Task<IEnumerable<Certificate?>> ListAllCertificates()
         {
-            return await _context.Certificates.ToListAsync();
+            return await _context.Certificates
+                .Include(c => c.Course)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Certificate?>> GetCertificatesByEndUserId(Guid id)
         {
             return await _context.Certificates
+                .Include(c => c.Course)
                 .Where(c => c.EndUserId == id).ToListAsync();
         }
 
         public async Task<Certificate?> GetCertificateById(Guid id)
         {
-            return await _context.Certificates.FirstOrDefaultAsync(c => c.Id == id);
+            return await _context.Certificates
+                .Include(c => c.Course)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<Certificate?> UpdateCertificate(Guid id, CertificateUpdateDto certForUpdateDto)
@@ -213,17 +219,47 @@ namespace QardlessAPI.Data
         {
             if (certForCreation == null)
                 throw new ArgumentNullException(nameof(certForCreation));
+            
+            var endUser = FindEndUserByEmail(certForCreation.EndUserEmail).Result;
 
-            Certificate cert = new Certificate
+            if (endUser == null)
+                throw new ArgumentNullException(nameof(endUser));
+
+            var cert = new Certificate
             {
                 Id = new Guid(),
                 CourseId = certForCreation.CourseId,
+                EndUserId = endUser.Id,
                 CertNumber = certForCreation.CertNumber,
                 PdfUrl = certForCreation.PdfUrl,
                 CreatedAt = DateTime.Now
             };
 
             _context.Certificates.Add(cert);
+            
+            _context.SaveChanges();
+            
+            // AssignCert(cert);
+        }
+
+        // WEB APP - ASSIGN/UNASSIGN CERT
+        public void AssignCert(Certificate certificate)
+        {
+            var cert =  _context.Certificates.Find(certificate.Id);
+            
+            if(cert == null)
+                throw new ArgumentNullException(nameof(cert));
+            
+            if(!certificate.Equals(cert))
+                throw new Exception("Created certificate doesnt match");
+
+            var endUser = _context.EndUsers.Include(i => i.EndUserCerts).FirstOrDefault(e => e.Id == cert.EndUserId);
+            
+            if(endUser == null)
+                throw new ArgumentNullException(nameof(endUser));
+            
+            endUser.EndUserCerts.Add(cert);
+            
             _context.SaveChanges();
         }
 
@@ -235,6 +271,62 @@ namespace QardlessAPI.Data
             _context.Certificates.Remove(certificate);
         }
         #endregion
+
+        #region Course 
+
+        public async Task<IEnumerable<Course>> ListAllCourses()
+        {
+            return await _context.Courses.ToListAsync();
+        }
+
+        public Task<Course> GetCourseById(Guid id)
+        {
+            var course = _context.Courses.Include(c => c.BusinessId).FirstAsync(b => b.Id == id);
+
+            return course;
+        }
+
+        public async Task<Course?> UpdateCourseDetails(Guid id, CourseReadDto courseForUpdate)
+        {
+            Course? course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
+
+            course.Title = courseForUpdate.Title;
+            course.CourseDate = DateTime.ParseExact(courseForUpdate.CourseDate, "dd/MM/yyyy", null);
+            course.Expiry = DateTime.ParseExact(courseForUpdate.Expiry, "dd/MM/yyyy", null);
+            
+            _context.Courses.Add(course);
+            _context.SaveChanges();
+
+            return await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public CourseReadDto AddNewCourse(CourseReadDto newCourse)
+        {
+            if (newCourse == null)
+                    throw new ArgumentNullException(nameof(newCourse));
+            
+            var course = new Course()
+            {
+                Id = new Guid(),
+                BusinessId = newCourse.BusinessId,
+                Title = newCourse.Title,
+                CourseDate = DateTime.ParseExact(newCourse.CourseDate, "dd/MM/yyyy", null),
+                Expiry = DateTime.ParseExact(newCourse.CourseDate, "dd/MM/yyyy", null),
+            };
+
+            _context.Courses.Add(course);
+            _context.SaveChanges();
+
+            return newCourse;
+        }
+
+        public void DeleteCourse(Course? course)
+        {
+            if(course == null) throw new ArgumentNullException(nameof(course));
+            _context .Courses.Remove(course);
+        }
+
+        #endregion#
 
         #region FlaggedIssue
         public async Task<IEnumerable<FlaggedIssue?>> GetFlaggedIssues()
@@ -279,7 +371,9 @@ namespace QardlessAPI.Data
         #region Employee
         public async Task<IEnumerable<Employee>> ListAllEmployees()
         {
-            return await _context.Employees.ToListAsync();
+            return await _context.Employees
+                .Include(b => b.Business)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Employee?>> GetEmployeesByBusinessId(Guid id)
@@ -290,7 +384,9 @@ namespace QardlessAPI.Data
 
         public async Task<Employee?> GetEmployeeById(Guid id)
         {
-            return await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
+            return await _context.Employees
+                .Include(b => b.Business)
+                .FirstOrDefaultAsync(e => e.Id == id);
         }
 
         //For Login Controller
@@ -369,12 +465,27 @@ namespace QardlessAPI.Data
         #region EndUser
         public async Task<IEnumerable<EndUser>> ListAllEndUsers()
         {
-            return await _context.EndUsers.ToListAsync();
+            return await _context.EndUsers
+                .Include(e => e.EndUserCerts)
+                .ToListAsync();
         }
 
         public async Task<EndUser?> GetEndUserById(Guid id)
         {
-            return await _context.EndUsers.FirstOrDefaultAsync(e => e.Id == id);
+            return await _context.EndUsers
+                .Where(e => e.Id == id)
+                .Include(e => e.EndUserCerts)
+                .FirstOrDefaultAsync();
+        }
+
+        public Task <EndUser?> FindEndUserByEmail(string email)
+        {
+            var user = _context.EndUsers.Where(e => e.Email == email).Select(e => e);
+
+            var e =  _context.EndUsers.FirstOrDefault(e => e.Email.Contains(email));
+
+            return Task.FromResult(e);
+
         }
 
         //For login controller

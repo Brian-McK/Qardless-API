@@ -14,9 +14,9 @@ namespace QardlessAPI.Data.Models
 
         public string Title { get; set; }
 
-        public DateOnly CourseDate { get; set; }
+        public DateTime CourseDate { get; set; }
 
-        public DateOnly Expiry { get; set; }
+        public DateTime Expiry { get; set; }
 
     }
 }
