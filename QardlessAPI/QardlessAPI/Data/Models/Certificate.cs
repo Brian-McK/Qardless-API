@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace QardlessAPI.Data.Models
 {
@@ -12,13 +13,12 @@ namespace QardlessAPI.Data.Models
         public Guid CourseId { get; set; }
         
         [ForeignKey("CourseId")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public virtual Course Course { get; set; }
         
         [Required]
-        public Guid EndUserId { get; set; }
-        
         [ForeignKey("EndUserId")]
-        public virtual EndUser EndUser { get; set; }
+        public Guid EndUserId { get; set; }
 
         [Required]
         public string CertNumber { get; set; }

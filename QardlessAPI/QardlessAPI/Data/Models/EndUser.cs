@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace QardlessAPI.Data.Models
 {
@@ -25,7 +26,8 @@ namespace QardlessAPI.Data.Models
         public DateTime CreatedAt { get; set; }
 
         public DateTime LastLoginDate { get; set; }
-
+        
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public virtual List<Certificate> EndUserCerts { get; set; }
     }
 }

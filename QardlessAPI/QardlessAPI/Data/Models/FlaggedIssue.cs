@@ -21,9 +21,7 @@ namespace QardlessAPI.Data.Models
         public DateTime CreatedAt { get; set; }
 
         [Required]
-        public Guid EndUserId { get; set; }
-        
         [ForeignKey("EndUserId")]
-        public virtual EndUser EndUser { get; set; }
+        public Guid EndUserId { get; set; }
     }
 }

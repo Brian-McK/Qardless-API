@@ -9,10 +9,8 @@ namespace QardlessAPI.Data.Models
         public Guid Id { get; set; }
 
         [Required]
-        public Guid BusinessId { get; set; }
-        
         [ForeignKey("BusinessId")]
-        public virtual Business Business { get; set; }
+        public Guid BusinessId { get; set; }
 
         public string Title { get; set; }
 

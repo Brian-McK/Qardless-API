@@ -195,7 +195,6 @@ namespace QardlessAPI.Data
         {
             return await _context.Certificates
                 .Include(c => c.Course)
-                .Include(e => e.EndUser)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
@@ -277,14 +276,12 @@ namespace QardlessAPI.Data
 
         public async Task<IEnumerable<Course>> ListAllCourses()
         {
-            return await _context.Courses
-                .Include(b => b.Business)
-                .ToListAsync();
+            return await _context.Courses.ToListAsync();
         }
 
-        public async Task<Course?> GetCourseById(Guid id)
+        public Task<Course> GetCourseById(Guid id)
         {
-            var course = await _context.Courses.FindAsync(id);
+            var course = _context.Courses.Include(c => c.BusinessId).FirstAsync(b => b.Id == id);
 
             return course;
         }
@@ -475,7 +472,10 @@ namespace QardlessAPI.Data
 
         public async Task<EndUser?> GetEndUserById(Guid id)
         {
-            return await _context.EndUsers.FirstOrDefaultAsync(e => e.Id == id);
+            return await _context.EndUsers
+                .Where(e => e.Id == id)
+                .Include(e => e.EndUserCerts)
+                .FirstOrDefaultAsync();
         }
 
         public Task <EndUser?> FindEndUserByEmail(string email)
