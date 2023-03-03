@@ -227,7 +227,7 @@ namespace QardlessAPI.Data
 
             var cert = new Certificate
             {
-                Id = new Guid(),
+                Id = Guid.NewGuid(),
                 CourseId = certForCreation.CourseId,
                 EndUserId = endUser.Id,
                 CertNumber = certForCreation.CertNumber,
@@ -260,6 +260,26 @@ namespace QardlessAPI.Data
             
             endUser.EndUserCerts.Add(cert);
             
+            _context.SaveChanges();
+        }
+
+        // WEB APP - FREEZE CERT
+        public void FreezeCertificate(Certificate certificate)
+        {
+            if(certificate == null) throw new ArgumentNullException(nameof(certificate));
+
+            certificate.IsFrozen = true;
+
+            _context.SaveChanges();
+        }
+
+        // WEB APP - UNFREEZE CERT
+        public void UnfreezeCertificate(Certificate certificate)
+        {
+            if (certificate == null) throw new ArgumentNullException(nameof(certificate));
+
+            certificate.IsFrozen = false;
+
             _context.SaveChanges();
         }
 
