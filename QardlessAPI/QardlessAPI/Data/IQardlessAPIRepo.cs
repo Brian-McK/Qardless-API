@@ -43,6 +43,7 @@ namespace QardlessAPI.Data
         void AddNewCertificate(CertificateCreateDto certForCreation);
         void AssignCert(Certificate certificate);
         void FreezeCertificate(Certificate certificate);
+        void UnfreezeCertificate(Certificate certificate);
 
         void DeleteCertificate(Certificate? certificate);
         #endregion

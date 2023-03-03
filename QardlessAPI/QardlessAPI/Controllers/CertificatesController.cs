@@ -113,6 +113,20 @@ namespace QardlessAPI.Controllers
             return Ok();
         }
 
+        // WEB APP - UNFREEZE CERT
+        // PUT: api/certificates/unfreeze/5
+        [HttpPut("/certificates/{id}/unfreeze")]
+        public async Task<ActionResult> UnfreezeEndUserCert(Guid id)
+        {
+            var cert = await _repo.GetCertificateById(id);
+
+            if (cert == null) return NotFound();
+
+            _repo.UnfreezeCertificate(cert);
+
+            return Ok();
+        }
+
         // DELETE: api/Certificates/5
         [HttpDelete("/certificates/{id}")]
         public async Task<IActionResult> DeleteCertificate(Guid id)
