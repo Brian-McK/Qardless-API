@@ -79,12 +79,13 @@ namespace QardlessAPI.Controllers
             
             return Created("/certificates", certificateForCreation);
         }
-        
+
+        #region WEB APP - BUSINESS LOGIC - ASSIGN CERT TO ENDUSER (NOT IMPLEMENTED HERE)
         // Commented out the below code as we dont need a controller to assign a cert. The assign a cert is
         // done in the create a certificate. We then populate the certificate list in the end user object. Kept this
         // commented if we need still need it.
-        
-        /*// WEB APP - BUSINESS LOGIC - ASSIGN CERT TO ENDUSER 
+
+        /* 
         // PUT : api/enduser/7/cert
         [HttpPut("enduser/{id}/certificates")]
         public async Task<ActionResult> AssignCertToEndUser(CertToAssignDto certToAssign)
@@ -96,6 +97,22 @@ namespace QardlessAPI.Controllers
 
             return Ok();
         }*/
+        #endregion
+
+        // WEB APP - FREEZE CERT
+        // POST: api/certificates/freeze/5
+        [HttpPost("/certificates/freeze/{id}")]
+        public async Task<ActionResult> FreezeEndUserCert(Guid id)
+        {
+            var cert = await _repo.GetCertificateById(id);
+
+            if(cert == null) return NotFound();
+
+            _repo.FreezeCertificate(cert);
+            _repo.SaveChanges();
+
+            return Ok();
+        }
 
         // DELETE: api/Certificates/5
         [HttpDelete("/certificates/{id}")]

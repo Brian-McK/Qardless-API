@@ -28,5 +28,7 @@ namespace QardlessAPI.Data.Models
 
         [Required]
         public DateTime CreatedAt { get; set; }
+
+        public bool IsFrozen { get; set; }
     }
 }

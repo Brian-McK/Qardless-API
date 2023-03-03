@@ -263,6 +263,16 @@ namespace QardlessAPI.Data
             _context.SaveChanges();
         }
 
+        // WEB APP - FREEZE CERT
+        public void FreezeCertificate(Certificate certificate)
+        {
+            if(certificate == null) throw new ArgumentNullException(nameof(certificate));
+
+            certificate.IsFrozen = true;
+
+            _context.SaveChanges();
+        }
+
         public void DeleteCertificate(Certificate? certificate)
         {
             if (certificate == null)
