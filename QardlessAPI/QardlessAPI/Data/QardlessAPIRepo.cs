@@ -227,7 +227,7 @@ namespace QardlessAPI.Data
 
             var cert = new Certificate
             {
-                Id = new Guid(),
+                Id = Guid.NewGuid(),
                 CourseId = certForCreation.CourseId,
                 EndUserId = endUser.Id,
                 CertNumber = certForCreation.CertNumber,

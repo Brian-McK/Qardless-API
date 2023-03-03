@@ -100,8 +100,8 @@ namespace QardlessAPI.Controllers
         #endregion
 
         // WEB APP - FREEZE CERT
-        // POST: api/certificates/freeze/5
-        [HttpPost("/certificates/freeze/{id}")]
+        // PUT: api/certificates/freeze/5
+        [HttpPut("/certificates/{id}/freeze")]
         public async Task<ActionResult> FreezeEndUserCert(Guid id)
         {
             var cert = await _repo.GetCertificateById(id);
@@ -109,7 +109,6 @@ namespace QardlessAPI.Controllers
             if(cert == null) return NotFound();
 
             _repo.FreezeCertificate(cert);
-            _repo.SaveChanges();
 
             return Ok();
         }
