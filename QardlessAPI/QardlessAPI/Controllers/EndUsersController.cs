@@ -103,7 +103,7 @@ namespace QardlessAPI.Controllers
 
 
         // WEB APP - UNASSIGN CERT
-        [HttpPut("/endusers/{id}/certificates")]
+        [HttpPut("/endusers/certificates/unassign/{id}")]
         public async Task<ActionResult> UnassignCertFromEndUser(CertificateReadPartialDto cert)
         {
             if(cert== null)
