@@ -101,6 +101,19 @@ namespace QardlessAPI.Controllers
             return Ok();
         }*/
 
+
+        // WEB APP - UNASSIGN CERT
+        [HttpPut("/endusers/certificates/unassign/{id}")]
+        public async Task<ActionResult> UnassignCertFromEndUser(CertificateReadPartialDto cert)
+        {
+            if(cert== null)
+                return BadRequest();
+
+            await Task.Run(() => _repo.UnassignCert(cert));
+
+            return Ok();
+        }
+
         // Business logic: Logout EndUser
         // POST: api/EndUsers
         [HttpPost("/endusers/logout")]

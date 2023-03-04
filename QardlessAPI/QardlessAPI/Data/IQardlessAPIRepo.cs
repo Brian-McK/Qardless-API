@@ -42,6 +42,7 @@ namespace QardlessAPI.Data
         // WEB APP - GOAL 6
         void AddNewCertificate(CertificateCreateDto certForCreation);
         void AssignCert(Certificate certificate);
+        void UnassignCert(CertificateReadPartialDto certToUnassign);
         void FreezeCertificate(Certificate certificate);
         void UnfreezeCertificate(Certificate certificate);
 
