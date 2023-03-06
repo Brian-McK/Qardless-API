@@ -24,6 +24,19 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     )
 );
 
+builder.Services.AddCors(options =>  
+{  
+      
+    options.AddDefaultPolicy(  
+        policy =>
+        {
+            policy.WithOrigins("*")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowAnyOrigin();
+        });  
+});  
+
 // Service Lifetime: Scoped, created once per request.
 builder.Services.AddScoped<IQardlessAPIRepo, QardlessAPIRepo>();
 
@@ -31,6 +44,8 @@ builder.Services.AddScoped<IQardlessAPIRepo, QardlessAPIRepo>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
+
+app.UseCors();  
 
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
