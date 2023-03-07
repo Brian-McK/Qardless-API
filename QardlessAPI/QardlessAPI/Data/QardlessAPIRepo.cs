@@ -319,6 +319,11 @@ namespace QardlessAPI.Data
         {
             return await _context.Courses.ToListAsync();
         }
+        
+        public async Task<IEnumerable<Course>> ListCoursesByBusinessId(Guid id)
+        {
+            return await _context.Courses.Where(c => c.BusinessId == id).OrderBy(c => c.CourseDate).ToListAsync();
+        }
 
         public Task<Course> GetCourseById(Guid id)
         {

@@ -42,6 +42,17 @@ namespace QardlessAPI.Controllers
 
             return Ok(course);
         }
+        
+        // GET: api/Courses/Businesses/5
+        [HttpGet("/courses/businesses/{id}")]
+        public async Task<ActionResult<Course>> CoursesByBusinessId(Guid id)
+        {
+            if (id == null) return BadRequest();
+
+            var courses = await _repo.ListCoursesByBusinessId(id);
+
+            return Ok(_mapper.Map<IEnumerable<Course>>(courses));
+        }
 
         // PUT: api/Courses/5
         [HttpPut("/courses/{id}")]

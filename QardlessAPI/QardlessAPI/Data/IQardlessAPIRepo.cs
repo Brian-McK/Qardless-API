@@ -52,6 +52,7 @@ namespace QardlessAPI.Data
         #region Course 
 
         Task<IEnumerable<Course>> ListAllCourses();
+        Task<IEnumerable<Course>> ListCoursesByBusinessId(Guid id);
         Task<Course?> GetCourseById(Guid id);
         Task<Course?> UpdateCourseDetails(Guid id, CourseReadDto courseForUpdate);
         CourseReadDto AddNewCourse(CourseReadDto newCourse);
