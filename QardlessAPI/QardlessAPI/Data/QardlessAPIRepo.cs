@@ -340,8 +340,9 @@ namespace QardlessAPI.Data
             course.CourseDate = DateTime.ParseExact(courseForUpdate.CourseDate, "dd/MM/yyyy", null);
             course.Expiry = DateTime.ParseExact(courseForUpdate.Expiry, "dd/MM/yyyy", null);
             
-            _context.Courses.Add(course);
-            _context.SaveChanges();
+            _context.Courses.Update(course);
+            
+            await _context.SaveChangesAsync();
 
             return await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
         }
