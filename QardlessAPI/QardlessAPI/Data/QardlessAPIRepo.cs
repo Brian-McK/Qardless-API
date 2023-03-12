@@ -215,7 +215,7 @@ namespace QardlessAPI.Data
         }
 
         // WEB APP  - CREATE CERT
-        public CertificateCreateDto AddNewCertificate(CertificateCreateDto certForCreation)
+        public Certificate AddNewCertificate(CertificateCreateDto certForCreation)
         {
             if (certForCreation == null)
                 throw new ArgumentNullException(nameof(certForCreation));
@@ -232,15 +232,16 @@ namespace QardlessAPI.Data
                 EndUserId = endUser.Id,
                 CertNumber = certForCreation.CertNumber,
                 PdfUrl = certForCreation.PdfUrl,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.Now,
+                IsFrozen = false
             };
 
             _context.Certificates.Add(cert);
             
             _context.SaveChanges();
 
-            return certForCreation;
-            
+            return cert;
+
             // AssignCert(cert);
         }
 
@@ -329,7 +330,7 @@ namespace QardlessAPI.Data
 
         public Task<Course> GetCourseById(Guid id)
         {
-            var course = _context.Courses.Include(c => c.BusinessId).FirstAsync(b => b.Id == id);
+            var course = _context.Courses.Where(c => c.Id == id).FirstOrDefaultAsync();
 
             return course;
         }
@@ -342,8 +343,9 @@ namespace QardlessAPI.Data
             course.CourseDate = DateTime.ParseExact(courseForUpdate.CourseDate, "dd/MM/yyyy", null);
             course.Expiry = DateTime.ParseExact(courseForUpdate.Expiry, "dd/MM/yyyy", null);
             
-            _context.Courses.Add(course);
-            _context.SaveChanges();
+            _context.Courses.Update(course);
+            
+            await _context.SaveChangesAsync();
 
             return await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
         }

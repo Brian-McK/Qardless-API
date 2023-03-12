@@ -70,14 +70,16 @@ namespace QardlessAPI.Controllers
 
         // POST: api/Certificates
         [HttpPost("/certificates")]
-        public async Task<ActionResult<CertificateCreateDto?>> AddNewCertificate(CertificateCreateDto certificateForCreation)
+        public async Task<ActionResult<Certificate?>> AddNewCertificate(CertificateCreateDto certificateForCreation)
         {
             if (certificateForCreation == null)
                 return BadRequest();
             
-            await Task.Run(() => _repo.AddNewCertificate(certificateForCreation));
-            
-            return Created("/certificates", certificateForCreation);
+            var cert =  _repo.AddNewCertificate(certificateForCreation);
+
+            if (cert == null) return BadRequest();
+
+            return Created("/certificates", cert);
         }
 
         #region WEB APP - BUSINESS LOGIC - ASSIGN CERT TO ENDUSER (NOT IMPLEMENTED HERE)
