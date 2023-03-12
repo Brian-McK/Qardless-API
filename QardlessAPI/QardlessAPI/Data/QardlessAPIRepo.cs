@@ -215,7 +215,7 @@ namespace QardlessAPI.Data
         }
 
         // WEB APP  - CREATE CERT
-        public void AddNewCertificate(CertificateCreateDto certForCreation)
+        public Certificate AddNewCertificate(CertificateCreateDto certForCreation)
         {
             if (certForCreation == null)
                 throw new ArgumentNullException(nameof(certForCreation));
@@ -232,13 +232,16 @@ namespace QardlessAPI.Data
                 EndUserId = endUser.Id,
                 CertNumber = certForCreation.CertNumber,
                 PdfUrl = certForCreation.PdfUrl,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.Now,
+                IsFrozen = false
             };
 
             _context.Certificates.Add(cert);
             
             _context.SaveChanges();
-            
+
+            return cert;
+
             // AssignCert(cert);
         }
 

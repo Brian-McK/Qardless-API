@@ -40,7 +40,7 @@ namespace QardlessAPI.Data
         Task<Certificate?> UpdateCertificate(Guid id, CertificateUpdateDto certForUpdateDto);
 
         // WEB APP - GOAL 6
-        void AddNewCertificate(CertificateCreateDto certForCreation);
+        Certificate AddNewCertificate(CertificateCreateDto certForCreation);
         void AssignCert(Certificate certificate);
         void UnassignCert(CertificateReadPartialDto certToUnassign);
         void FreezeCertificate(Certificate certificate);
