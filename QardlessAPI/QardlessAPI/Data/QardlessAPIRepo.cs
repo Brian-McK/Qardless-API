@@ -361,7 +361,7 @@ namespace QardlessAPI.Data
                 BusinessId = newCourse.BusinessId,
                 Title = newCourse.Title,
                 CourseDate = DateTime.ParseExact(newCourse.CourseDate, "dd/MM/yyyy", null),
-                Expiry = DateTime.ParseExact(newCourse.CourseDate, "dd/MM/yyyy", null),
+                Expiry = DateTime.ParseExact(newCourse.Expiry, "dd/MM/yyyy", null),
             };
 
             _context.Courses.Add(course);
