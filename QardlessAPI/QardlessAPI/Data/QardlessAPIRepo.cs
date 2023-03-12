@@ -327,7 +327,7 @@ namespace QardlessAPI.Data
 
         public Task<Course> GetCourseById(Guid id)
         {
-            var course = _context.Courses.Include(c => c.BusinessId).FirstAsync(b => b.Id == id);
+            var course = _context.Courses.Where(c => c.Id == id).FirstOrDefaultAsync();
 
             return course;
         }
