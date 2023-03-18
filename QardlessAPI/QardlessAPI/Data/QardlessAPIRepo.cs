@@ -191,6 +191,13 @@ namespace QardlessAPI.Data
                 .Where(c => c.EndUserId == id).ToListAsync();
         }
 
+        public async Task<IEnumerable<Certificate?>> GetCertificateByBusinessId(Guid id)
+        {
+            return await _context.Certificates
+                .Include(c => c.Course)
+                .Where(c => c.Course.BusinessId == id).ToListAsync();
+        }
+
         public async Task<Certificate?> GetCertificateById(Guid id)
         {
             return await _context.Certificates

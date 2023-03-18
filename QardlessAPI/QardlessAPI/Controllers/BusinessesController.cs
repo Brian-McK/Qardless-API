@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Dtos.Business;
@@ -42,6 +41,17 @@ namespace QardlessAPI.Controllers
             if (business == null) return BadRequest();
             
             return Ok(_mapper.Map<BusinessReadFullDto>(business));
+        }
+
+        [HttpGet("/businesses/{id}/certificates")]
+        public async Task<ActionResult<Certificate>> ViewBusinessesCertificates(Guid id)
+        {
+            var businessCerts = await _repo.GetCertificateByBusinessId(id);
+
+            if (businessCerts == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<IEnumerable<Certificate>>(businessCerts));
         }
 
         // PUT: api/Businesses/5
