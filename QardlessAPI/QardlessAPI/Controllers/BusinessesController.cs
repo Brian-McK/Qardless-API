@@ -54,6 +54,17 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<Certificate>>(businessCerts));
         }
 
+        [HttpGet("/businesses/{id}/exp/certificates")]
+        public async Task<ActionResult<Certificate>> ViewCertsDueForRenewalByBusiness(Guid id)
+        {
+            var certs = await _repo.GetCertsDueForRenewal(id);
+
+            if (certs == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<IEnumerable<Certificate>>(certs));
+        }
+
         // PUT: api/Businesses/5
         [HttpPut("/businesses/{id}")]
         public async Task<ActionResult> UpdateBusinessContactDetails(Guid id, BusinessUpdateDto businessUpdateDto)
