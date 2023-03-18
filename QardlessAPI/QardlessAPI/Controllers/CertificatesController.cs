@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Models;
 using QardlessAPI.Data.Dtos.Certificate;
 using AutoMapper;
-using QardlessAPI.Data.Dtos.EndUser;
 
 namespace QardlessAPI.Controllers
 {
@@ -75,7 +68,7 @@ namespace QardlessAPI.Controllers
             if (certificateForCreation == null)
                 return BadRequest();
             
-            var cert =  _repo.AddNewCertificate(certificateForCreation);
+            var cert = _repo.AddNewCertificate(certificateForCreation);
 
             if (cert == null) return BadRequest();
 
