@@ -250,8 +250,6 @@ namespace QardlessAPI.Data
             _context.SaveChanges();
 
             return cert;
-
-            // AssignCert(cert);
         }
 
         // WEB APP - ASSIGN CERT
@@ -322,6 +320,7 @@ namespace QardlessAPI.Data
                 throw new ArgumentNullException(nameof(certificate));
 
             _context.Certificates.Remove(certificate);
+            _context.SaveChanges();
         }
         #endregion
 
