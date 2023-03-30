@@ -457,7 +457,8 @@ namespace QardlessAPI.Data
         //For Login Controller
         public async Task<Employee?> GetEmployeeByEmail(LoginDto empLoginDto)
         {
-            return await _context.Employees.FirstOrDefaultAsync(e => e.Email == empLoginDto.Email);
+            return await _context.Employees
+                .FirstOrDefaultAsync(e => e.Email == empLoginDto.Email);
         }
 
         public async Task<Employee?> UpdateEmployee(Guid id, EmployeeUpdateDto employeeUpdateDto)
@@ -471,8 +472,8 @@ namespace QardlessAPI.Data
             emp.PrivilegeLevel = employeeUpdateDto.PrivilegeLevel;
             emp.BusinessId = employeeUpdateDto.BusinessId;
 
-            _context.SaveChanges();
             _context.Employees.Add(emp);
+            _context.SaveChanges();
 
             return await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
         }
@@ -524,6 +525,7 @@ namespace QardlessAPI.Data
                 throw new ArgumentNullException(nameof(emp));
 
             _context.Employees.Remove(emp);
+            _context.SaveChanges();
         }
         #endregion
 

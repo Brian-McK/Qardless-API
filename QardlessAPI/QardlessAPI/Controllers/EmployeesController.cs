@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Dtos.Authentication;
@@ -23,7 +22,6 @@ namespace QardlessAPI.Controllers
                throw new ArgumentNullException(nameof(mapper));
         }
 
-        // GET: api/Employees
         [HttpGet("/employees")]
         public async Task<ActionResult<Employee>> AllEmployees()
         {
@@ -35,7 +33,6 @@ namespace QardlessAPI.Controllers
             return Ok(employees);
         }
 
-        // GET: api/Employees/5
         [HttpGet("/employees/{id}")]
         public async Task<ActionResult<Employee>> ViewEmployeeById(Guid id)
         {
@@ -47,9 +44,6 @@ namespace QardlessAPI.Controllers
             return Ok(emp);
         }
 
-        //Task<IEnumerable<Employee?>> GetEmployeesById(Guid id); //TODO: Businesses controller
-
-        // PUT: api/Employees/5
         [HttpPut("/employees/{id}")]
         public async Task<IActionResult> UpdateEmployeeDetails(Guid id, EmployeeUpdateDto employeeUpdateDto)
         {
@@ -65,8 +59,7 @@ namespace QardlessAPI.Controllers
             return Accepted(emp);
         }
 
-        // Register Employee
-        // POST: api/Employees
+        // Business logic: Register an Employee
         [HttpPost("/employees")]
         public async Task<ActionResult<EmployeeCreateDto?>> RegisterNewEmployee(EmployeeCreateDto employeeCreateDto)
         {
@@ -79,7 +72,6 @@ namespace QardlessAPI.Controllers
         }
 
         // Business logic: Logout Employee
-        // POST: api/Employees
         [HttpPost("/employees/logout")]
         public async Task<ActionResult<LogoutResponseDto>> LogoutEmployee(
             [FromBody] LogoutRequestDto employeeLogoutRequest)
@@ -97,7 +89,6 @@ namespace QardlessAPI.Controllers
             return Ok(employeeLogoutResponse);
         }
 
-        // DELETE: api/Employees/5
         [HttpDelete("/employees/{id}")]
         public async Task<IActionResult> DeleteEmployee(Guid id)
         {
@@ -106,7 +97,6 @@ namespace QardlessAPI.Controllers
                 return NotFound();
 
             _repo.DeleteEmployee(emp);
-            _repo.SaveChanges();
 
             return Accepted();
         }
