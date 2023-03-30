@@ -104,6 +104,7 @@ namespace QardlessAPI.Data
                 throw new ArgumentNullException(nameof(admin));
 
             _context.Admins.Remove(admin);
+            _context.SaveChanges();
         }
         #endregion
 
