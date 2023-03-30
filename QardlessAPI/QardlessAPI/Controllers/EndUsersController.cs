@@ -23,7 +23,6 @@ namespace QardlessAPI.Controllers
                       throw new ArgumentNullException(nameof(mapper));
         }
 
-        // GET: api/EndUsers
         [HttpGet("/endusers")]
         public async Task<ActionResult<EndUser>> AllEndUsers()
         {
@@ -35,7 +34,6 @@ namespace QardlessAPI.Controllers
             return Ok(endUsers);
         }
 
-        // GET: api/EndUsers/5
         [HttpGet("/endusers/{id}")]
         public async Task<ActionResult<EndUser>> EndUserById(Guid id)
         {
@@ -47,7 +45,6 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<EndUserReadFullDto>(endUser));
         }
 
-        // GET: api/EndUsers/5/Certificates/
         [HttpGet("/endusers/{id}/certificates")]
         public async Task<ActionResult<Certificate>> ViewEndUsersCertificates(Guid id)
         {
@@ -59,7 +56,6 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<CertificateReadFullDto>>(endUserCerts));
         }
 
-        // PUT: api/EndUsers/5
         [HttpPut("/endusers/{id}")]
         public async Task<ActionResult> UpdateEndUserContactDetails(Guid id, EndUserUpdateDto endUserUpdateDto)
         {
@@ -76,7 +72,6 @@ namespace QardlessAPI.Controllers
         }
 
         // Business logic: Register EndUser
-        // POST: api/EndUsers
         [HttpPost("/endusers")]
         public async Task<ActionResult<EndUserCreateDto?>> RegisterNewEndUser(EndUserCreateDto endUserForCreation)
         {
@@ -87,20 +82,6 @@ namespace QardlessAPI.Controllers
 
             return Created("/endusers", endUserReadPartialDto);
         }
-
-        /*// Business logic: Assign cert to enduser
-        // PUT : api/enduser/7/cert
-        [HttpPut("enduser/{id}/certificates")]
-        public async Task<ActionResult> AssignCertToEndUser(CertToAssignDto certToAssign)
-        {
-            if(certToAssign == null)
-                return BadRequest();
-
-            await Task.Run(() => _repo.AssignCert(certToAssign));
-
-            return Ok();
-        }*/
-
 
         // WEB APP - UNASSIGN CERT
         [HttpPut("/endusers/certificates/unassign/{id}")]
@@ -115,7 +96,6 @@ namespace QardlessAPI.Controllers
         }
 
         // Business logic: Logout EndUser
-        // POST: api/EndUsers
         [HttpPost("/endusers/logout")]
         public async Task<ActionResult<LogoutResponseDto>> LogoutEndUser(
             [FromBody] LogoutRequestDto endUserLogoutRequest)
@@ -134,7 +114,6 @@ namespace QardlessAPI.Controllers
             return Ok(endUserLogoutResponse);
         }
 
-        // DELETE: api/EndUsers/5
         [HttpDelete("/endusers/{id}")]
         public async Task<IActionResult> DeleteEndUser(Guid id)
         {
@@ -143,7 +122,6 @@ namespace QardlessAPI.Controllers
                 return NotFound();
 
             _repo.DeleteEndUser(endUser);
-            _repo.SaveChanges();
 
             return Accepted();
         }

@@ -623,6 +623,7 @@ namespace QardlessAPI.Data
                 throw new ArgumentNullException(nameof(endUser));
 
             _context.EndUsers.Remove(endUser);
+            _context.SaveChanges();
         }
 
         #endregion
