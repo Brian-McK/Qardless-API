@@ -24,7 +24,7 @@ namespace QardlessAPI.Controllers
         [HttpGet("/flaggedissues")]
         public async Task<ActionResult<FlaggedIssue>> ViewAllFlaggedIssues()
         {
-            var flaggedIssues = await _repo.GetFlaggedIssues();
+            var flaggedIssues = await _repo.ListAllFlaggedIssues();
 
             if (flaggedIssues == null)
                 return NotFound();
@@ -35,7 +35,7 @@ namespace QardlessAPI.Controllers
         [HttpGet("/flaggedissues/{id}")]
         public async Task<ActionResult<FlaggedIssue>> FlaggedIssueById(Guid id)
         {
-            var flaggedIssue = await _repo.GetFlaggedIssue(id);
+            var flaggedIssue = await _repo.GetFlaggedIssueById(id);
 
             if (flaggedIssue == null)
                 return NotFound();
@@ -44,24 +44,20 @@ namespace QardlessAPI.Controllers
         }
 
         [HttpPut("/flaggedissues/{id}")]
-        public async Task<ActionResult> UpdateFlaggedIssueWasRead(Guid id, FlaggedIssueUpdateDto flaggedIssueUpdateDto)
+        public async Task<ActionResult> UpdateFlaggedIssue(Guid id, FlaggedIssueUpdateDto flaggedIssueDto)
         {
-            if (flaggedIssueUpdateDto == null)
+            if (flaggedIssueDto == null)
                 return BadRequest();
 
-            var flaggedIssue = await _repo.GetFlaggedIssue(id);
+            var flaggedIssue = await _repo.GetFlaggedIssueById(id);
             if (flaggedIssue == null)
-                return NotFound();
+                return BadRequest();
 
-            flaggedIssue.WasRead = true;
+            await Task.Run(() => _repo.UpdateFlaggedIssueWasRead(id, flaggedIssueDto));
 
-            _mapper.Map(flaggedIssueUpdateDto, flaggedIssue);
-            _repo.UpdateFlaggedIssue(id, flaggedIssue);
-
-            return Accepted();
+            return Accepted(flaggedIssue);
         }
 
-        // POST: api/FlaggedIssue
         [HttpPost("/flaggedissues")]
         public async Task<ActionResult<FlaggedIssue>> AddNewFlaggedIssue(FlaggedIssueCreateDto flaggedIssueForCreation)
         {
@@ -82,11 +78,10 @@ namespace QardlessAPI.Controllers
             return CreatedAtAction("FlaggedIssueById", new { id = flaggedIssue.Id }, flaggedIssue);
         }
 
-        // DELETE: api/FlaggedIssue/5
         [HttpDelete("/flaggedissues/{id}")]
         public async Task<IActionResult> DeleteFlaggedIssue(Guid id)
         {
-            var flaggedIssue = await _repo.GetFlaggedIssue(id);
+            var flaggedIssue = await _repo.GetFlaggedIssueById(id);
             if(flaggedIssue == null)
                 return NotFound();
 
@@ -97,7 +92,7 @@ namespace QardlessAPI.Controllers
 
         private bool FlaggedIssueExists(Guid id)
         {
-            var flaggedIssue = _repo.GetFlaggedIssue(id);
+            var flaggedIssue = _repo.GetFlaggedIssueById(id);
             if (flaggedIssue == null)
                 return false;
 

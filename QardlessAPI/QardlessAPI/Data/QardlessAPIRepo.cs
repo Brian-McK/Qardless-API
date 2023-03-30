@@ -6,6 +6,7 @@ using QardlessAPI.Data.Dtos.Certificate;
 using QardlessAPI.Data.Dtos.Course;
 using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Dtos.EndUser;
+using QardlessAPI.Data.Dtos.FlaggedIssue;
 using QardlessAPI.Data.Models;
 using System.Security.Cryptography;
 using System.Text;
@@ -393,20 +394,26 @@ namespace QardlessAPI.Data
         #endregion#
 
         #region FlaggedIssue
-        public async Task<IEnumerable<FlaggedIssue?>> GetFlaggedIssues()
+        public async Task<IEnumerable<FlaggedIssue>> ListAllFlaggedIssues()
         {
             return await _context.FlaggedIssues.ToListAsync();
         }
 
-        public async Task<FlaggedIssue?> GetFlaggedIssue(Guid id)
+        public async Task<FlaggedIssue?> GetFlaggedIssueById(Guid id)
         {
-            return await _context.FlaggedIssues.FirstOrDefaultAsync(c => c.Id == id);
+            return await _context.FlaggedIssues
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task<FlaggedIssue?> UpdateFlaggedIssue(Guid id, FlaggedIssue flaggedIssue)
+        public async Task<FlaggedIssue?> UpdateFlaggedIssueWasRead(Guid id, FlaggedIssueUpdateDto flaggedIssueDto)
         {
-            _context.FlaggedIssues.Add(flaggedIssue);
+            FlaggedIssue? flaggedIssue = await _context.FlaggedIssues
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            flaggedIssue.WasRead = true;
+
             _context.SaveChanges();
+            _context.FlaggedIssues.Add(flaggedIssue);
 
             return await _context.FlaggedIssues.FirstOrDefaultAsync(i => i.Id == id);
         }

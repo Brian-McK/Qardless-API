@@ -63,9 +63,9 @@ namespace QardlessAPI.Data
         #endregion
 
         #region FlaggedIssue
-        Task<IEnumerable<FlaggedIssue?>> GetFlaggedIssues();
-        Task<FlaggedIssue?> GetFlaggedIssue(Guid id);
-        Task<FlaggedIssue?> UpdateFlaggedIssue(Guid id, FlaggedIssue flaggedIssue);
+        Task<IEnumerable<FlaggedIssue?>> ListAllFlaggedIssues();
+        Task<FlaggedIssue?> GetFlaggedIssueById(Guid id);
+        Task<FlaggedIssue?> UpdateFlaggedIssueWasRead(Guid id, FlaggedIssueUpdateDto flaggedIssueDto);
         void PostFlaggedIssue(FlaggedIssue? flaggedIssue);
         void DeleteFlaggedIssue(FlaggedIssue? flaggedIssue);
         #endregion
@@ -101,8 +101,7 @@ namespace QardlessAPI.Data
 
         #region Security
         public string HashPassword(string Password);
-
         #endregion
-        
+
     }
 }
