@@ -1,13 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Models;
-using System.Text;
-using System.Security.Cryptography;
-using AutoMapper;
 using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Dtos.Admin;
 
@@ -25,7 +21,6 @@ namespace QardlessAPI.Controllers
                 throw new ArgumentNullException(nameof(repo));
         }
 
-        // POST: api/endusers/login/
         [HttpPost("/endusers/login")]
         public async Task<ActionResult<EndUserReadPartialDto>> LoginEndUser(LoginDto loginUser)
         {
@@ -41,8 +36,6 @@ namespace QardlessAPI.Controllers
             return Ok(endUserForProps);
         }
 
-
-        // POST: api/employees/login/
         [HttpPost("/employees/login")]
         public async Task<ActionResult<EmployeeReadPartialDto>> LoginEmployee(LoginDto loginEmp)
         {
@@ -58,7 +51,6 @@ namespace QardlessAPI.Controllers
             return Ok(empForProps);
         }
 
-        // POST: api/admins/login/
         [HttpPost("/admins/login")]
         public async Task<ActionResult<AdminPartialDto>> LoginAdmin(LoginDto loginAdmin)
         {
