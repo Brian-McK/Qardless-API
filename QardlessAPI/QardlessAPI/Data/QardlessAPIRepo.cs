@@ -333,12 +333,17 @@ namespace QardlessAPI.Data
         
         public async Task<IEnumerable<Course>> ListCoursesByBusinessId(Guid id)
         {
-            return await _context.Courses.Where(c => c.BusinessId == id).OrderBy(c => c.CourseDate).ToListAsync();
+            return await _context.Courses
+                .Where(c => c.BusinessId == id)
+                .OrderBy(c => c.CourseDate)
+                .ToListAsync();
         }
 
         public Task<Course> GetCourseById(Guid id)
         {
-            var course = _context.Courses.Where(c => c.Id == id).FirstOrDefaultAsync();
+            var course = _context.Courses
+                .Where(c => c.Id == id)
+                .FirstOrDefaultAsync();
 
             return course;
         }
@@ -381,7 +386,8 @@ namespace QardlessAPI.Data
         public void DeleteCourse(Course? course)
         {
             if(course == null) throw new ArgumentNullException(nameof(course));
-            _context .Courses.Remove(course);
+            _context.Courses.Remove(course);
+            _context.SaveChanges();
         }
 
         #endregion#

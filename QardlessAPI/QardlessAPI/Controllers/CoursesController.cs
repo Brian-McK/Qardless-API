@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QardlessAPI.Data.Models;
 using QardlessAPI.Data.Dtos.Course;
@@ -22,7 +21,6 @@ namespace QardlessAPI.Controllers
                       throw new ArgumentNullException(nameof(mapper));
         }
 
-        // GET: api/Courses
         [HttpGet("/courses")]
         public async Task<ActionResult<Course>> AllCourses()
         {
@@ -34,16 +32,13 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<Course>>(courses));
         }
 
-        // GET: api/Courses/5
         [HttpGet("/courses/{id}")]
         public async Task<ActionResult<Course>> CourseById(Guid id)
         {
             var course = await _repo.GetCourseById(id);
-
             return Ok(course);
         }
         
-        // GET: api/Courses/Businesses/5
         [HttpGet("/courses/businesses/{id}")]
         public async Task<ActionResult<Course>> CoursesByBusinessId(Guid id)
         {
@@ -54,7 +49,6 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<Course>>(courses));
         }
 
-        // PUT: api/Courses/5
         [HttpPut("/courses/{id}")]
         public async Task<ActionResult> UpdateCourse(Guid id, CourseReadDto courseUpdate)
         {
@@ -68,7 +62,6 @@ namespace QardlessAPI.Controllers
             return Accepted(course);
         }
 
-        // POST: api/Courses
         [HttpPost("/courses")]
         public async Task<ActionResult<CourseReadDto?>> AddNewCourse(CourseReadDto newCourse)
         {
@@ -79,7 +72,6 @@ namespace QardlessAPI.Controllers
             return Created("/courses", courseReadDto);
         }
 
-        // DELETE: api/Course/5
         [HttpDelete("/course/{id}")]
         public async Task<IActionResult> DeleteCourse(Guid id)
         {
@@ -87,7 +79,6 @@ namespace QardlessAPI.Controllers
             if (course == null) return BadRequest();
 
             _repo.DeleteCourse(course);
-            _repo.SaveChanges();
 
             return Accepted();
         }
