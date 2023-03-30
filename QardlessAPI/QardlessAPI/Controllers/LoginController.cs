@@ -25,7 +25,6 @@ namespace QardlessAPI.Controllers
                 throw new ArgumentNullException(nameof(repo));
         }
 
-        // POST: api/endusers/login/
         [HttpPost("/endusers/login")]
         public async Task<ActionResult<EndUserReadPartialDto>> LoginEndUser(LoginDto loginUser)
         {
@@ -41,8 +40,6 @@ namespace QardlessAPI.Controllers
             return Ok(endUserForProps);
         }
 
-
-        // POST: api/employees/login/
         [HttpPost("/employees/login")]
         public async Task<ActionResult<EmployeeReadPartialDto>> LoginEmployee(LoginDto loginEmp)
         {
@@ -58,7 +55,6 @@ namespace QardlessAPI.Controllers
             return Ok(empForProps);
         }
 
-        // POST: api/admins/login/
         [HttpPost("/admins/login")]
         public async Task<ActionResult<AdminPartialDto>> LoginAdmin(LoginDto loginAdmin)
         {
