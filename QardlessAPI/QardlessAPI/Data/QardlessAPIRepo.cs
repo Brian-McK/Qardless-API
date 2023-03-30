@@ -642,7 +642,7 @@ namespace QardlessAPI.Data
             };
 
             endUser.LastLoginDate = DateTime.Now;
-            _context.SaveChanges();
+            SaveChanges();
 
             return endUserForProps;
         }
@@ -660,7 +660,7 @@ namespace QardlessAPI.Data
             };
 
             emp.LastLoginDate = DateTime.Now;
-            _context.SaveChanges();
+            SaveChanges();
 
             return empForProps;
         }
@@ -677,7 +677,7 @@ namespace QardlessAPI.Data
             };
 
             admin.LastLoginDate = DateTime.Now;
-            _context.SaveChanges();
+            SaveChanges();
 
             return adminForProps;
         }
