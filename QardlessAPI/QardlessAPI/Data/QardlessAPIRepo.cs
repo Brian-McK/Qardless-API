@@ -119,18 +119,6 @@ namespace QardlessAPI.Data
             return await _context.Businesses.FirstOrDefaultAsync(b => b.Id == id);
         }
 
-        public async Task<IEnumerable<Certificate?>> GetCertsDueForRenewal(Guid id)
-        { 
-            return await _context.Certificates
-                .Include(c => c.Course)
-                .Where(c => c.Course.BusinessId == id 
-                && (c.Course.Expiry.CompareTo(DateTime.Now)) < 0)
-                //&& (DateTime.Now - c.Course.Expiry).TotalDays.CompareTo(42) == 0)
-                //&& (DateTime.Compare(c.Course.Expiry, DateTime.Now) < 42)
-                //&& (DateTime.Compare(c.Course.Expiry, DateTime.Now) > 0)) 
-                .ToListAsync();
-        }
-
         // For login
         public async Task<Business?> GetBusinessByEmail(LoginDto businessLogin)
         {
@@ -186,6 +174,7 @@ namespace QardlessAPI.Data
                 throw new ArgumentNullException(nameof(business));
 
             _context.Businesses.Remove(business);
+            _context.SaveChanges();
         }
         #endregion
 

@@ -21,7 +21,6 @@ namespace QardlessAPI.Controllers
                throw new ArgumentNullException(nameof(mapper));
         }
 
-        // GET: api/Businesses
         [HttpGet("/businesses")]
         public async Task<ActionResult<IEnumerable<Business>>> ViewAllBusinesses()
         {
@@ -32,7 +31,6 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<BusinessReadPartialDto>>(businesses));
         }
 
-        // GET: api/Businesses/5
         [HttpGet("/businesses/{id}")]
         public async Task<ActionResult<Business>> BusinessById(Guid id)
         {
@@ -54,18 +52,6 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<Certificate>>(businessCerts));
         }
 
-        [HttpGet("/businesses/{id}/exp/certificates")]
-        public async Task<ActionResult<Certificate>> ViewCertsDueForRenewalByBusiness(Guid id)
-        {
-            var certs = await _repo.GetCertsDueForRenewal(id);
-
-            if (certs == null)
-                return NotFound();
-
-            return Ok(_mapper.Map<IEnumerable<Certificate>>(certs));
-        }
-
-        // PUT: api/Businesses/5
         [HttpPut("/businesses/{id}")]
         public async Task<ActionResult> UpdateBusinessContactDetails(Guid id, BusinessUpdateDto businessUpdateDto)
         {
@@ -81,7 +67,6 @@ namespace QardlessAPI.Controllers
             return Accepted(business);
         }
 
-        // POST: api/Businesses
         [HttpPost("/businesses")]
         public async Task<ActionResult<BusinessCreateDto?>> RegisterNewBusiness(BusinessCreateDto businessCreateDto)
         {
@@ -93,7 +78,6 @@ namespace QardlessAPI.Controllers
             return Created("/businesses", businessReadPartialDto);
         }
 
-        // DELETE: api/Businesses/5
         [HttpDelete("/businesses/{id}")]
         public async Task<IActionResult> DeleteBusiness(Guid id)
         {
@@ -102,7 +86,6 @@ namespace QardlessAPI.Controllers
                 return NotFound();
 
             _repo.DeleteBusiness(business);
-            _repo.SaveChanges();
 
             return Accepted();
         }
