@@ -403,32 +403,33 @@ namespace QardlessAPI.Data
             return await _context.FlaggedIssues.FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public void PutFlaggedIssue(Guid id, FlaggedIssue? flaggedIssue)
+        public async Task<FlaggedIssue?> UpdateFlaggedIssue(Guid id, FlaggedIssue flaggedIssue)
         {
-            // Implemented in the controller
+            _context.FlaggedIssues.Add(flaggedIssue);
+            _context.SaveChanges();
+
+            return await _context.FlaggedIssues.FirstOrDefaultAsync(i => i.Id == id);
         }
 
         public void PostFlaggedIssue(FlaggedIssue? flaggedIssue)
         {
             if (flaggedIssue == null)
-            {
                 throw new ArgumentNullException(nameof(flaggedIssue));
-            }
 
             flaggedIssue.Id = Guid.NewGuid();
             flaggedIssue.CreatedAt = DateTime.Now;
 
             _context.FlaggedIssues.Add(flaggedIssue);
+            _context.SaveChanges();
         }
 
         public void DeleteFlaggedIssue(FlaggedIssue? flaggedIssue)
         {
             if (flaggedIssue == null)
-            {
                 throw new ArgumentNullException(nameof(flaggedIssue));
-            }
-
+            
             _context.FlaggedIssues.Remove(flaggedIssue);
+            _context.SaveChanges();
         }
         #endregion
 

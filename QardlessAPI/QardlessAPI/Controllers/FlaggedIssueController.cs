@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Dtos.FlaggedIssue;
-using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
 
 namespace QardlessAPI.Controllers
@@ -23,7 +21,6 @@ namespace QardlessAPI.Controllers
                throw new ArgumentNullException(nameof(mapper));
         }
 
-        // GET: api/FlaggedIssue
         [HttpGet("/flaggedissues")]
         public async Task<ActionResult<FlaggedIssue>> ViewAllFlaggedIssues()
         {
@@ -35,7 +32,6 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<FlaggedIssueReadDto>>(flaggedIssues));
         }
 
-        // GET: api/FlaggedIssue/5
         [HttpGet("/flaggedissues/{id}")]
         public async Task<ActionResult<FlaggedIssue>> FlaggedIssueById(Guid id)
         {
@@ -47,9 +43,8 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<FlaggedIssueReadDto>(flaggedIssue));
         }
 
-        // PUT: api/FlaggedIssue/5
         [HttpPut("/flaggedissues/{id}")]
-        public async Task<IActionResult> UpdateFlaggedIssueWasRead(Guid id, FlaggedIssueUpdateDto flaggedIssueUpdateDto)
+        public async Task<ActionResult> UpdateFlaggedIssueWasRead(Guid id, FlaggedIssueUpdateDto flaggedIssueUpdateDto)
         {
             if (flaggedIssueUpdateDto == null)
                 return BadRequest();
@@ -61,8 +56,7 @@ namespace QardlessAPI.Controllers
             flaggedIssue.WasRead = true;
 
             _mapper.Map(flaggedIssueUpdateDto, flaggedIssue);
-            _repo.PutFlaggedIssue(id, flaggedIssue);
-            _repo.SaveChanges();
+            _repo.UpdateFlaggedIssue(id, flaggedIssue);
 
             return Accepted();
         }
@@ -97,7 +91,6 @@ namespace QardlessAPI.Controllers
                 return NotFound();
 
             _repo.DeleteFlaggedIssue(flaggedIssue);
-            _repo.SaveChanges();
 
             return Accepted();
         }

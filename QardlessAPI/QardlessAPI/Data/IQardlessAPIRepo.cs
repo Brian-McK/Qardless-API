@@ -5,6 +5,7 @@ using QardlessAPI.Data.Dtos.Certificate;
 using QardlessAPI.Data.Dtos.Course;
 using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Dtos.EndUser;
+using QardlessAPI.Data.Dtos.FlaggedIssue;
 using QardlessAPI.Data.Models;
 
 namespace QardlessAPI.Data
@@ -64,7 +65,7 @@ namespace QardlessAPI.Data
         #region FlaggedIssue
         Task<IEnumerable<FlaggedIssue?>> GetFlaggedIssues();
         Task<FlaggedIssue?> GetFlaggedIssue(Guid id);
-        void PutFlaggedIssue(Guid id, FlaggedIssue? flaggedIssue);
+        void UpdateFlaggedIssue(Guid id, FlaggedIssue? flaggedIssue);
         void PostFlaggedIssue(FlaggedIssue? flaggedIssue);
         void DeleteFlaggedIssue(FlaggedIssue? flaggedIssue);
         #endregion
