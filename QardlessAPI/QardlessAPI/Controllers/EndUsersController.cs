@@ -78,9 +78,23 @@ namespace QardlessAPI.Controllers
             if (endUserForCreation == null)
                 return BadRequest();
 
-            EndUserReadPartialDto endUserReadPartialDto = await Task.Run(() => _repo.AddNewEndUser(endUserForCreation));
+            LoginDto userCheck = new LoginDto
+            {
+                Email = endUserForCreation.Email,
+                Password = endUserForCreation.Password
+            };
 
-            return Created("/endusers", endUserReadPartialDto);
+            if(_repo.GetEndUserByEmail(userCheck).Result == null)
+            {
+                EndUserReadPartialDto endUserReadPartialDto = 
+                    await Task.Run(() => _repo.AddNewEndUser(endUserForCreation));
+
+                return Created("/endusers", endUserReadPartialDto);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         // WEB APP - UNASSIGN CERT
