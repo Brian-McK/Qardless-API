@@ -66,9 +66,23 @@ namespace QardlessAPI.Controllers
             if (employeeCreateDto == null)
                 return BadRequest();
 
-            EmployeeReadPartialDto empReadPartialDto = await Task.Run(() => _repo.AddNewEmployee(employeeCreateDto));
+            LoginDto empCheck = new LoginDto
+            {
+                Email = employeeCreateDto.Email,
+                Password = employeeCreateDto.Password
+            };
 
-            return Created("/employees", empReadPartialDto);
+            if (_repo.GetEmployeeByEmail(empCheck).Result == null)
+            {
+                EmployeeReadPartialDto empReadPartialDto = 
+                    await Task.Run(() => _repo.AddNewEmployee(employeeCreateDto));
+
+                return Created("/employees", empReadPartialDto);
+            }   
+            else
+            {
+                return BadRequest();
+            }
         }
 
         // Business logic: Logout Employee

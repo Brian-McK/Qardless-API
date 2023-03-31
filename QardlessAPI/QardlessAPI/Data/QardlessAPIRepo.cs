@@ -490,32 +490,32 @@ namespace QardlessAPI.Data
             if (newEmp == null)
                 throw new ArgumentNullException(nameof(newEmp));
 
-            Employee emp = new Employee
-            {
-                Id = new Guid(),
-                Name = newEmp.Name,
-                Email = newEmp.Email,
-                PasswordHash = HashPassword(newEmp.Password),
-                ContactNumber = newEmp.ContactNumber,
-                CreatedAt = DateTime.Now,
-                PrivilegeLevel = newEmp.PrivilegeLevel,
-                BusinessId = newEmp.BusinessId
-            };
-            
-            _context.Employees.Add(emp);
-            _context.SaveChanges();
+                Employee emp = new Employee
+                {
+                    Id = new Guid(),
+                    Name = newEmp.Name,
+                    Email = newEmp.Email,
+                    PasswordHash = HashPassword(newEmp.Password),
+                    ContactNumber = newEmp.ContactNumber,
+                    CreatedAt = DateTime.Now,
+                    PrivilegeLevel = newEmp.PrivilegeLevel,
+                    BusinessId = newEmp.BusinessId
+                };
 
-            EmployeeReadPartialDto empPartialRead = new EmployeeReadPartialDto
-            {
-                Id = emp.Id,
-                Name = emp.Name,
-                Email = emp.Email,
-                ContactNumber = emp.ContactNumber,
-                BusinessId = emp.BusinessId
-            };
-            
-            return empPartialRead;
-        }
+                _context.Employees.Add(emp);
+                _context.SaveChanges();
+
+                EmployeeReadPartialDto empPartialRead = new EmployeeReadPartialDto
+                {
+                    Id = emp.Id,
+                    Name = emp.Name,
+                    Email = emp.Email,
+                    ContactNumber = emp.ContactNumber,
+                    BusinessId = emp.BusinessId
+                };
+
+                return empPartialRead;
+            }
 
         // Password check for login 
         public bool CheckEmpPassword(Employee emp, LoginDto login)
