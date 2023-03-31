@@ -58,6 +58,7 @@ namespace QardlessAPI.Data
         Task<Course?> GetCourseById(Guid id);
         Task<Course?> UpdateCourseDetails(Guid id, CourseReadDto courseForUpdate);
         CourseReadDto AddNewCourse(CourseReadDto newCourse);
+        Task<Course?> GetCourseByTitleAndDate(CourseReadDto courseDto);
         void DeleteCourse(Course? course);
 
         #endregion

@@ -384,6 +384,13 @@ namespace QardlessAPI.Data
             return newCourse;
         }
 
+        public async Task<Course?> GetCourseByTitleAndDate(CourseReadDto courseDto)
+        {
+            return await _context.Courses.FirstOrDefaultAsync(
+                c => c.Title == courseDto.Title && 
+                c.CourseDate == DateTime.Parse(courseDto.CourseDate));
+        }
+
         public void DeleteCourse(Course? course)
         {
             if(course == null) throw new ArgumentNullException(nameof(course));

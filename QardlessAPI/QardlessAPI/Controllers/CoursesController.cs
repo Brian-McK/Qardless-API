@@ -67,9 +67,16 @@ namespace QardlessAPI.Controllers
         {
             if (newCourse == null) return BadRequest();
 
-            var courseReadDto = await Task.Run(() => _repo.AddNewCourse(newCourse));
+            if(_repo.GetCourseByTitleAndDate(newCourse).Result == null)
+            {
+                var courseReadDto = await Task.Run(() => _repo.AddNewCourse(newCourse));
 
-            return Created("/courses", courseReadDto);
+                return Created("/courses", courseReadDto);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [HttpDelete("/course/{id}")]
