@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using QardlessAPI.Data;
+using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Dtos.Business;
+using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Models;
 
 namespace QardlessAPI.Controllers
@@ -73,9 +75,21 @@ namespace QardlessAPI.Controllers
             if (businessCreateDto == null)
                 return BadRequest();
 
-            BusinessReadPartialDto businessReadPartialDto = await Task.Run(() => _repo.AddNewBusiness(businessCreateDto));
+            LoginDto businessCheck = new LoginDto
+            {
+                Email = businessCreateDto.Email
+            };
 
-            return Created("/businesses", businessReadPartialDto);
+            if (_repo.GetBusinessByEmail(businessCheck).Result == null)
+            {
+                BusinessReadPartialDto businessReadPartialDto = await Task.Run(() => _repo.AddNewBusiness(businessCreateDto));
+
+                return Created("/businesses", businessReadPartialDto);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [HttpDelete("/businesses/{id}")]
