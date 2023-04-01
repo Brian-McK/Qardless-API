@@ -208,6 +208,12 @@ namespace QardlessAPI.Data
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
+        public async Task<Certificate?> FindCertificateByCertNumber(string certNumber)
+        {
+            return await _context.Certificates
+                .FirstOrDefaultAsync(c => c.CertNumber == certNumber);
+        }
+
         public async Task<Certificate?> UpdateCertificate(Guid id, CertificateUpdateDto certForUpdateDto)
         {
             Certificate? cert = await _context.Certificates.FirstOrDefaultAsync(c => c.Id == id);

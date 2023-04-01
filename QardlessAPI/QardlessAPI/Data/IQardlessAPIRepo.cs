@@ -39,6 +39,7 @@ namespace QardlessAPI.Data
         Task<IEnumerable<Certificate?>> ListAllCertificates();
         Task<IEnumerable<Certificate?>> GetCertificatesByEndUserId(Guid id);
         Task<Certificate?> GetCertificateById(Guid id);
+        Task<Certificate?> FindCertificateByCertNumber(string certNumber);
         Task<Certificate?> UpdateCertificate(Guid id, CertificateUpdateDto certForUpdateDto);
 
         // WEB APP - GOAL 6

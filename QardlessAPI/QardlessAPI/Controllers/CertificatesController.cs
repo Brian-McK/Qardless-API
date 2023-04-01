@@ -63,12 +63,17 @@ namespace QardlessAPI.Controllers
         {
             if (certificateForCreation == null)
                 return BadRequest();
-            
-            var cert = _repo.AddNewCertificate(certificateForCreation);
 
-            if (cert == null) return BadRequest();
+            if (_repo.FindCertificateByCertNumber(certificateForCreation.CertNumber).Result == null)
+            {
+                var cert = await Task.Run(() => _repo.AddNewCertificate(certificateForCreation));
 
-            return Created("/certificates", cert);
+                return Created("/certificates", cert);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         // WEB APP - FREEZE CERT
