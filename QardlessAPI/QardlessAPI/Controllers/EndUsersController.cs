@@ -53,7 +53,7 @@ namespace QardlessAPI.Controllers
             if (endUserCerts == null)
                 return NotFound();
 
-            return Ok(_mapper.Map<IEnumerable<CertificateReadFullDto>>(endUserCerts));
+            return Ok(_mapper.Map<IEnumerable<Certificate>>(endUserCerts));
         }
 
         [HttpPut("/endusers/{id}")]
