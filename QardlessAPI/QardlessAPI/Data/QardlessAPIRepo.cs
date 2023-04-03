@@ -6,6 +6,7 @@ using QardlessAPI.Data.Dtos.Certificate;
 using QardlessAPI.Data.Dtos.Course;
 using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Dtos.EndUser;
+using QardlessAPI.Data.Dtos.FlaggedIssue;
 using QardlessAPI.Data.Models;
 using System.Security.Cryptography;
 using System.Text;
@@ -104,6 +105,7 @@ namespace QardlessAPI.Data
                 throw new ArgumentNullException(nameof(admin));
 
             _context.Admins.Remove(admin);
+            _context.SaveChanges();
         }
         #endregion
 
@@ -116,18 +118,6 @@ namespace QardlessAPI.Data
         public async Task<Business?> GetBusinessById(Guid id)
         {
             return await _context.Businesses.FirstOrDefaultAsync(b => b.Id == id);
-        }
-
-        public async Task<IEnumerable<Certificate?>> GetCertsDueForRenewal(Guid id)
-        { 
-            return await _context.Certificates
-                .Include(c => c.Course)
-                .Where(c => c.Course.BusinessId == id 
-                && (c.Course.Expiry.CompareTo(DateTime.Now)) < 0)
-                //&& (DateTime.Now - c.Course.Expiry).TotalDays.CompareTo(42) == 0)
-                //&& (DateTime.Compare(c.Course.Expiry, DateTime.Now) < 42)
-                //&& (DateTime.Compare(c.Course.Expiry, DateTime.Now) > 0)) 
-                .ToListAsync();
         }
 
         // For login
@@ -185,6 +175,7 @@ namespace QardlessAPI.Data
                 throw new ArgumentNullException(nameof(business));
 
             _context.Businesses.Remove(business);
+            _context.SaveChanges();
         }
         #endregion
 
@@ -215,6 +206,12 @@ namespace QardlessAPI.Data
             return await _context.Certificates
                 .Include(c => c.Course)
                 .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<Certificate?> FindCertificateByCertNumber(string certNumber)
+        {
+            return await _context.Certificates
+                .FirstOrDefaultAsync(c => c.CertNumber == certNumber);
         }
 
         public async Task<Certificate?> UpdateCertificate(Guid id, CertificateUpdateDto certForUpdateDto)
@@ -260,8 +257,6 @@ namespace QardlessAPI.Data
             _context.SaveChanges();
 
             return cert;
-
-            // AssignCert(cert);
         }
 
         // WEB APP - ASSIGN CERT
@@ -332,6 +327,7 @@ namespace QardlessAPI.Data
                 throw new ArgumentNullException(nameof(certificate));
 
             _context.Certificates.Remove(certificate);
+            _context.SaveChanges();
         }
         #endregion
 
@@ -344,12 +340,17 @@ namespace QardlessAPI.Data
         
         public async Task<IEnumerable<Course>> ListCoursesByBusinessId(Guid id)
         {
-            return await _context.Courses.Where(c => c.BusinessId == id).OrderBy(c => c.CourseDate).ToListAsync();
+            return await _context.Courses
+                .Where(c => c.BusinessId == id)
+                .OrderBy(c => c.CourseDate)
+                .ToListAsync();
         }
 
         public Task<Course> GetCourseById(Guid id)
         {
-            var course = _context.Courses.Where(c => c.Id == id).FirstOrDefaultAsync();
+            var course = _context.Courses
+                .Where(c => c.Id == id)
+                .FirstOrDefaultAsync();
 
             return course;
         }
@@ -389,51 +390,66 @@ namespace QardlessAPI.Data
             return newCourse;
         }
 
+        public async Task<Course?> GetCourseByTitleAndDate(CourseReadDto courseDto)
+        {
+            return await _context.Courses.FirstOrDefaultAsync(
+                c => c.Title == courseDto.Title && 
+                c.CourseDate == DateTime.Parse(courseDto.CourseDate));
+        }
+
         public void DeleteCourse(Course? course)
         {
             if(course == null) throw new ArgumentNullException(nameof(course));
-            _context .Courses.Remove(course);
+            _context.Courses.Remove(course);
+            _context.SaveChanges();
         }
 
         #endregion#
 
         #region FlaggedIssue
-        public async Task<IEnumerable<FlaggedIssue?>> GetFlaggedIssues()
+        public async Task<IEnumerable<FlaggedIssue>> ListAllFlaggedIssues()
         {
             return await _context.FlaggedIssues.ToListAsync();
         }
 
-        public async Task<FlaggedIssue?> GetFlaggedIssue(Guid id)
+        public async Task<FlaggedIssue?> GetFlaggedIssueById(Guid id)
         {
-            return await _context.FlaggedIssues.FirstOrDefaultAsync(c => c.Id == id);
+            return await _context.FlaggedIssues
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public void PutFlaggedIssue(Guid id, FlaggedIssue? flaggedIssue)
+        public async Task<FlaggedIssue?> UpdateFlaggedIssueWasRead(Guid id, FlaggedIssueUpdateDto flaggedIssueDto)
         {
-            // Implemented in the controller
+            FlaggedIssue? flaggedIssue = await _context.FlaggedIssues
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            flaggedIssue.WasRead = true;
+
+            _context.SaveChanges();
+            _context.FlaggedIssues.Add(flaggedIssue);
+
+            return await _context.FlaggedIssues.FirstOrDefaultAsync(i => i.Id == id);
         }
 
         public void PostFlaggedIssue(FlaggedIssue? flaggedIssue)
         {
             if (flaggedIssue == null)
-            {
                 throw new ArgumentNullException(nameof(flaggedIssue));
-            }
 
             flaggedIssue.Id = Guid.NewGuid();
             flaggedIssue.CreatedAt = DateTime.Now;
 
             _context.FlaggedIssues.Add(flaggedIssue);
+            _context.SaveChanges();
         }
 
         public void DeleteFlaggedIssue(FlaggedIssue? flaggedIssue)
         {
             if (flaggedIssue == null)
-            {
                 throw new ArgumentNullException(nameof(flaggedIssue));
-            }
-
+            
             _context.FlaggedIssues.Remove(flaggedIssue);
+            _context.SaveChanges();
         }
         #endregion
 
@@ -461,7 +477,8 @@ namespace QardlessAPI.Data
         //For Login Controller
         public async Task<Employee?> GetEmployeeByEmail(LoginDto empLoginDto)
         {
-            return await _context.Employees.FirstOrDefaultAsync(e => e.Email == empLoginDto.Email);
+            return await _context.Employees
+                .FirstOrDefaultAsync(e => e.Email == empLoginDto.Email);
         }
 
         public async Task<Employee?> UpdateEmployee(Guid id, EmployeeUpdateDto employeeUpdateDto)
@@ -475,8 +492,8 @@ namespace QardlessAPI.Data
             emp.PrivilegeLevel = employeeUpdateDto.PrivilegeLevel;
             emp.BusinessId = employeeUpdateDto.BusinessId;
 
-            _context.SaveChanges();
             _context.Employees.Add(emp);
+            _context.SaveChanges();
 
             return await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
         }
@@ -486,32 +503,32 @@ namespace QardlessAPI.Data
             if (newEmp == null)
                 throw new ArgumentNullException(nameof(newEmp));
 
-            Employee emp = new Employee
-            {
-                Id = new Guid(),
-                Name = newEmp.Name,
-                Email = newEmp.Email,
-                PasswordHash = HashPassword(newEmp.Password),
-                ContactNumber = newEmp.ContactNumber,
-                CreatedAt = DateTime.Now,
-                PrivilegeLevel = newEmp.PrivilegeLevel,
-                BusinessId = newEmp.BusinessId
-            };
-            
-            _context.Employees.Add(emp);
-            _context.SaveChanges();
+                Employee emp = new Employee
+                {
+                    Id = new Guid(),
+                    Name = newEmp.Name,
+                    Email = newEmp.Email,
+                    PasswordHash = HashPassword(newEmp.Password),
+                    ContactNumber = newEmp.ContactNumber,
+                    CreatedAt = DateTime.Now,
+                    PrivilegeLevel = newEmp.PrivilegeLevel,
+                    BusinessId = newEmp.BusinessId
+                };
 
-            EmployeeReadPartialDto empPartialRead = new EmployeeReadPartialDto
-            {
-                Id = emp.Id,
-                Name = emp.Name,
-                Email = emp.Email,
-                ContactNumber = emp.ContactNumber,
-                BusinessId = emp.BusinessId
-            };
-            
-            return empPartialRead;
-        }
+                _context.Employees.Add(emp);
+                _context.SaveChanges();
+
+                EmployeeReadPartialDto empPartialRead = new EmployeeReadPartialDto
+                {
+                    Id = emp.Id,
+                    Name = emp.Name,
+                    Email = emp.Email,
+                    ContactNumber = emp.ContactNumber,
+                    BusinessId = emp.BusinessId
+                };
+
+                return empPartialRead;
+            }
 
         // Password check for login 
         public bool CheckEmpPassword(Employee emp, LoginDto login)
@@ -528,6 +545,7 @@ namespace QardlessAPI.Data
                 throw new ArgumentNullException(nameof(emp));
 
             _context.Employees.Remove(emp);
+            _context.SaveChanges();
         }
         #endregion
 
@@ -625,6 +643,7 @@ namespace QardlessAPI.Data
                 throw new ArgumentNullException(nameof(endUser));
 
             _context.EndUsers.Remove(endUser);
+            _context.SaveChanges();
         }
 
         #endregion
@@ -643,7 +662,7 @@ namespace QardlessAPI.Data
             };
 
             endUser.LastLoginDate = DateTime.Now;
-            SaveChanges();
+            _context.SaveChanges();
 
             return endUserForProps;
         }
@@ -661,7 +680,7 @@ namespace QardlessAPI.Data
             };
 
             emp.LastLoginDate = DateTime.Now;
-            SaveChanges();
+            _context.SaveChanges();
 
             return empForProps;
         }
@@ -678,7 +697,7 @@ namespace QardlessAPI.Data
             };
 
             admin.LastLoginDate = DateTime.Now;
-            SaveChanges();
+            _context.SaveChanges();
 
             return adminForProps;
         }

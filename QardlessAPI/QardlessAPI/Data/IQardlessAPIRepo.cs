@@ -5,6 +5,7 @@ using QardlessAPI.Data.Dtos.Certificate;
 using QardlessAPI.Data.Dtos.Course;
 using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Dtos.EndUser;
+using QardlessAPI.Data.Dtos.FlaggedIssue;
 using QardlessAPI.Data.Models;
 
 namespace QardlessAPI.Data
@@ -28,7 +29,6 @@ namespace QardlessAPI.Data
         Task<Business?> GetBusinessById(Guid id);
         Task<Business?> GetBusinessByEmail(LoginDto businessLogin);
         Task<IEnumerable<Certificate?>> GetCertificateByBusinessId(Guid id);
-        Task<IEnumerable<Certificate?>> GetCertsDueForRenewal(Guid id);
         Task<Business?> UpdateBusinessDetails(Guid id, BusinessUpdateDto businessUpdate);
         BusinessReadPartialDto AddNewBusiness(BusinessCreateDto businessForCreation);
         void DeleteBusiness(Business? business);
@@ -39,6 +39,7 @@ namespace QardlessAPI.Data
         Task<IEnumerable<Certificate?>> ListAllCertificates();
         Task<IEnumerable<Certificate?>> GetCertificatesByEndUserId(Guid id);
         Task<Certificate?> GetCertificateById(Guid id);
+        Task<Certificate?> FindCertificateByCertNumber(string certNumber);
         Task<Certificate?> UpdateCertificate(Guid id, CertificateUpdateDto certForUpdateDto);
 
         // WEB APP - GOAL 6
@@ -58,14 +59,15 @@ namespace QardlessAPI.Data
         Task<Course?> GetCourseById(Guid id);
         Task<Course?> UpdateCourseDetails(Guid id, CourseReadDto courseForUpdate);
         CourseReadDto AddNewCourse(CourseReadDto newCourse);
+        Task<Course?> GetCourseByTitleAndDate(CourseReadDto courseDto);
         void DeleteCourse(Course? course);
 
         #endregion
 
         #region FlaggedIssue
-        Task<IEnumerable<FlaggedIssue?>> GetFlaggedIssues();
-        Task<FlaggedIssue?> GetFlaggedIssue(Guid id);
-        void PutFlaggedIssue(Guid id, FlaggedIssue? flaggedIssue);
+        Task<IEnumerable<FlaggedIssue?>> ListAllFlaggedIssues();
+        Task<FlaggedIssue?> GetFlaggedIssueById(Guid id);
+        Task<FlaggedIssue?> UpdateFlaggedIssueWasRead(Guid id, FlaggedIssueUpdateDto flaggedIssueDto);
         void PostFlaggedIssue(FlaggedIssue? flaggedIssue);
         void DeleteFlaggedIssue(FlaggedIssue? flaggedIssue);
         #endregion
@@ -101,8 +103,7 @@ namespace QardlessAPI.Data
 
         #region Security
         public string HashPassword(string Password);
-
         #endregion
-        
+
     }
 }

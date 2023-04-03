@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using QardlessAPI.Data;
+using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Dtos.Business;
+using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Models;
 
 namespace QardlessAPI.Controllers
@@ -21,7 +23,6 @@ namespace QardlessAPI.Controllers
                throw new ArgumentNullException(nameof(mapper));
         }
 
-        // GET: api/Businesses
         [HttpGet("/businesses")]
         public async Task<ActionResult<IEnumerable<Business>>> ViewAllBusinesses()
         {
@@ -32,7 +33,6 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<BusinessReadPartialDto>>(businesses));
         }
 
-        // GET: api/Businesses/5
         [HttpGet("/businesses/{id}")]
         public async Task<ActionResult<Business>> BusinessById(Guid id)
         {
@@ -54,18 +54,6 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<Certificate>>(businessCerts));
         }
 
-        [HttpGet("/businesses/{id}/exp/certificates")]
-        public async Task<ActionResult<Certificate>> ViewCertsDueForRenewalByBusiness(Guid id)
-        {
-            var certs = await _repo.GetCertsDueForRenewal(id);
-
-            if (certs == null)
-                return NotFound();
-
-            return Ok(_mapper.Map<IEnumerable<Certificate>>(certs));
-        }
-
-        // PUT: api/Businesses/5
         [HttpPut("/businesses/{id}")]
         public async Task<ActionResult> UpdateBusinessContactDetails(Guid id, BusinessUpdateDto businessUpdateDto)
         {
@@ -81,19 +69,29 @@ namespace QardlessAPI.Controllers
             return Accepted(business);
         }
 
-        // POST: api/Businesses
         [HttpPost("/businesses")]
         public async Task<ActionResult<BusinessCreateDto?>> RegisterNewBusiness(BusinessCreateDto businessCreateDto)
         {
             if (businessCreateDto == null)
                 return BadRequest();
 
-            BusinessReadPartialDto businessReadPartialDto = await Task.Run(() => _repo.AddNewBusiness(businessCreateDto));
+            LoginDto businessCheck = new LoginDto
+            {
+                Email = businessCreateDto.Email
+            };
 
-            return Created("/businesses", businessReadPartialDto);
+            if (_repo.GetBusinessByEmail(businessCheck).Result == null)
+            {
+                BusinessReadPartialDto businessReadPartialDto = await Task.Run(() => _repo.AddNewBusiness(businessCreateDto));
+
+                return Created("/businesses", businessReadPartialDto);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
-        // DELETE: api/Businesses/5
         [HttpDelete("/businesses/{id}")]
         public async Task<IActionResult> DeleteBusiness(Guid id)
         {
@@ -102,7 +100,6 @@ namespace QardlessAPI.Controllers
                 return NotFound();
 
             _repo.DeleteBusiness(business);
-            _repo.SaveChanges();
 
             return Accepted();
         }

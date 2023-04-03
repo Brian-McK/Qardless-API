@@ -22,7 +22,6 @@ namespace QardlessAPI.Controllers
                       throw new ArgumentNullException(nameof(mapper));
         }
 
-        // GET: api/Admins
         [HttpGet("/admins")]
         public async Task<ActionResult<Admin>> AllAdmins()
         {
@@ -34,7 +33,6 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<AdminReadDto>>(admins));
         }
 
-        // GET: api/Admins/5
         [HttpGet("/admins/{id}")]
         public async Task<ActionResult<Admin>> AdminById(Guid id)
         {
@@ -45,7 +43,6 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<AdminReadDto>(admin));
         }
 
-        // PUT: api/Admins/5
         [HttpPut("/admins/{id}")]
         public async Task<ActionResult> UpdateAdminContactDetails(Guid id, AdminUpdateDto adminUpdateDto)
         {
@@ -59,7 +56,7 @@ namespace QardlessAPI.Controllers
             return Accepted(admin);
         }
 
-        // POST: api/Admins    (REGISTER)
+        // REGISTER
         [HttpPost("/admins")]
         public async Task<ActionResult<AdminCreateDto?>> RegisterNewAdmin(AdminCreateDto newAdmin)
         {
@@ -70,8 +67,7 @@ namespace QardlessAPI.Controllers
             return Created("/admins", adminPartialDto);
         }
 
-        //LOGOUT
-        // POST: api/admins/logout
+        // LOGOUT
         [HttpPost("/admins/logout")]
         public async Task<ActionResult<LogoutResponseDto>> LogoutAdmin(
             [FromBody] LogoutRequestDto adminLogoutRequest)
@@ -88,7 +84,6 @@ namespace QardlessAPI.Controllers
             return Ok(adminLogoutResponse);
         }
 
-        // DELETE: api/Admins/5
         [HttpDelete("/admins/{id}")]
         public async Task<IActionResult> DeleteAdmin(Guid id)
         {
@@ -96,7 +91,6 @@ namespace QardlessAPI.Controllers
             if (admin == null) return BadRequest();
 
             _repo.DeleteAdmin(admin);
-            _repo.SaveChanges();
 
             return Accepted();
         }
