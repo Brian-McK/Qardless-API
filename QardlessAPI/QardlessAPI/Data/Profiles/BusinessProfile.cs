@@ -19,9 +19,6 @@ namespace QardlessAPI.Data.Profiles
 
             // PUT
             CreateMap<BusinessUpdateDto, Business>();
-
-            // PATCH
-            CreateMap<Business, BusinessUpdateDto>();
         }
 
 
