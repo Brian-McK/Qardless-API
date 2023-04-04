@@ -12,7 +12,7 @@ using QardlessAPI.Data;
 namespace QardlessAPI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230404204226_Update")]
+    [Migration("20230404211906_Update")]
     partial class Update
     {
         /// <inheritdoc />
