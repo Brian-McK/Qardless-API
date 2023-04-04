@@ -67,6 +67,7 @@ namespace QardlessAPI.Data
         #region FlaggedIssue
         Task<IEnumerable<FlaggedIssue?>> ListAllFlaggedIssues();
         Task<FlaggedIssue?> GetFlaggedIssueById(Guid id);
+        Task<IEnumerable<Certificate>> ListFlaggedCertsByBusinessId(Guid businessId);
         Task<FlaggedIssue?> UpdateFlaggedIssueWasRead(Guid id, FlaggedIssueUpdateDto flaggedIssueDto);
         void PostFlaggedIssue(FlaggedIssue? flaggedIssue);
         void DeleteFlaggedIssue(FlaggedIssue? flaggedIssue);
