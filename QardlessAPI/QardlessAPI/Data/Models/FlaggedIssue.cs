@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace QardlessAPI.Data.Models
 {
@@ -21,7 +22,9 @@ namespace QardlessAPI.Data.Models
         public DateTime CreatedAt { get; set; }
 
         [Required]
-        [ForeignKey("EndUserId")]
-        public Guid EndUserId { get; set; }
+        public Guid CertificateId { get; set; }
+
+        [ForeignKey("CertificateId")]
+        public virtual Certificate Certificate { get; set; }
     }
 }
