@@ -346,13 +346,11 @@ namespace QardlessAPI.Data
                 .ToListAsync();
         }
 
-        public Task<Course> GetCourseById(Guid id)
+        public async Task<Course?> GetCourseById(Guid id)
         {
-            var course = _context.Courses
+            return await _context.Courses
                 .Where(c => c.Id == id)
                 .FirstOrDefaultAsync();
-
-            return course;
         }
 
         public async Task<Course?> UpdateCourseDetails(Guid id, CourseReadDto courseForUpdate)
