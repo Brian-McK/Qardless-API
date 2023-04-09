@@ -35,7 +35,7 @@ namespace QardlessAPI.Data
 
         public async Task<Admin?> GetAdminById(Guid id)
         {
-            return await _context.Admins.FirstOrDefaultAsync(a => a.Id == id);
+            return await _context.Admins.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
         }
 
         //for login
