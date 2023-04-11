@@ -9,6 +9,7 @@ using NuGet.Protocol.Plugins;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Dtos;
 using QardlessAPI.Data.Models;
+using QardlessAPI.Data.Dtos.Authentication;
 
 namespace QardlessAPI.Controllers
 {
