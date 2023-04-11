@@ -4,11 +4,14 @@ using QardlessAPI.Data;
 using QardlessAPI.Data.Models;
 using QardlessAPI.Data.Dtos.Admin;
 using QardlessAPI.Data.Dtos.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace QardlessAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Administrator")]
     public class AdminsController : ControllerBase
     {
         private readonly IQardlessAPIRepo _repo;

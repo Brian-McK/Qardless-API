@@ -1,5 +1,8 @@
-﻿using System.IdentityModel.Tokens;
+﻿using System.Data;
+using System.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Plugins;
@@ -9,11 +12,11 @@ using QardlessAPI.Data.Models;
 
 namespace QardlessAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly ApplicationDbContext _context; // TODO: Change to use repo
+        private readonly ApplicationDbContext _context; // TODO: Change to use repo, also add mapper
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly JwtHandler _jwtHandler;
 
@@ -49,5 +52,26 @@ namespace QardlessAPI.Controllers
                 Token = jwt
             });
         }
+
+        [HttpGet]
+        [Authorize] // Only allows access to Authenticated users.
+        public async Task<ActionResult> GetAccountInfo()
+        {
+            var user = await _userManager.FindByNameAsync(
+                HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value);
+
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(user);
+        }
+        // TODO, have GET for all Accounts
+        /*
+        [HttpGet]
+        [Authorize(Roles = "Administrator")]
+        public async Task<Action>
+        */
     }
 }

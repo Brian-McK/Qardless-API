@@ -5,26 +5,41 @@ using QardlessAPI.Data;
 using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace QardlessAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class EmployeesController : ControllerBase
     {
         private readonly IQardlessAPIRepo _repo;
         private readonly IMapper _mapper;
+        // TODO, add DI below to repo
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly JwtHandler _jwtHandler;
 
-        public EmployeesController(IQardlessAPIRepo repo, IMapper mapper)
+        public EmployeesController(
+            IQardlessAPIRepo repo,
+            IMapper mapper,
+            UserManager<ApplicationUser> userManager,
+            JwtHandler jwtHandler
+            )
         {
             _repo = repo ??
                 throw new ArgumentNullException(nameof(repo));
             _mapper = mapper ??
                throw new ArgumentNullException(nameof(mapper));
+
+            _userManager = userManager;
+            _jwtHandler = jwtHandler;
         }
 
         // GET: api/Employees
         [HttpGet("/employees")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Employee>> AllEmployees()
         {
             var employees = await _repo.ListAllEmployees();
@@ -36,7 +51,9 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/Employees/5
+
         [HttpGet("/employees/{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Employee>> ViewEmployeeById(Guid id)
         {
             var emp = await _repo.GetEmployeeById(id);
@@ -51,6 +68,7 @@ namespace QardlessAPI.Controllers
 
         // PUT: api/Employees/5
         [HttpPut("/employees/{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> UpdateEmployeeDetails(Guid id, EmployeeUpdateDto employeeUpdateDto)
         {
             if(employeeUpdateDto == null )
@@ -68,6 +86,7 @@ namespace QardlessAPI.Controllers
         // Register Employee
         // POST: api/Employees
         [HttpPost("/employees")]
+        [Authorize(Roles = "Administrator,Business")]
         public async Task<ActionResult<EmployeeCreateDto?>> RegisterNewEmployee(EmployeeCreateDto employeeCreateDto)
         {
             if (employeeCreateDto == null)
@@ -81,6 +100,7 @@ namespace QardlessAPI.Controllers
         // Business logic: Logout Employee
         // POST: api/Employees
         [HttpPost("/employees/logout")]
+        [Authorize(Roles = "Employee")]
         public async Task<ActionResult<LogoutResponseDto>> LogoutEmployee(
             [FromBody] LogoutRequestDto employeeLogoutRequest)
         {
@@ -99,6 +119,7 @@ namespace QardlessAPI.Controllers
 
         // DELETE: api/Employees/5
         [HttpDelete("/employees/{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeleteEmployee(Guid id)
         {
             var emp = await _repo.GetEmployeeById(id);

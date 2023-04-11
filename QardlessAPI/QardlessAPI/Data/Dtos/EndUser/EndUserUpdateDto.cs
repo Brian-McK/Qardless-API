@@ -16,8 +16,6 @@ namespace QardlessAPI.Data.Dtos.EndUser
         [Required]
         public string PasswordHash { get; set; }
 
-        public string? ContactNumber { get; set; }
-
-        public DateTime LastLoginDate { get; set; }
+        public string? PhoneNumber { get; set; }
     }
 }

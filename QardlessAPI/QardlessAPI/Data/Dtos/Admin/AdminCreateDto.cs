@@ -13,6 +13,6 @@ namespace QardlessAPI.Data.Dtos.Admin
         [Required]
         public string Password { get; set; }
         
-        public string ContactNumber { get; set; }
+        public string PhoneNumber { get; set; }
     }
 }

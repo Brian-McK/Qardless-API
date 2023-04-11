@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QardlessAPI.Data.Models
 {
-    public class Employee
+    public class Employee : ApplicationUser
     {
-        [Key]
-        public Guid Id { get; set; }
+        [Required]
+        public string Name { get; set; }
 
         [Required]
         public Guid BusinessId { get; set; }
@@ -15,23 +15,6 @@ namespace QardlessAPI.Data.Models
         public virtual Business Business { get; set; }
 
         [Required]
-        public string Name { get; set; }
-
-        [Required]
-        public string Email { get; set; }
-
-        [Required]
-        public string PasswordHash { get; set; }
-
-        public string ContactNumber { get; set; }
-
-        [Required]
         public int PrivilegeLevel { get; set; }
-
-        [Required]
-        public DateTime CreatedAt { get; set; }
-
-        public DateTime LastLoginDate { get; set; }
-
     }
 }

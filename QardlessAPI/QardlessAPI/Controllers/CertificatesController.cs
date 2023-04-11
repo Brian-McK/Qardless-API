@@ -3,11 +3,13 @@ using QardlessAPI.Data;
 using QardlessAPI.Data.Models;
 using QardlessAPI.Data.Dtos.Certificate;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QardlessAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CertificatesController : ControllerBase
     {
         private readonly IQardlessAPIRepo _repo;

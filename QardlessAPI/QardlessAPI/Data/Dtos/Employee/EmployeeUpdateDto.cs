@@ -16,11 +16,9 @@ namespace QardlessAPI.Data.Dtos.Employee
         [Required]
         public string Password { get; set; }
 
-        public string? ContactNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
         [Required]
         public int PrivilegeLevel { get; set; }
-
-        public DateTime LastLoginDate { get; set; }
     }
 }

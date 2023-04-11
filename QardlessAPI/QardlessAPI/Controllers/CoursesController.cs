@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using QardlessAPI.Data.Models;
 using QardlessAPI.Data.Dtos.Course;
 using QardlessAPI.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QardlessAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CoursesController : ControllerBase
     {
         private readonly IQardlessAPIRepo _repo;

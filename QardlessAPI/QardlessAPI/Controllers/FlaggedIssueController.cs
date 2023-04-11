@@ -5,11 +5,13 @@ using QardlessAPI.Data;
 using QardlessAPI.Data.Dtos.FlaggedIssue;
 using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QardlessAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class FlaggedIssueController : ControllerBase
     {
         private readonly IQardlessAPIRepo _repo;

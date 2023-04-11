@@ -62,6 +62,11 @@ namespace QardlessAPI.Controllers
                 await _roleManager.CreateAsync(new
                  IdentityRole(role_Business));
 
+            if (await _roleManager.FindByNameAsync(role_Employee) ==
+             null)
+                await _roleManager.CreateAsync(new
+                 IdentityRole(role_Employee));
+
             // create a list to track the newly added users
             var addedUserList = new List<ApplicationUser>();
 

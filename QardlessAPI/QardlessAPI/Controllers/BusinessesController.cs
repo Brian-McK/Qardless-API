@@ -1,28 +1,44 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Dtos.Business;
 using QardlessAPI.Data.Models;
+using System.Data;
+using System.Security.Claims;
 
 namespace QardlessAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BusinessesController : ControllerBase
     {
         private readonly IQardlessAPIRepo _repo;
         private readonly IMapper _mapper;
+        // TODO: Move DI below to repo
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly JwtHandler _jwtHandler;
 
-        public BusinessesController(IQardlessAPIRepo repo, IMapper mapper)
+        public BusinessesController(
+            IQardlessAPIRepo repo,
+            IMapper mapper,
+            UserManager<ApplicationUser> userManager,
+            JwtHandler jwtHandler)
         {
             _repo = repo ??
                 throw new ArgumentNullException(nameof(repo));
             _mapper = mapper ??
                throw new ArgumentNullException(nameof(mapper));
+
+            _userManager = userManager;
+            _jwtHandler= jwtHandler;
         }
 
         // GET: api/Businesses
         [HttpGet("/businesses")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<IEnumerable<Business>>> ViewAllBusinesses()
         {
             var businesses = await _repo.ListAllBusinesses();
@@ -34,6 +50,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/Businesses/5
         [HttpGet("/businesses/{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Business>> BusinessById(Guid id)
         {
             var business = await _repo.GetBusinessById(id);
@@ -43,7 +60,9 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<BusinessReadFullDto>(business));
         }
 
+
         [HttpGet("/businesses/{id}/certificates")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Certificate>> ViewBusinessesCertificates(Guid id)
         {
             var businessCerts = await _repo.GetCertificateByBusinessId(id);
@@ -54,7 +73,30 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<Certificate>>(businessCerts));
         }
 
+        [HttpGet("/businesses/certificates")]
+        [Authorize(Roles = "Business")]
+        public async Task<ActionResult<Certificate>> ViewBusinessesCertificates()
+        {
+            var user = await _userManager.FindByNameAsync(
+                HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value);
+
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+
+            var businessCerts = await _repo.GetCertificateByBusinessId(new Guid(user.Id));
+
+            if (businessCerts == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<IEnumerable<Certificate>>(businessCerts));
+        }
+
+
         [HttpGet("/businesses/{id}/exp/certificates")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Certificate>> ViewCertsDueForRenewalByBusiness(Guid id)
         {
             var certs = await _repo.GetCertsDueForRenewal(id);
@@ -65,8 +107,29 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<Certificate>>(certs));
         }
 
+        [HttpGet("/businesses/exp/certificates")]
+        [Authorize(Roles = "Business")]
+        public async Task<ActionResult<Certificate>> ViewCertsDueForRenewalByBusinessJWT()
+        {
+            var user = await _userManager.FindByNameAsync(
+                HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value);
+
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            var certs = await _repo.GetCertsDueForRenewal(new Guid(user.Id));
+
+            if (certs == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<IEnumerable<Certificate>>(certs));
+        }
+
         // PUT: api/Businesses/5
         [HttpPut("/businesses/{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult> UpdateBusinessContactDetails(Guid id, BusinessUpdateDto businessUpdateDto)
         {
             if (businessUpdateDto == null)
@@ -83,6 +146,7 @@ namespace QardlessAPI.Controllers
 
         // POST: api/Businesses
         [HttpPost("/businesses")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<BusinessCreateDto?>> RegisterNewBusiness(BusinessCreateDto businessCreateDto)
         {
             if (businessCreateDto == null)
@@ -95,6 +159,7 @@ namespace QardlessAPI.Controllers
 
         // DELETE: api/Businesses/5
         [HttpDelete("/businesses/{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeleteBusiness(Guid id)
         {
             var business = await _repo.GetBusinessById(id);
