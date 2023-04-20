@@ -16,10 +16,8 @@ namespace QardlessAPI.Data
         #region Admin
         Task<IEnumerable<Admin>> ListAllAdmins();
         Task<Admin?> GetAdminById(Guid id);
-        Task<Admin?> GetAdminByEmail(LoginDto adminLoginDto);
         Task<Admin?> UpdateAdminDetails(Guid id, AdminUpdateDto adminForUpdate);
-        AdminPartialDto AddNewAdmin(AdminCreateDto newAdmin);
-        bool CheckAdminPassword(Admin admin, LoginDto login);
+        Task<AdminReadDto> AddNewAdmin(AdminCreateDto newAdmin);
         void DeleteAdmin(Admin? admin);
         #endregion
 
@@ -30,7 +28,7 @@ namespace QardlessAPI.Data
         Task<IEnumerable<Certificate?>> GetCertificateByBusinessId(Guid id);
         Task<IEnumerable<Certificate?>> GetCertsDueForRenewal(Guid id);
         Task<Business?> UpdateBusinessDetails(Guid id, BusinessUpdateDto businessUpdate);
-        BusinessReadPartialDto AddNewBusiness(BusinessCreateDto businessForCreation);
+        BusinessReadFullDto AddNewBusiness(BusinessCreateDto businessForCreation);
         void DeleteBusiness(Business? business);
 
         #endregion
@@ -76,7 +74,7 @@ namespace QardlessAPI.Data
         Task<Employee?> GetEmployeeById(Guid id);
         Task<Employee?> GetEmployeeByEmail(LoginDto empLoginDto);
         Task<Employee?> UpdateEmployee(Guid id, EmployeeUpdateDto employeeUpdateDto);
-        EmployeeReadPartialDto AddNewEmployee(EmployeeCreateDto newEmp);
+        EmployeeReadFullDto AddNewEmployee(EmployeeCreateDto newEmp);
         bool CheckEmpPassword(Employee emp, LoginDto login);
         void DeleteEmployee(Employee? employee);
         #endregion
@@ -87,7 +85,7 @@ namespace QardlessAPI.Data
         Task<EndUser?> FindEndUserByEmail(string email);
         Task<EndUser?> GetEndUserByEmail(LoginDto endUserLoginDto);
         Task<EndUser?> UpdateEndUserDetails(Guid id, EndUserUpdateDto endUserUpdateDto);
-        EndUserReadPartialDto AddNewEndUser(EndUserCreateDto endUserForCreation);
+        EndUserReadFullDto AddNewEndUser(EndUserCreateDto endUserForCreation);
         bool CheckEndUserPassword(EndUser endUser, LoginDto login);
         void DeleteEndUser(EndUser endUser);
         #endregion
@@ -95,7 +93,7 @@ namespace QardlessAPI.Data
         #region Login
         EndUserReadPartialDto SendEndUserForProps(EndUser endUser);
         EmployeeReadPartialDto SendEmpForProps(Employee emp);
-        AdminPartialDto SendAdminForProps(Admin admin);
+        AdminReadDto SendAdminForProps(Admin admin);
 
         #endregion
 

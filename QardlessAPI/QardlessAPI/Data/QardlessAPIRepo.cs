@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using QardlessAPI.Data.Dtos.Admin;
 using QardlessAPI.Data.Dtos.Authentication;
 using QardlessAPI.Data.Dtos.Business;
@@ -15,11 +16,24 @@ namespace QardlessAPI.Data
     public class QardlessAPIRepo : IQardlessAPIRepo
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public QardlessAPIRepo(ApplicationDbContext context)
+        private readonly string role_RegisteredUser = "RegisteredUser";
+        private readonly string role_Administrator = "Administrator";
+        private readonly string role_Business = "Business";
+        private readonly string role_Employee = "Employee";
+
+        public QardlessAPIRepo(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
             _context = context ??
-                throw new ArgumentNullException(nameof(context)); 
+                throw new ArgumentNullException(nameof(context));
+
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public bool SaveChanges()
@@ -35,67 +49,58 @@ namespace QardlessAPI.Data
 
         public async Task<Admin?> GetAdminById(Guid id)
         {
-            return await _context.Admins.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
-        }
-
-        //for login
-        public async Task<Admin?> GetAdminByEmail(LoginDto adminLoginDto)
-        {
-            return await _context.Admins.FirstOrDefaultAsync(
-                e => e.Email == adminLoginDto.Email);
+            return await _context.Admins.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id.ToString());
         }
 
         public async Task<Admin?> UpdateAdminDetails(Guid id, AdminUpdateDto adminForUpdate)
         {
-            Admin? admin = await _context.Admins.FirstOrDefaultAsync(e => e.Id == id);
+            Admin? admin = await _context.Admins.FirstOrDefaultAsync(e => e.Id == id.ToString());
 
             admin.Name = adminForUpdate.Name;
             admin.Email = adminForUpdate.Email;
-            admin.ContactNumber = adminForUpdate.ContactNumber;
+            admin.PhoneNumber = adminForUpdate.PhoneNumber;
 
             _context.SaveChanges();
             _context.Admins.Add(admin);
 
-            return await _context.Admins.FirstOrDefaultAsync(e => e.Id == id);
+            return await _context.Admins.FirstOrDefaultAsync(e => e.Id == id.ToString());
         }
 
-        public AdminPartialDto AddNewAdmin(AdminCreateDto newAdmin)
+        public async Task<AdminReadDto> AddNewAdmin(AdminCreateDto newAdmin)
         {
             if (newAdmin == null)
                 throw new ArgumentNullException(nameof(newAdmin));
 
-            Admin admin = new Admin
+            var user_Admin = new Admin()
             {
-                Id = new Guid(),
-                Name = newAdmin.Name,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = newAdmin.Email,
                 Email = newAdmin.Email,
-                PasswordHash = HashPassword(newAdmin.Password),
-                ContactNumber = newAdmin.ContactNumber,
-                CreatedAt = DateTime.Now,
-                LastLoginDate = DateTime.Now
+                Name = newAdmin.Name
             };
 
-            _context.Admins.Add(admin);
-            _context.SaveChanges();
+            // insert the admin user into the DB
+            await _userManager.CreateAsync(user_Admin, newAdmin.Password);
 
-            AdminPartialDto adminPartial = new AdminPartialDto
+            // assign the "Administrator" role
+            await _userManager.AddToRoleAsync(user_Admin, role_Administrator);
+
+            // confirm the e-mail and remove lockout
+            user_Admin.EmailConfirmed = true;
+            user_Admin.LockoutEnabled = false;
+
+            _context.Admins.Add(user_Admin);
+            await _context.SaveChangesAsync();
+
+            AdminReadDto adminReadDto = new AdminReadDto()
             {
-                Id = admin.Id,
-                Name = admin.Name,
-                Email = admin.Email,
-                ContactNumber = admin.ContactNumber,
-                IsLoggedIn = false
+                Id = new Guid(user_Admin.Id),
+                Name = user_Admin.Name,
+                Email = user_Admin.Email,
+                PhoneNumber = user_Admin.PhoneNumber
             };
 
-            return adminPartial;
-        }
-
-        // Password check for login
-        public bool CheckAdminPassword(Admin admin, LoginDto login)
-        {
-            if(admin.PasswordHash == HashPassword(login.Password))
-                return true;
-            return false;
+            return adminReadDto;
         }
 
         public void DeleteAdmin(Admin? admin)
@@ -104,6 +109,7 @@ namespace QardlessAPI.Data
                 throw new ArgumentNullException(nameof(admin));
 
             _context.Admins.Remove(admin);
+            _userManager.DeleteAsync(admin);
         }
         #endregion
 
@@ -115,7 +121,7 @@ namespace QardlessAPI.Data
 
         public async Task<Business?> GetBusinessById(Guid id)
         {
-            return await _context.Businesses.FirstOrDefaultAsync(b => b.Id == id);
+            return await _context.Businesses.FirstOrDefaultAsync(b => b.Id == id.ToString());
         }
 
         public async Task<IEnumerable<Certificate?>> GetCertsDueForRenewal(Guid id)
@@ -139,52 +145,65 @@ namespace QardlessAPI.Data
 
         public async Task<Business?> UpdateBusinessDetails(Guid id, BusinessUpdateDto businessUpdate)
         {
-            Business? business = await _context.Businesses.FirstOrDefaultAsync(b => b.Id == id);
+            Business? business = await _context.Businesses.FirstOrDefaultAsync(b => b.Id == id.ToString());
 
             business.Name = businessUpdate.Name;
             business.Email = businessUpdate.Email;
-            business.Contact = businessUpdate.Contact;
+            business.PhoneNumber = businessUpdate.PhoneNumber;
 
             _context.SaveChanges();
             _context.Businesses.Add(business);
 
-            return await _context.Businesses.FirstOrDefaultAsync(b => b.Id == id);
+            return await _context.Businesses.FirstOrDefaultAsync(b => b.Id == id.ToString());
         }
 
-        public BusinessReadPartialDto AddNewBusiness(BusinessCreateDto businessForCreation)
+        public BusinessReadFullDto AddNewBusiness(BusinessCreateDto businessForCreation)
         {
             if (businessForCreation == null)
                 throw new ArgumentNullException(nameof(businessForCreation));
 
-            Business business = new Business()
+            var user_Business = new Business()
             {
-                Id = new Guid(),
-                Name = businessForCreation.Name,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = businessForCreation.Email,
                 Email = businessForCreation.Email,
-                Contact = businessForCreation.Contact,
-                CreatedAt = DateTime.Now
+                Name = businessForCreation.Name
             };
 
-            _context.Businesses.Add(business);
-            _context.SaveChanges();
+            // insert the user into the DB
+            await _userManager.CreateAsync(user_Business, businessForCreation.Password);
 
-            BusinessReadPartialDto businessReadPartialDto = new BusinessReadPartialDto
+            // assign the "Business" role
+            await _userManager.AddToRoleAsync(user_Business, role_Business);
+
+            // confirm the e-mail and remove lockout
+            user_Business.EmailConfirmed = true;
+            user_Business.LockoutEnabled = false;
+
+            _context.Businesses.Add(user_Business);
+            await _context.SaveChangesAsync();
+
+            BusinessReadFullDto businessReadFullDto = new BusinessReadFullDto()
             {
-                Id = business.Id,
-                Name = business.Name,
-                Email = business.Email,
-                Contact = business.Contact
+                Id = new Guid(user_Business.Id),
+                Name = user_Business.Name,
+                Email = user_Business.Email,
+                PhoneNumber = user_Business.PhoneNumber
             };
 
-            return businessReadPartialDto;
+            return businessReadFullDto;
+
         }
 
-        public void DeleteBusiness(Business? business)
+        public async void DeleteBusiness(Business? business)
         {
             if (business == null)
                 throw new ArgumentNullException(nameof(business));
 
             _context.Businesses.Remove(business);
+            _userManager.DeleteAsync(business);
+
+            await _context.SaveChangesAsync();
         }
         #endregion
 
@@ -455,7 +474,7 @@ namespace QardlessAPI.Data
         {
             return await _context.Employees
                 .Include(b => b.Business)
-                .FirstOrDefaultAsync(e => e.Id == id);
+                .FirstOrDefaultAsync(e => e.Id == id.ToString());
         }
 
         //For Login Controller
@@ -466,51 +485,60 @@ namespace QardlessAPI.Data
 
         public async Task<Employee?> UpdateEmployee(Guid id, EmployeeUpdateDto employeeUpdateDto)
         {
-            Employee? emp = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
+            Employee? emp = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id.ToString());
 
             emp.Name = employeeUpdateDto.Name;
             emp.Email = employeeUpdateDto.Email;
             emp.PasswordHash = HashPassword(employeeUpdateDto.Password);
-            emp.ContactNumber = employeeUpdateDto.ContactNumber;
+            emp.PhoneNumber = employeeUpdateDto.PhoneNumber;
             emp.PrivilegeLevel = employeeUpdateDto.PrivilegeLevel;
             emp.BusinessId = employeeUpdateDto.BusinessId;
 
             _context.SaveChanges();
             _context.Employees.Add(emp);
 
-            return await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
+            return await _context.Employees.FirstOrDefaultAsync(e => e.Id == id.ToString());
         }
 
-        public EmployeeReadPartialDto AddNewEmployee(EmployeeCreateDto newEmp)
+        public EmployeeReadFullDto AddNewEmployee(EmployeeCreateDto newEmp)
         {
             if (newEmp == null)
                 throw new ArgumentNullException(nameof(newEmp));
 
             Employee emp = new Employee
             {
-                Id = new Guid(),
-                Name = newEmp.Name,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = newEmp.Email,
                 Email = newEmp.Email,
-                PasswordHash = HashPassword(newEmp.Password),
-                ContactNumber = newEmp.ContactNumber,
-                CreatedAt = DateTime.Now,
+                Name = newEmp.Name,
+                PhoneNumber = newEmp.PhoneNumber,
                 PrivilegeLevel = newEmp.PrivilegeLevel,
                 BusinessId = newEmp.BusinessId
             };
-            
-            _context.Employees.Add(emp);
-            _context.SaveChanges();
 
-            EmployeeReadPartialDto empPartialRead = new EmployeeReadPartialDto
+            // insert the user into the DB
+            await _userManager.CreateAsync(emp, newEmp.Password);
+
+            // assign the "Employee" role
+            await _userManager.AddToRoleAsync(emp, role_Employee);
+
+            // confirm the e-mail and remove lockout
+            emp.EmailConfirmed = true;
+            emp.LockoutEnabled = false;
+
+            _context.Employees.Add(emp);
+            await _context.SaveChangesAsync();
+
+            EmployeeReadFullDto empFullRead = new EmployeeReadFullDto
             {
-                Id = emp.Id,
+                Id = new Guid(emp.Id),
                 Name = emp.Name,
                 Email = emp.Email,
-                ContactNumber = emp.ContactNumber,
+                PhoneNumber = emp.PhoneNumber,
                 BusinessId = emp.BusinessId
             };
             
-            return empPartialRead;
+            return empFullRead;
         }
 
         // Password check for login 
@@ -542,7 +570,7 @@ namespace QardlessAPI.Data
         public async Task<EndUser?> GetEndUserById(Guid id)
         {
             return await _context.EndUsers
-                .Where(e => e.Id == id)
+                .Where(e => e.Id == id.ToString())
                 .Include(e => e.EndUserCerts)
                 .FirstOrDefaultAsync();
         }
@@ -566,48 +594,54 @@ namespace QardlessAPI.Data
 
         public async Task<EndUser?> UpdateEndUserDetails(Guid id, EndUserUpdateDto endUserUpdateDto)
         {
-            EndUser? endUser = await _context.EndUsers.FirstOrDefaultAsync(e => e.Id == id);
+            EndUser? endUser = await _context.EndUsers.FirstOrDefaultAsync(e => e.Id == id.ToString());
 
             endUser.Name = endUserUpdateDto.Name;
             endUser.Email = endUserUpdateDto.Email;
-            endUser.ContactNumber = endUserUpdateDto.ContactNumber;
+            endUser.PhoneNumber = endUserUpdateDto.PhoneNumber;
 
             _context.SaveChanges();
             _context.EndUsers.Add(endUser);
 
-            return await _context.EndUsers.FirstOrDefaultAsync(e => e.Id == id);
+            return await _context.EndUsers.FirstOrDefaultAsync(e => e.Id == id.ToString());
         }
 
-        public EndUserReadPartialDto AddNewEndUser(EndUserCreateDto endUserForCreation)
+        public EndUserReadFullDto AddNewEndUser(EndUserCreateDto endUserForCreation)
         {
             if (endUserForCreation == null)
                 throw new ArgumentNullException(nameof(endUserForCreation));
 
-            EndUser endUser = new EndUser
+            EndUser user_RegisteredUser = new EndUser
             {
-                Id = new Guid(),
-                Name = endUserForCreation.Name,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = endUserForCreation.Email,
                 Email = endUserForCreation.Email,
-                EmailVerified = false,
-                PasswordHash = HashPassword(endUserForCreation.Password),
-                ContactNumber = endUserForCreation.ContactNumber,
-                CreatedAt = DateTime.Now,
-                LastLoginDate = DateTime.Now
+                Name = endUserForCreation.Name,
+                PhoneNumber = endUserForCreation.PhoneNumber
             };
 
-            _context.EndUsers.Add(endUser);
-            _context.SaveChanges();
+            // insert the standard user into the DB
+            await _userManager.CreateAsync(user_RegisteredUser, endUserForCreation.Password);
 
-            EndUserReadPartialDto endUserReadPartialDto = new EndUserReadPartialDto
+            // assign the "RegisteredUser" role
+            await _userManager.AddToRoleAsync(user_RegisteredUser, role_RegisteredUser);
+
+            // confirm the e-mail and remove lockout
+            user_RegisteredUser.EmailConfirmed = true;
+            user_RegisteredUser.LockoutEnabled = false;
+
+            _context.EndUsers.Add(user_RegisteredUser);
+            await _context.SaveChangesAsync();
+
+            EndUserReadFullDto endUserReadFullDto = new EndUserReadFullDto
             {
-                Id = endUser.Id,
-                Name = endUser.Name,
-                Email = endUser.Email,
-                ContactNumber = endUser.ContactNumber,
-                IsLoggedIn = false
+                Id = new Guid(user_RegisteredUser.Id),
+                Name = user_RegisteredUser.Name,
+                Email = user_RegisteredUser.Email,
+                PhoneNumber = user_RegisteredUser.PhoneNumber
             };
            
-            return endUserReadPartialDto;
+            return endUserReadFullDto;
         }
 
         // Password check for login 
@@ -666,18 +700,16 @@ namespace QardlessAPI.Data
             return empForProps;
         }
 
-        public AdminPartialDto SendAdminForProps(Admin admin)
+        public AdminReadDto SendAdminForProps(Admin admin)
         {
-            AdminPartialDto adminForProps = new AdminPartialDto
+            AdminReadDto adminForProps = new AdminReadDto
             {
-                Id = admin.Id,
+                Id = new Guid(admin.Id),
                 Name = admin.Name,
                 Email = admin.Email,
-                ContactNumber = admin.ContactNumber,
-                IsLoggedIn = true
+                PhoneNumber = admin.PhoneNumber
             };
 
-            admin.LastLoginDate = DateTime.Now;
             SaveChanges();
 
             return adminForProps;

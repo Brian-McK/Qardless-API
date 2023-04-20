@@ -68,9 +68,9 @@ namespace QardlessAPI.Controllers
         {
             if(newAdmin == null) return BadRequest();
 
-            AdminPartialDto adminPartialDto = await Task.Run(() => _repo.AddNewAdmin(newAdmin));
+            AdminReadDto adminReadDto = await Task.Run(() => _repo.AddNewAdmin(newAdmin));
 
-            return Created("/admins", adminPartialDto);
+            return Created("/admins", adminReadDto);
         }
 
         //LOGOUT
