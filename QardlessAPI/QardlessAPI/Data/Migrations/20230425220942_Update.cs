@@ -44,21 +44,6 @@ namespace QardlessAPI.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Courses",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    BusinessId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CourseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Expiry = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Courses", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "EndUsers",
                 columns: table => new
                 {
@@ -77,19 +62,24 @@ namespace QardlessAPI.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FlaggedIssues",
+                name: "Courses",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    WasRead = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    BusinessId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CourseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Expiry = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FlaggedIssues", x => x.Id);
+                    table.PrimaryKey("PK_Courses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Courses_Businesses_BusinessId",
+                        column: x => x.BusinessId,
+                        principalTable: "Businesses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -146,6 +136,28 @@ namespace QardlessAPI.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "FlaggedIssues",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    WasRead = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CertificateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FlaggedIssues", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FlaggedIssues_Certificates_CertificateId",
+                        column: x => x.CertificateId,
+                        principalTable: "Certificates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Certificates_CourseId",
                 table: "Certificates",
@@ -157,9 +169,19 @@ namespace QardlessAPI.Data.Migrations
                 column: "EndUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Courses_BusinessId",
+                table: "Courses",
+                column: "BusinessId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Employees_BusinessId",
                 table: "Employees",
                 column: "BusinessId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FlaggedIssues_CertificateId",
+                table: "FlaggedIssues",
+                column: "CertificateId");
         }
 
         /// <inheritdoc />
@@ -169,13 +191,13 @@ namespace QardlessAPI.Data.Migrations
                 name: "Admins");
 
             migrationBuilder.DropTable(
-                name: "Certificates");
-
-            migrationBuilder.DropTable(
                 name: "Employees");
 
             migrationBuilder.DropTable(
                 name: "FlaggedIssues");
+
+            migrationBuilder.DropTable(
+                name: "Certificates");
 
             migrationBuilder.DropTable(
                 name: "Courses");
