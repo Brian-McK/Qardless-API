@@ -43,6 +43,17 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<FlaggedIssueReadDto>(flaggedIssue));
         }
 
+        [HttpGet("/flaggedissues/businesses/{id}")]
+        public async Task<ActionResult<FlaggedIssue>> ViewFlaggedIssuesByBusiness(Guid id)
+        {
+            var certs = await _repo.ListFlaggedIssuesByBusinessId(id);
+
+            if (certs == null)
+                return NotFound();
+
+            return Ok(certs);
+        }
+
         [HttpPut("/flaggedissues/{id}")]
         public async Task<ActionResult> UpdateFlaggedIssue(Guid id, FlaggedIssueUpdateDto flaggedIssueDto)
         {

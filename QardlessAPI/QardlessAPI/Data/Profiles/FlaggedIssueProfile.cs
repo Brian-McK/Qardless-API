@@ -8,20 +8,14 @@ namespace QardlessAPI.Data.Profiles
     {
         public FlaggedIssueProfile()
         {
-            // GET Full
+            // GET 
             CreateMap<FlaggedIssue, FlaggedIssueReadDto>();
-
-            // GET Partial
-            //CreateMap<>();
 
             // POST
             CreateMap<FlaggedIssueCreateDto, FlaggedIssue>();
 
             // PUT
             CreateMap<FlaggedIssueUpdateDto, FlaggedIssue>();
-
-            // PATCH
-            CreateMap<FlaggedIssue, FlaggedIssueUpdateDto>();
         }
     }
 }

@@ -19,9 +19,6 @@ namespace QardlessAPI.Data.Profiles
 
             // PUT
             CreateMap<EmployeeUpdateDto, Employee>();
-
-            // PATCH
-            CreateMap<Employee, EmployeeUpdateDto>();
         }
     }
 }

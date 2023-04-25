@@ -8,19 +8,14 @@ namespace QardlessAPI.Data.Profiles
     {
         public AdminProfile()
         {
-            // Source -> Target
-
             // GET
             CreateMap<Admin, AdminReadDto>();
 
             // POST
             CreateMap<AdminCreateDto, Admin>();
 
-            // PUT // NOTE: May remove PUT in favour of PATCH
+            // PUT 
             CreateMap<AdminUpdateDto, Admin>();
-
-            // PATCH
-            CreateMap<Admin, AdminUpdateDto>();
         }
     }
 }
