@@ -418,21 +418,10 @@ namespace QardlessAPI.Data
 
         public async Task<IEnumerable<FlaggedIssue>> ListFlaggedIssuesByBusinessId(Guid businessId)
         {
-            return await _context.Certificates
-                .Join(_context.Courses,
-                    c => c.CourseId,
-                    course => course.Id,
-                    (c, course) => new { Certificate = c, Course = course })
-                .Join(_context.Businesses,
-                    b => b.Course.BusinessId,
-                    business => business.Id,
-                    (b, business) => new { b.Certificate, Business = business })
-                .Join(_context.FlaggedIssues,
-                    c => c.Certificate.Id,
-                    flaggedIssue => flaggedIssue.CertificateId,
-                    (x, flaggedIssue) => new { x.Certificate, x.Business, FlaggedIssue = flaggedIssue })
-                .Where(x => x.Business.Id == businessId)
-                .Select(x => x.FlaggedIssue)
+            return await _context.FlaggedIssues
+                .Include(f => f.Certificate)
+                .ThenInclude(c => c.Course)
+                .Where(f => f.Certificate.Course.BusinessId == businessId)
                 .ToListAsync();
         }
 
