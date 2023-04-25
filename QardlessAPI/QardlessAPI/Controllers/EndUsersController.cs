@@ -73,28 +73,25 @@ namespace QardlessAPI.Controllers
 
         // Business logic: Register EndUser
         [HttpPost("/endusers")]
-        public async Task<ActionResult<EndUserCreateDto?>> RegisterNewEndUser(EndUserCreateDto endUserForCreation)
+        public async Task<ActionResult<EndUserReadPartialDto?>> RegisterNewEndUser(EndUserCreateDto endUserForCreation)
         {
             if (endUserForCreation == null)
                 return BadRequest();
 
-            LoginDto userCheck = new LoginDto
+            var userCheck = new LoginDto
             {
                 Email = endUserForCreation.Email,
                 Password = endUserForCreation.Password
             };
 
-            if(_repo.GetEndUserByEmail(userCheck).Result == null)
-            {
-                EndUserReadPartialDto endUserReadPartialDto = 
-                    await Task.Run(() => _repo.AddNewEndUser(endUserForCreation));
-
-                return Created("/endusers", endUserReadPartialDto);
-            }
-            else
+            if (_repo.GetEndUserByEmail(userCheck).Result != null)
             {
                 return BadRequest();
             }
+
+            var newEndUser = await Task.Run(() => _repo.AddNewEndUser(endUserForCreation));
+            
+            return Created("/endusers", newEndUser);
         }
 
         // WEB APP - UNASSIGN CERT
