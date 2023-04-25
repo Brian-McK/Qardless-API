@@ -44,9 +44,9 @@ namespace QardlessAPI.Controllers
         }
 
         [HttpGet("/flaggedissues/businesses/{id}")]
-        public async Task<ActionResult<Certificate>> ViewFlaggedCertsByBusiness(Guid id)
+        public async Task<ActionResult<FlaggedIssue>> ViewFlaggedIssuesByBusiness(Guid id)
         {
-            var certs = await _repo.ListFlaggedCertsByBusinessId(id);
+            var certs = await _repo.ListFlaggedIssuesByBusinessId(id);
 
             if(certs == null)
                 return NotFound();
