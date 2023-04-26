@@ -346,13 +346,11 @@ namespace QardlessAPI.Data
                 .ToListAsync();
         }
 
-        public Task<Course> GetCourseById(Guid id)
+        public async Task<Course?> GetCourseById(Guid id)
         {
-            var course = _context.Courses
+            return await _context.Courses
                 .Where(c => c.Id == id)
                 .FirstOrDefaultAsync();
-
-            return course;
         }
 
         public async Task<Course?> UpdateCourseDetails(Guid id, CourseReadDto courseForUpdate)
@@ -416,6 +414,15 @@ namespace QardlessAPI.Data
         {
             return await _context.FlaggedIssues
                 .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<IEnumerable<FlaggedIssue>> ListFlaggedIssuesByBusinessId(Guid businessId)
+        {
+            return await _context.FlaggedIssues
+                .Include(f => f.Certificate)
+                .ThenInclude(c => c.Course)
+                .Where(f => f.Certificate.Course.BusinessId == businessId)
+                .ToListAsync();
         }
 
         public async Task<FlaggedIssue?> UpdateFlaggedIssueWasRead(Guid id, FlaggedIssueUpdateDto flaggedIssueDto)

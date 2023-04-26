@@ -137,6 +137,8 @@ namespace QardlessAPI.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BusinessId");
+
                     b.ToTable("Courses");
                 });
 
@@ -222,15 +224,15 @@ namespace QardlessAPI.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("CertificateId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid>("EndUserId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -240,6 +242,8 @@ namespace QardlessAPI.Data.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CertificateId");
 
                     b.ToTable("FlaggedIssues");
                 });
@@ -261,6 +265,17 @@ namespace QardlessAPI.Data.Migrations
                     b.Navigation("Course");
                 });
 
+            modelBuilder.Entity("QardlessAPI.Data.Models.Course", b =>
+                {
+                    b.HasOne("QardlessAPI.Data.Models.Business", "Business")
+                        .WithMany()
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Business");
+                });
+
             modelBuilder.Entity("QardlessAPI.Data.Models.Employee", b =>
                 {
                     b.HasOne("QardlessAPI.Data.Models.Business", "Business")
@@ -270,6 +285,17 @@ namespace QardlessAPI.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Business");
+                });
+
+            modelBuilder.Entity("QardlessAPI.Data.Models.FlaggedIssue", b =>
+                {
+                    b.HasOne("QardlessAPI.Data.Models.Certificate", "Certificate")
+                        .WithMany()
+                        .HasForeignKey("CertificateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Certificate");
                 });
 
             modelBuilder.Entity("QardlessAPI.Data.Models.EndUser", b =>

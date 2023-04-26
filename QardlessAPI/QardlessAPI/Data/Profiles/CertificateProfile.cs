@@ -19,9 +19,6 @@ namespace QardlessAPI.Data.Profiles
 
             // PUT
             CreateMap<CertificateUpdateDto, Certificate>();
-
-            // PATCH
-            CreateMap<Certificate, CertificateUpdateDto>();
         }
     }
 }
