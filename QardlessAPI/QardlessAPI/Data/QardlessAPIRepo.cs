@@ -424,18 +424,17 @@ namespace QardlessAPI.Data
                 .Where(f => f.Certificate.Course.BusinessId == businessId)
                 .ToListAsync();
         }
-
-        public async Task<FlaggedIssue?> UpdateFlaggedIssueWasRead(Guid id, FlaggedIssueUpdateDto flaggedIssueDto)
+        
+        public void FlaggedIssueWasRead(Guid flaggedIssueId)
         {
-            FlaggedIssue? flaggedIssue = await _context.FlaggedIssues
-                .FirstOrDefaultAsync(c => c.Id == id);
+            var flaggedIssue = _context.FlaggedIssues.FirstOrDefault(f => f.Id == flaggedIssueId);
+
+            if (flaggedIssue == null) 
+                throw new ArgumentNullException(nameof(flaggedIssue));
 
             flaggedIssue.WasRead = true;
-
+            
             _context.SaveChanges();
-            _context.FlaggedIssues.Add(flaggedIssue);
-
-            return await _context.FlaggedIssues.FirstOrDefaultAsync(i => i.Id == id);
         }
 
         public void PostFlaggedIssue(FlaggedIssue? flaggedIssue)

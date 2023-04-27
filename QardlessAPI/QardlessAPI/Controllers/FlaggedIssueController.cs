@@ -54,19 +54,19 @@ namespace QardlessAPI.Controllers
             return Ok(certs);
         }
 
-        [HttpPut("/flaggedissues/{id}")]
-        public async Task<ActionResult> UpdateFlaggedIssue(Guid id, FlaggedIssueUpdateDto flaggedIssueDto)
+        [HttpPut("/flaggedissues/{id}/read")]
+        public async Task<ActionResult> ReadFlaggedIssue(Guid id)
         {
-            if (flaggedIssueDto == null)
+            if (id == null)
                 return BadRequest();
-
+            
             var flaggedIssue = await _repo.GetFlaggedIssueById(id);
-            if (flaggedIssue == null)
-                return BadRequest();
 
-            await Task.Run(() => _repo.UpdateFlaggedIssueWasRead(id, flaggedIssueDto));
+            if(flaggedIssue == null) return NotFound();
 
-            return Accepted(flaggedIssue);
+            _repo.FlaggedIssueWasRead(id);
+
+            return Ok();
         }
 
         [HttpPost("/flaggedissues")]
