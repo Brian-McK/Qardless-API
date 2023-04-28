@@ -47,37 +47,37 @@ GET /businesses/{id}/certificates - gets certificates by business id <br />
 ### Certificates 
 GET /certificates - gets all certs <br />
 POST /certificates - add new cert <br />
-GET /certificates/{id} - get cert by id <br /> <br /> <br /> <br /> <br /> <br />
-PUT /certificates/{id} - edit cert by id <br /> <br /> <br /> <br /> <br /> <br />
-DELETE /certificates/{id} - delete cert by id <br /> <br /> <br /> <br /> <br /> <br />
+GET /certificates/{id} - get cert by id <br />
+PUT /certificates/{id} - edit cert by id <br /> 
+DELETE /certificates/{id} - delete cert by id <br />
 PUT /certificates/{id}/freeze - freeze a cert <br />
 PUT /certificates/{id}/unfreeze - unfreeze a cert <br />
 
 ### Courses
-GET /courses - gets all courses <br /> <br /> <br /> <br /> <br />
-POST /courses - adds new course <br /> <br /> <br /> <br /> <br />
-GET /courses/{id} - get course by id <br /> <br /> <br /> <br /> <br />
-PUT /courses/{id} - edit a course <br /> <br /> <br /> <br /> <br />
-GET /courses/businesses/{id} - get courses by business  <br /> <br /> <br /> <br /> <br />
-DELETE /courses/{id} - delete a course <br /> <br /> <br /> <br /> <br />
+GET /courses - gets all courses <br /> 
+POST /courses - adds new course <br /> 
+GET /courses/{id} - get course by id <br /> 
+PUT /courses/{id} - edit a course <br /> 
+GET /courses/businesses/{id} - get courses by business  <br />
+DELETE /courses/{id} - delete a course <br /> 
 
 ### Employees 
-GET /employees - gets all employees <br /> <br /> <br /> <br />
-POST /employees - add new employee <br /> <br /> <br /> <br />
-GET /employees/{id} - get employee by id <br /> <br /> <br /> <br />
-PUT /employees/{id} - edit employee <br /> <br /> <br /> <br />
-DELETE /employees/{id} - delete employee <br /> <br /> <br /> <br />
-POST /employees/logout - logout employee <br /> <br /> <br /> <br />
+GET /employees - gets all employees <br />
+POST /employees - add new employee <br /> 
+GET /employees/{id} - get employee by id <br /> 
+PUT /employees/{id} - edit employee <br /> 
+DELETE /employees/{id} - delete employee <br />
+POST /employees/logout - logout employee <br /> 
 
 ### End Users
-GET /endusers - get all end users <br /> <br /> <br />
-POST /endusers - add new end user (register) <br /> <br /> <br />
-GET /endusers/{id} - get enduser by id <br /> <br /> <br />
-PUT /endusers/{id} - edit end user <br /> <br /> <br />
-DELETE /endusers/{id} - delete end user by id <br /> <br /> <br />
-GET /endusers/{id}/certificates - get end users certs <br /> <br /> <br />
-PUT /endusers/certificates/unassign/{id} - unassign a cert from an end user <br /> <br /> <br />
-POST /endusers/logout - logout end user  <br /> <br /> <br />
+GET /endusers - get all end users <br />
+POST /endusers - add new end user (register) <br /> 
+GET /endusers/{id} - get enduser by id <br /> 
+PUT /endusers/{id} - edit end user <br /> 
+DELETE /endusers/{id} - delete end user by id <br /> 
+GET /endusers/{id}/certificates - get end users certs <br /> 
+PUT /endusers/certificates/unassign/{id} - unassign a cert from an end user <br /> 
+POST /endusers/logout - logout end user  <br /> 
 
 ### Flagged Issues
 GET /flaggedusses - get all flagged issues <br /> <br />
