@@ -1,4 +1,5 @@
 # Qardless API 
+Qardless is a SaaS (Software as a service) application targeted towards businesses who provide paper certificates as proof of obtaining a qualification and provides a means of storing certificates digitally. Qardless consists of two separate applications; a mobile application for end users and a desktop application for administration staff.
 
 README file for Qardless-API, a RESTful API built using ASP .NET Core and using Enitity Framework, connected to a Microsoft SQL Server Database. 
 
