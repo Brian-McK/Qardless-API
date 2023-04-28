@@ -5,24 +5,24 @@ README file for Qardless-API, a RESTful API built using ASP .NET Core and using 
 ## Installation 
 
 To run this API, you will need: 
-..* .NET Core 6 or above 
-..* Microsoft SQL Server  
-..* Recommended IDE: Visual Studio 2023 
+* .NET Core 6 or above 
+* Microsoft SQL Server  
+* Recommended IDE: Visual Studio 2023 
 
 ### Create a Local SQL Server DB on your machine
 
 1. Download and install Microsoft SQL Server Management Studio.
-..1. Open up command prompt.
-..1. Run command 'sqllocaldb create Local'
-..1. Open Microsoft SQL Server Management Studio. 
-..1. Server name: '(localdb)\Local'
-..1. Auth: 'Windows Auth' 
-..1. In command prompt, go to project directory, specifically '/Qardless.API'
-..1. If no migrations: run command 'dotnet ef migrations add UpdateMigration'
-..1. If migrations: run command 'dotnet ef database update'
-..1. Database should be viewable in Microsoft SQL Server Management Studio. 
+2. Open up command prompt.
+3. Run command 'sqllocaldb create Local'
+4. Open Microsoft SQL Server Management Studio. 
+5. Server name: '(localdb)\Local'
+6. Auth: 'Windows Auth' 
+7. In command prompt, go to project directory, specifically '/Qardless.API'
+8. If no migrations: run command 'dotnet ef migrations add UpdateMigration'
+9. If migrations: run command 'dotnet ef database update'
+10. Database should be viewable in Microsoft SQL Server Management Studio. 
 
-..* Modify appsettings.json' to point to your own SQL Server Database. 
+* Modify appsettings.json' to point to your own SQL Server Database. 
 
 ## Usage 
 
@@ -91,7 +91,6 @@ GET /flaggedusses/businesses/{id} - get flagged issues per business
 POST /endusers/login - login end user
 POST /employees/login - login employee
 POST /admins/login - login admin
-
 
 All end points return data in JSON format. 
 
