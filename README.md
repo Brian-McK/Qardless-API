@@ -80,12 +80,12 @@ PUT /endusers/certificates/unassign/{id} - unassign a cert from an end user <br 
 POST /endusers/logout - logout end user  <br /> 
 
 ### Flagged Issues
-GET /flaggedusses - get all flagged issues <br /> <br />
-POST /flaggedusses - post flagged issue <br /> <br />
-GET /flaggedusses/{id} - get flagged issue by id <br /> <br />
-PUT /flaggedusses/{id} - mark flagged issue as read <br /> <br />
-DELETE /flaggedusses/{id} - delete flagged issue by id <br /> <br />
-GET /flaggedusses/businesses/{id} - get flagged issues per business <br /> <br />
+GET /flaggedusses - get all flagged issues <br /> 
+POST /flaggedusses - post flagged issue <br />
+GET /flaggedusses/{id} - get flagged issue by id <br /> 
+PUT /flaggedusses/{id} - mark flagged issue as read <br />
+DELETE /flaggedusses/{id} - delete flagged issue by id <br />
+GET /flaggedusses/businesses/{id} - get flagged issues per business <br /> 
 
 ### Login 
 POST /endusers/login - login end user <br />
