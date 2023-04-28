@@ -29,12 +29,12 @@ To run this API, you will need:
 The API provides the following endpoints: 
 
 ### Admins 
-GET /admins - gets all admins
-POST /admins - adds a new admin
-GET /admins/{id} - gets admin by id
-PUT /admins/{id} - edits admin by id
-DELETE /admins/{id} - deletes an admin by id
-POST /admins/logout - logouts an admin
+GET /admins - gets all admins <br />
+POST /admins - adds a new admin <br />
+GET /admins/{id} - gets admin by id <br />
+PUT /admins/{id} - edits admin by id <br />
+DELETE /admins/{id} - deletes an admin by id <br />
+POST /admins/logout - logouts an admin <br />
 
 ### Businesses 
 GET /businesses - gets all businesses
