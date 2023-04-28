@@ -152,9 +152,9 @@ namespace QardlessAPI.Controllers
             if (businessCreateDto == null)
                 return BadRequest();
 
-            BusinessReadPartialDto businessReadPartialDto = await Task.Run(() => _repo.AddNewBusiness(businessCreateDto));
+            BusinessReadFullDto businessReadFullDto = await Task.Run(() => _repo.AddNewBusiness(businessCreateDto));
 
-            return Created("/businesses", businessReadPartialDto);
+            return Created("/businesses", businessReadFullDto);
         }
 
         // DELETE: api/Businesses/5

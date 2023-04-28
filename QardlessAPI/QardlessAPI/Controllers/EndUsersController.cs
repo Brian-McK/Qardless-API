@@ -10,9 +10,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace QardlessAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/endusers")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class EndUsersController : ControllerBase
     {
         private readonly IQardlessAPIRepo _repo;
@@ -32,13 +32,13 @@ namespace QardlessAPI.Controllers
                       throw new ArgumentNullException(nameof(mapper));
 
             _userManager = userManager;
-            _jwtHandler = jwtHandler
+            _jwtHandler = jwtHandler;
         }
 
         // GET: api/EndUsers
-        [HttpGet("/endusers")]
-        [Authorize(Roles = "Administrator")]
-        public async Task<ActionResult<EndUser>> AllEndUsers()
+        [HttpGet]
+        //[Authorize(Roles = "Administrator")]
+        public async Task<ActionResult<IEnumerable<EndUser>>> AllEndUsers()
         {
             var endUsers = await _repo.ListAllEndUsers();
 
@@ -49,7 +49,7 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/EndUsers/5
-        [HttpGet("/endusers/{id}")]
+        [HttpGet("/{id}")]
         [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<EndUser>> EndUserById(Guid id)
         {
@@ -62,7 +62,7 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/EndUsers/5/Certificates/
-        [HttpGet("/endusers/{id}/certificates")]
+        [HttpGet("{id}/certificates")]
         [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Certificate>> ViewEndUsersCertificates(Guid id)
         {
@@ -75,7 +75,7 @@ namespace QardlessAPI.Controllers
         }
 
         // PUT: api/EndUsers/5
-        [HttpPut("/endusers/{id}")]
+        [HttpPut("{id}")]
         [Authorize(Roles = "Administrator")]
         public async Task<ActionResult> UpdateEndUserContactDetails(Guid id, EndUserUpdateDto endUserUpdateDto)
         {
@@ -93,16 +93,16 @@ namespace QardlessAPI.Controllers
 
         // Business logic: Register EndUser
         // POST: api/EndUsers
-        [HttpPost("/endusers")]
+        [HttpPost]
         [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<EndUserCreateDto?>> RegisterNewEndUser(EndUserCreateDto endUserForCreation)
         {
             if (endUserForCreation == null)
                 return BadRequest();
 
-            EndUserReadPartialDto endUserReadPartialDto = await Task.Run(() => _repo.AddNewEndUser(endUserForCreation));
+            EndUserReadFullDto endUserReadFullDto = await Task.Run(() => _repo.AddNewEndUser(endUserForCreation));
 
-            return Created("/endusers", endUserReadPartialDto);
+            return Created("/endusers", endUserReadFullDto);
         }
 
         /*// Business logic: Assign cert to enduser
@@ -120,7 +120,7 @@ namespace QardlessAPI.Controllers
 
 
         // WEB APP - UNASSIGN CERT
-        [HttpPut("/endusers/certificates/unassign/{id}")]
+        [HttpPut("certificates/unassign/{id}")]
         [Authorize(Roles = "Administrator, RegisteredUser")]
         public async Task<ActionResult> UnassignCertFromEndUser(CertificateReadPartialDto cert)
         {
@@ -135,7 +135,7 @@ namespace QardlessAPI.Controllers
 
         // Business logic: Logout EndUser
         // POST: api/EndUsers
-        [HttpPost("/endusers/logout")]
+        [HttpPost("logout")]
         [Authorize(Roles = "RegisteredUser")]
         public async Task<ActionResult<LogoutResponseDto>> LogoutEndUser(
             [FromBody] LogoutRequestDto endUserLogoutRequest)
@@ -155,7 +155,7 @@ namespace QardlessAPI.Controllers
         }
 
         // DELETE: api/EndUsers/5
-        [HttpDelete("/endusers/{id}")]
+        [HttpDelete("{id}")]
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeleteEndUser(Guid id)
         {

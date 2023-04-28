@@ -28,7 +28,7 @@ namespace QardlessAPI.Data
         Task<IEnumerable<Certificate?>> GetCertificateByBusinessId(Guid id);
         Task<IEnumerable<Certificate?>> GetCertsDueForRenewal(Guid id);
         Task<Business?> UpdateBusinessDetails(Guid id, BusinessUpdateDto businessUpdate);
-        BusinessReadFullDto AddNewBusiness(BusinessCreateDto businessForCreation);
+        Task<BusinessReadFullDto> AddNewBusiness(BusinessCreateDto businessForCreation);
         void DeleteBusiness(Business? business);
 
         #endregion
@@ -74,7 +74,7 @@ namespace QardlessAPI.Data
         Task<Employee?> GetEmployeeById(Guid id);
         Task<Employee?> GetEmployeeByEmail(LoginDto empLoginDto);
         Task<Employee?> UpdateEmployee(Guid id, EmployeeUpdateDto employeeUpdateDto);
-        EmployeeReadFullDto AddNewEmployee(EmployeeCreateDto newEmp);
+        Task<EmployeeReadFullDto> AddNewEmployee(EmployeeCreateDto newEmp);
         bool CheckEmpPassword(Employee emp, LoginDto login);
         void DeleteEmployee(Employee? employee);
         #endregion
@@ -85,7 +85,7 @@ namespace QardlessAPI.Data
         Task<EndUser?> FindEndUserByEmail(string email);
         Task<EndUser?> GetEndUserByEmail(LoginDto endUserLoginDto);
         Task<EndUser?> UpdateEndUserDetails(Guid id, EndUserUpdateDto endUserUpdateDto);
-        EndUserReadFullDto AddNewEndUser(EndUserCreateDto endUserForCreation);
+        Task<EndUserReadFullDto> AddNewEndUser(EndUserCreateDto endUserForCreation);
         bool CheckEndUserPassword(EndUser endUser, LoginDto login);
         void DeleteEndUser(EndUser endUser);
         #endregion

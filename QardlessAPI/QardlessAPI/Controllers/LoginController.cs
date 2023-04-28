@@ -17,6 +17,8 @@ namespace QardlessAPI.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
+        // Commented out while testing AccountController
+        /*
         private readonly IQardlessAPIRepo _repo;
 
         public LoginController(IQardlessAPIRepo repo)
@@ -60,7 +62,7 @@ namespace QardlessAPI.Controllers
 
         // POST: api/admins/login/
         [HttpPost("/admins/login")]
-        public async Task<ActionResult<AdminPartialDto>> LoginAdmin(LoginDto loginAdmin)
+        public async Task<ActionResult<AdminReadDto>> LoginAdmin(LoginDto loginAdmin)
         {
             Admin? admin = await _repo.GetAdminByEmail(loginAdmin);
 
@@ -73,5 +75,6 @@ namespace QardlessAPI.Controllers
             AdminPartialDto adminForProps = _repo.SendAdminForProps(admin);
             return Ok(adminForProps);
         }
+        */
     }
 }

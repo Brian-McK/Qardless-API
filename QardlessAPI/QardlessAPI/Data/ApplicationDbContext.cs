@@ -22,5 +22,6 @@ namespace QardlessAPI.Data
         public DbSet<FlaggedIssue> FlaggedIssues { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<EndUser> EndUsers { get; set; }
+
     }
 }

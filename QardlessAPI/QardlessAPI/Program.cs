@@ -5,6 +5,8 @@ using QardlessAPI.Data;
 using QardlessAPI.Data.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using QardlessAPI.Data.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +65,11 @@ builder.Services.AddAuthentication(opt =>
         IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecurityKey"]))
     };
 });
+
+// Email
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
+
 
 // TODO: Wrap this in an If ENV == Dev
 builder.Services.AddCors(options =>  

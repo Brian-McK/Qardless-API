@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using QardlessAPI.Data;
 using QardlessAPI.Data.Models;
+using QardlessAPI.Data.Services;
 using QardlessAPI.Data.Dtos.Admin;
 using QardlessAPI.Data.Dtos.Authentication;
 using Microsoft.AspNetCore.Authorization;
+
 using System.Data;
 
 namespace QardlessAPI.Controllers
@@ -24,6 +26,23 @@ namespace QardlessAPI.Controllers
             _mapper = mapper ??
                       throw new ArgumentNullException(nameof(mapper));
         }
+        // Email
+        /*
+        [HttpPost("/admins/resetpassword")]
+        public async void ResetPassword()
+        {
+            EmailSender emailSender;
+
+            var resetLink = "test";
+
+            var email = "finbar.xp@gmail.com";
+            var subject = "Reset Password for Qardless";
+            var message = $"Please reset your password for Qardless using this link: {resetLink}";
+
+            await emailSender.SendEmailAsync(email, subject, message);
+        }
+        */
+
 
         // GET: api/Admins
         [HttpGet("/admins")]

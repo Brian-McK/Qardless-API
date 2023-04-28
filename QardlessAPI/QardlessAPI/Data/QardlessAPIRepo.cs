@@ -157,7 +157,7 @@ namespace QardlessAPI.Data
             return await _context.Businesses.FirstOrDefaultAsync(b => b.Id == id.ToString());
         }
 
-        public BusinessReadFullDto AddNewBusiness(BusinessCreateDto businessForCreation)
+        public async Task<BusinessReadFullDto> AddNewBusiness(BusinessCreateDto businessForCreation)
         {
             if (businessForCreation == null)
                 throw new ArgumentNullException(nameof(businessForCreation));
@@ -267,7 +267,7 @@ namespace QardlessAPI.Data
             {
                 Id = Guid.NewGuid(),
                 CourseId = certForCreation.CourseId,
-                EndUserId = endUser.Id,
+                EndUserId = new Guid(endUser.Id),
                 CertNumber = certForCreation.CertNumber,
                 PdfUrl = certForCreation.PdfUrl,
                 CreatedAt = DateTime.Now,
@@ -294,7 +294,7 @@ namespace QardlessAPI.Data
             if (!certificate.Equals(cert))
                 throw new Exception("Created certificate does not match");
 
-            var endUser = _context.EndUsers.Include(i => i.EndUserCerts).FirstOrDefault(e => e.Id == cert.EndUserId);
+            var endUser = _context.EndUsers.Include(i => i.EndUserCerts).FirstOrDefault(e => e.Id == cert.EndUserId.ToString());
 
             if (endUser == null)
                 throw new ArgumentNullException(nameof(endUser));
@@ -314,7 +314,7 @@ namespace QardlessAPI.Data
                 throw new ArgumentNullException(nameof(cert));
 
             _context.EndUsers.Include(i => i.EndUserCerts)
-                .FirstOrDefault(e => e.Id == cert.EndUserId);
+                .FirstOrDefault(e => e.Id == cert.EndUserId.ToString());
             
             if(endUser == null)
                 throw new ArgumentNullException(nameof(endUser));
@@ -467,7 +467,7 @@ namespace QardlessAPI.Data
         public async Task<IEnumerable<Employee?>> GetEmployeesByBusinessId(Guid id)
         {
             return await _context.Employees
-                .Where(e => e.BusinessId == id).ToListAsync();
+                .Where(e => e.BusinessId == id.ToString()).ToListAsync();
         }
 
         public async Task<Employee?> GetEmployeeById(Guid id)
@@ -492,7 +492,7 @@ namespace QardlessAPI.Data
             emp.PasswordHash = HashPassword(employeeUpdateDto.Password);
             emp.PhoneNumber = employeeUpdateDto.PhoneNumber;
             emp.PrivilegeLevel = employeeUpdateDto.PrivilegeLevel;
-            emp.BusinessId = employeeUpdateDto.BusinessId;
+            emp.BusinessId = employeeUpdateDto.BusinessId.ToString();
 
             _context.SaveChanges();
             _context.Employees.Add(emp);
@@ -500,7 +500,7 @@ namespace QardlessAPI.Data
             return await _context.Employees.FirstOrDefaultAsync(e => e.Id == id.ToString());
         }
 
-        public EmployeeReadFullDto AddNewEmployee(EmployeeCreateDto newEmp)
+        public async Task<EmployeeReadFullDto> AddNewEmployee(EmployeeCreateDto newEmp)
         {
             if (newEmp == null)
                 throw new ArgumentNullException(nameof(newEmp));
@@ -513,7 +513,7 @@ namespace QardlessAPI.Data
                 Name = newEmp.Name,
                 PhoneNumber = newEmp.PhoneNumber,
                 PrivilegeLevel = newEmp.PrivilegeLevel,
-                BusinessId = newEmp.BusinessId
+                BusinessId = newEmp.BusinessId.ToString()
             };
 
             // insert the user into the DB
@@ -535,7 +535,7 @@ namespace QardlessAPI.Data
                 Name = emp.Name,
                 Email = emp.Email,
                 PhoneNumber = emp.PhoneNumber,
-                BusinessId = emp.BusinessId
+                BusinessId = new Guid(emp.BusinessId)
             };
             
             return empFullRead;
@@ -606,7 +606,7 @@ namespace QardlessAPI.Data
             return await _context.EndUsers.FirstOrDefaultAsync(e => e.Id == id.ToString());
         }
 
-        public EndUserReadFullDto AddNewEndUser(EndUserCreateDto endUserForCreation)
+        public async Task<EndUserReadFullDto> AddNewEndUser(EndUserCreateDto endUserForCreation)
         {
             if (endUserForCreation == null)
                 throw new ArgumentNullException(nameof(endUserForCreation));
@@ -669,14 +669,12 @@ namespace QardlessAPI.Data
         {
             EndUserReadPartialDto endUserForProps = new EndUserReadPartialDto
             {
-                Id = endUser.Id,
+                Id = new Guid(endUser.Id),
                 Name = endUser.Name,
                 Email = endUser.Email,
-                ContactNumber = endUser.ContactNumber,
-                IsLoggedIn = true
+                PhoneNumber = endUser.PhoneNumber
             };
 
-            endUser.LastLoginDate = DateTime.Now;
             SaveChanges();
 
             return endUserForProps;
@@ -686,15 +684,13 @@ namespace QardlessAPI.Data
         {
             EmployeeReadPartialDto empForProps = new EmployeeReadPartialDto
             {
-                Id = emp.Id,
+                Id = new Guid(emp.Id),
                 Name = emp.Name,
                 Email = emp.Email,
-                ContactNumber = emp.ContactNumber,
-                BusinessId = emp.BusinessId,
-                IsLoggedIn = true
+                PhoneNumber = emp.PhoneNumber,
+                BusinessId = new Guid(emp.BusinessId)
             };
 
-            emp.LastLoginDate = DateTime.Now;
             SaveChanges();
 
             return empForProps;

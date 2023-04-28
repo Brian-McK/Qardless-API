@@ -7,14 +7,12 @@ using Microsoft.EntityFrameworkCore;
 // using OfficeOpenXml;
 using QardlessAPI.Data.Models;
 using QardlessAPI.Data;
-using QardlessAPI.Data;
-using QardlessAPI.Data.Models;
 
 namespace QardlessAPI.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    //[Authorize(Roles = "Administrator")]
+    //[Authorize(Roles = "Administrator")] // TODO, uncomment attribute once initial users are added
     public class SeedController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -75,11 +73,12 @@ namespace QardlessAPI.Controllers
             if (await _userManager.FindByNameAsync(email_Admin) == null)
             {
                 // create a new admin ApplicationUser account
-                var user_Admin = new ApplicationUser()
+                var user_Admin = new Admin()
                 {
                     SecurityStamp = Guid.NewGuid().ToString(),
                     UserName = email_Admin,
                     Email = email_Admin,
+                    Name = "Admin User"
                 };
 
                 // insert the admin user into the DB
@@ -96,6 +95,7 @@ namespace QardlessAPI.Controllers
                 user_Admin.LockoutEnabled = false;
 
                 // add the admin user to the added users list
+                //_context.Admins.Add(user_Admin);
                 addedUserList.Add(user_Admin);
             }
 
@@ -125,6 +125,7 @@ namespace QardlessAPI.Controllers
                 user_User.LockoutEnabled = false;
 
                 // add the standard user to the added users list
+                //_context.EndUsers.Add(user_User);
                 addedUserList.Add(user_User);
             }
 
