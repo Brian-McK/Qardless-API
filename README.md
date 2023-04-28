@@ -5,9 +5,9 @@ README file for Qardless-API, a RESTful API built using ASP .NET Core and using 
 ## Installation 
 
 To run this API, you will need: 
-..* .NET Core 6 or above
-..* Microsoft SQL Server 
-..* Recommended IDE: Visual Studio 2023
+..* .NET Core 6 or above 
+..* Microsoft SQL Server  
+..* Recommended IDE: Visual Studio 2023 
 
 ### Create a Local SQL Server DB on your machine
 
