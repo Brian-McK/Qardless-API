@@ -34,7 +34,7 @@ POST /admins - adds a new admin
 GET /admins/{id} - gets admin by id
 PUT /admins/{id} - edits admin by id
 DELETE /admins/{id} - deletes an admin by id
-POST /admins/logout - logouts an admin 
+POST /admins/logout - logouts an admin
 
 ### Businesses 
 GET /businesses - gets all businesses
