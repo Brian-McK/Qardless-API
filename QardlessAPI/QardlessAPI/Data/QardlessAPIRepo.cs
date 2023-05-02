@@ -416,14 +416,27 @@ namespace QardlessAPI.Data
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task<IEnumerable<FlaggedIssue>> ListFlaggedIssuesByBusinessId(Guid businessId)
+        public async Task<IEnumerable<FlaggedIssueWithUser>> ListFlaggedIssuesByBusinessId(Guid businessId)
         {
             return await _context.FlaggedIssues
                 .Include(f => f.Certificate)
-                .ThenInclude(c => c.Course)
+                    .ThenInclude(c => c.Course)
                 .Where(f => f.Certificate.Course.BusinessId == businessId)
+                .Select(f => new FlaggedIssueWithUser
+                {
+                    Id = f.Id,
+                    Type = f.Type,
+                    Content = f.Content,
+                    CertificateId = f.CertificateId,
+                    WasRead = f.WasRead,
+                    CreatedAt = f.CreatedAt,
+                    EndUserEmail = _context.EndUsers
+                        .Where(e => e.Id == f.Certificate.EndUserId)
+                        .Select(e => e.Email)
+                        .FirstOrDefault()
+                })
                 .ToListAsync();
-        }
+    }
         
         public void FlaggedIssueWasRead(Guid flaggedIssueId)
         {
