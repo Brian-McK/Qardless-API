@@ -205,10 +205,10 @@ namespace QardlessAPI.Data
                     Id = c.Id,
                     CertNumber = c.CertNumber,
                     Course = _context.Courses
-                        .Where(c => c.Id == c.Id)
+                        .Where(c => c.BusinessId == id)
                         .Select(co => new Course
                         {
-                            Id = c.CourseId,
+                            Id = co.Id,
                             BusinessId = co.BusinessId,
                             Title = co.Title,
                             CourseDate = co.CourseDate,
