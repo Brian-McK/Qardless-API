@@ -458,6 +458,14 @@ namespace QardlessAPI.Data
                     Type = f.Type,
                     Content = f.Content,
                     CertificateId = f.CertificateId,
+                    CertNum = _context.Certificates
+                        .Where(c => c.Id == f.CertificateId)
+                        .Select(cn => cn.CertNumber)
+                        .FirstOrDefault(),
+                    CourseTitle = _context.Courses
+                        .Where(c => c.Id == f.CertificateId)
+                        .Select(co => co.Title)
+                        .FirstOrDefault(),
                     WasRead = f.WasRead,
                     CreatedAt = f.CreatedAt,
                     EndUserEmail = _context.EndUsers
