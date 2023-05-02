@@ -6,6 +6,8 @@
         public string Type { get; set; }
         public string Content { get; set; }
         public Guid CertificateId { get; set; }
+        public string CertNum { get; set; }
+        public string CourseTitle { get; set; }
         public bool WasRead { get; set; }
         public DateTime CreatedAt { get; set; }
         public string EndUserEmail { get; set; }
