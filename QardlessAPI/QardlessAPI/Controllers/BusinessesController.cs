@@ -51,7 +51,7 @@ namespace QardlessAPI.Controllers
             if (businessCerts == null)
                 return NotFound();
 
-            return Ok(_mapper.Map<IEnumerable<Certificate>>(businessCerts));
+            return Ok(businessCerts);
         }
 
         [HttpPut("/businesses/{id}")]

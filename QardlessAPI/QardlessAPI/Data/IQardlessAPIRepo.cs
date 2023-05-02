@@ -28,7 +28,7 @@ namespace QardlessAPI.Data
         Task<IEnumerable<Business>> ListAllBusinesses();
         Task<Business?> GetBusinessById(Guid id);
         Task<Business?> GetBusinessByEmail(LoginDto businessLogin);
-        Task<IEnumerable<Certificate?>> GetCertificateByBusinessId(Guid id);
+        Task<IEnumerable<CertificatesForExport>> GetCertificateByBusinessId(Guid id);
         Task<Business?> UpdateBusinessDetails(Guid id, BusinessUpdateDto businessUpdate);
         BusinessReadPartialDto AddNewBusiness(BusinessCreateDto businessForCreation);
         void DeleteBusiness(Business? business);
