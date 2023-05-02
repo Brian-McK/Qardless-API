@@ -203,13 +203,12 @@ namespace QardlessAPI.Data
                 .Select(c => new CertificatesForExport
                 {
                     Id = c.Id,
-                    CourseId = c.CourseId,
                     CertNumber = c.CertNumber,
                     Course = _context.Courses
                         .Where(c => c.Id == c.Id)
                         .Select(co => new Course
                         {
-                            Id = co.Id,
+                            Id = c.CourseId,
                             BusinessId = co.BusinessId,
                             Title = co.Title,
                             CourseDate = co.CourseDate,
