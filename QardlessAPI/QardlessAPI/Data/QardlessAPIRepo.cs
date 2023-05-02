@@ -8,6 +8,7 @@ using QardlessAPI.Data.Dtos.Employee;
 using QardlessAPI.Data.Dtos.EndUser;
 using QardlessAPI.Data.Dtos.FlaggedIssue;
 using QardlessAPI.Data.Models;
+using System.Composition;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -202,7 +203,18 @@ namespace QardlessAPI.Data
                 .Select(c => new CertificatesForExport
                 {
                     Id = c.Id,
+                    CourseId = c.CourseId,
                     CertNumber = c.CertNumber,
+                    Course = _context.Courses
+                        .Where(c => c.Id == c.Id)
+                        .Select(co => new Course
+                        {
+                            Id = co.Id,
+                            BusinessId = co.BusinessId,
+                            Title = co.Title,
+                            CourseDate = co.CourseDate,
+                            Expiry = co.Expiry,
+                        }).FirstOrDefault(),
                     PdfUrl = c.PdfUrl,
                     CreatedAt = c.CreatedAt,
                     EndUserName = _context.EndUsers
@@ -212,7 +224,8 @@ namespace QardlessAPI.Data
                     EndUserEmail = _context.EndUsers
                         .Where(e => e.Id == c.EndUserId)
                         .Select(e => e.Email)
-                        .FirstOrDefault()
+                        .FirstOrDefault(),
+                    IsFrozen = c.IsFrozen,
                     })
                 .ToListAsync();
 
