@@ -208,11 +208,12 @@ namespace QardlessAPI.Data
                         .Where(c => c.BusinessId == id)
                         .Select(co => new Course
                         {
-                            Id = co.Id,
-                            BusinessId = co.BusinessId,
-                            Title = co.Title,
-                            CourseDate = co.CourseDate,
-                            Expiry = co.Expiry,
+                            Id = c.CourseId,
+                            BusinessId = id,
+                            Business = c.Course.Business,
+                            Title = c.Course.Title,
+                            CourseDate = c.Course.CourseDate,
+                            Expiry = c.Course.Expiry,
                         }).FirstOrDefault(),
                     PdfUrl = c.PdfUrl,
                     CreatedAt = c.CreatedAt,
