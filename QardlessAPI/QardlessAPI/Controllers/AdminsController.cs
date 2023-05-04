@@ -8,23 +8,31 @@ using QardlessAPI.Data.Dtos.Authentication;
 using Microsoft.AspNetCore.Authorization;
 
 using System.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace QardlessAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Administrator")]
+    // Note: having Authorize here causes issues with /api 
     public class AdminsController : ControllerBase
     {
+        private readonly ApplicationDbContext _context;
         private readonly IQardlessAPIRepo _repo;
         private readonly IMapper _mapper;
 
-        public AdminsController(IQardlessAPIRepo repo, IMapper mapper)
+        public AdminsController(
+            IQardlessAPIRepo repo,
+            IMapper mapper,
+            ApplicationDbContext context
+            )
         {
             _repo = repo ??
                     throw new ArgumentNullException(nameof(repo));
             _mapper = mapper ??
                       throw new ArgumentNullException(nameof(mapper));
+
+            _context = context;
         }
         // Email
         /*
@@ -45,19 +53,23 @@ namespace QardlessAPI.Controllers
 
 
         // GET: api/Admins
-        [HttpGet("/admins")]
-        public async Task<ActionResult<Admin>> AllAdmins()
+        [HttpGet]//("/admins")]
+        [Authorize(Roles = "Administrator")]
+        public async Task<ActionResult<IEnumerable<Admin>>> AllAdmins()
         {
             var admins = await _repo.ListAllAdmins();
+            //var admins = await _context.Admins.ToListAsync();
 
-            if(admins == null)
+            if (admins == null)
                 return NotFound();
 
-            return Ok(_mapper.Map<IEnumerable<AdminReadDto>>(admins));
+            return Ok(admins);
+            //return Ok(_mapper.Map<IEnumerable<AdminReadDto>>(admins));
         }
 
         // GET: api/Admins/5
-        [HttpGet("/admins/{id}")]
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Admin>> AdminById(Guid id)
         {
             var admin = await _repo.GetAdminById(id);
@@ -68,7 +80,8 @@ namespace QardlessAPI.Controllers
         }
 
         // PUT: api/Admins/5
-        [HttpPut("/admins/{id}")]
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult> UpdateAdminContactDetails(Guid id, AdminUpdateDto adminUpdateDto)
         {
             if(adminUpdateDto == null) return BadRequest();
@@ -82,7 +95,8 @@ namespace QardlessAPI.Controllers
         }
 
         // POST: api/Admins    (REGISTER)
-        [HttpPost("/admins")]
+        [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<AdminCreateDto?>> RegisterNewAdmin(AdminCreateDto newAdmin)
         {
             if(newAdmin == null) return BadRequest();
@@ -94,7 +108,9 @@ namespace QardlessAPI.Controllers
 
         //LOGOUT
         // POST: api/admins/logout
-        [HttpPost("/admins/logout")]
+        // Should be in the Account Controller
+        [HttpPost("logout")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<LogoutResponseDto>> LogoutAdmin(
             [FromBody] LogoutRequestDto adminLogoutRequest)
         {
@@ -111,7 +127,8 @@ namespace QardlessAPI.Controllers
         }
 
         // DELETE: api/Admins/5
-        [HttpDelete("/admins/{id}")]
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeleteAdmin(Guid id)
         {
             var admin = await _repo.GetAdminById(id);

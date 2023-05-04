@@ -66,6 +66,9 @@ builder.Services.AddAuthentication(opt =>
     };
 });
 
+// Service Lifetime: Scoped, created once per request.
+builder.Services.AddScoped<IQardlessAPIRepo, QardlessAPIRepo>();
+
 // Email
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
@@ -114,4 +117,5 @@ app.Run();
  * When the API successfully builds and runs, go to this link to test the API
  *  https://localhost:40443/swagger/index.html
  * 
+ * dotnet ef migrations add "Initial" -o "Data/Migrations"
  */

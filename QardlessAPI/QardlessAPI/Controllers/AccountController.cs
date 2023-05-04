@@ -13,7 +13,7 @@ using QardlessAPI.Data.Dtos.Authentication;
 
 namespace QardlessAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
     {

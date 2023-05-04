@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace QardlessAPI.Controllers
 {
-    [Route("api/endusers")]
+    [Route("api/[controller]")]
     [ApiController]
     //[Authorize]
     public class EndUsersController : ControllerBase
@@ -49,7 +49,7 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/EndUsers/5
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<EndUser>> EndUserById(Guid id)
         {

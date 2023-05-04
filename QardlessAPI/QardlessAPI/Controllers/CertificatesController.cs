@@ -24,7 +24,7 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/Certificates
-        [HttpGet("/certificates")]
+        [HttpGet]
         public async Task<ActionResult<Certificate>> ViewAllCertificates()
         {
             var certs = await _repo.ListAllCertificates();
@@ -36,7 +36,7 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/Certificates/5
-        [HttpGet("/certificates/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Certificate>> CertificateById(Guid id)
         {
             var cert = await _repo.GetCertificateById(id);
@@ -48,7 +48,7 @@ namespace QardlessAPI.Controllers
         }
 
         // PUT: api/Certificates/5
-        [HttpPut("/certificates/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> EditCertificate(Guid id, CertificateUpdateDto? certForUpdateDto)
         {
             if(certForUpdateDto == null)
@@ -64,7 +64,7 @@ namespace QardlessAPI.Controllers
         }
 
         // POST: api/Certificates
-        [HttpPost("/certificates")]
+        [HttpPost]
         public async Task<ActionResult<Certificate?>> AddNewCertificate(CertificateCreateDto certificateForCreation)
         {
             if (certificateForCreation == null)
@@ -98,7 +98,7 @@ namespace QardlessAPI.Controllers
 
         // WEB APP - FREEZE CERT
         // PUT: api/certificates/freeze/5
-        [HttpPut("/certificates/{id}/freeze")]
+        [HttpPut("{id}/freeze")]
         public async Task<ActionResult> FreezeEndUserCert(Guid id)
         {
             var cert = await _repo.GetCertificateById(id);
@@ -112,7 +112,7 @@ namespace QardlessAPI.Controllers
 
         // WEB APP - UNFREEZE CERT
         // PUT: api/certificates/unfreeze/5
-        [HttpPut("/certificates/{id}/unfreeze")]
+        [HttpPut("{id}/unfreeze")]
         public async Task<ActionResult> UnfreezeEndUserCert(Guid id)
         {
             var cert = await _repo.GetCertificateById(id);
@@ -125,7 +125,7 @@ namespace QardlessAPI.Controllers
         }
 
         // DELETE: api/Certificates/5
-        [HttpDelete("/certificates/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCertificate(Guid id)
         {
             var cert = await _repo.GetCertificateById(id);

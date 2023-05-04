@@ -12,7 +12,6 @@ namespace QardlessAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class BusinessesController : ControllerBase
     {
         private readonly IQardlessAPIRepo _repo;
@@ -37,7 +36,7 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/Businesses
-        [HttpGet("/businesses")]
+        [HttpGet]
         [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<IEnumerable<Business>>> ViewAllBusinesses()
         {
@@ -49,7 +48,7 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/Businesses/5
-        [HttpGet("/businesses/{id}")]
+        [HttpGet("{id}")]
         [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Business>> BusinessById(Guid id)
         {
@@ -61,7 +60,7 @@ namespace QardlessAPI.Controllers
         }
 
 
-        [HttpGet("/businesses/{id}/certificates")]
+        [HttpGet("{id}/certificates")]
         [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Certificate>> ViewBusinessesCertificates(Guid id)
         {
@@ -73,7 +72,7 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<Certificate>>(businessCerts));
         }
 
-        [HttpGet("/businesses/certificates")]
+        [HttpGet("certificates")]
         [Authorize(Roles = "Business")]
         public async Task<ActionResult<Certificate>> ViewBusinessesCertificates()
         {
@@ -95,7 +94,7 @@ namespace QardlessAPI.Controllers
         }
 
 
-        [HttpGet("/businesses/{id}/exp/certificates")]
+        [HttpGet("{id}/exp/certificates")]
         [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Certificate>> ViewCertsDueForRenewalByBusiness(Guid id)
         {
@@ -107,7 +106,7 @@ namespace QardlessAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<Certificate>>(certs));
         }
 
-        [HttpGet("/businesses/exp/certificates")]
+        [HttpGet("exp/certificates")]
         [Authorize(Roles = "Business")]
         public async Task<ActionResult<Certificate>> ViewCertsDueForRenewalByBusinessJWT()
         {
@@ -128,7 +127,7 @@ namespace QardlessAPI.Controllers
         }
 
         // PUT: api/Businesses/5
-        [HttpPut("/businesses/{id}")]
+        [HttpPut("{id}")]
         [Authorize(Roles = "Administrator")]
         public async Task<ActionResult> UpdateBusinessContactDetails(Guid id, BusinessUpdateDto businessUpdateDto)
         {
@@ -145,7 +144,7 @@ namespace QardlessAPI.Controllers
         }
 
         // POST: api/Businesses
-        [HttpPost("/businesses")]
+        [HttpPost]
         [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<BusinessCreateDto?>> RegisterNewBusiness(BusinessCreateDto businessCreateDto)
         {
@@ -158,7 +157,7 @@ namespace QardlessAPI.Controllers
         }
 
         // DELETE: api/Businesses/5
-        [HttpDelete("/businesses/{id}")]
+        [HttpDelete("{id}")]
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeleteBusiness(Guid id)
         {

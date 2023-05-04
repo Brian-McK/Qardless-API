@@ -45,6 +45,7 @@ namespace QardlessAPI.Data
         public async Task<IEnumerable<Admin>> ListAllAdmins()
         {
             return await _context.Admins.ToListAsync();
+
         }
 
         public async Task<Admin?> GetAdminById(Guid id)
@@ -89,7 +90,7 @@ namespace QardlessAPI.Data
             user_Admin.EmailConfirmed = true;
             user_Admin.LockoutEnabled = false;
 
-            _context.Admins.Add(user_Admin);
+            // _context.Admins.Add(user_Admin);
             await _context.SaveChangesAsync();
 
             AdminReadDto adminReadDto = new AdminReadDto()
@@ -180,7 +181,7 @@ namespace QardlessAPI.Data
             user_Business.EmailConfirmed = true;
             user_Business.LockoutEnabled = false;
 
-            _context.Businesses.Add(user_Business);
+            //_context.Businesses.Add(user_Business);
             await _context.SaveChangesAsync();
 
             BusinessReadFullDto businessReadFullDto = new BusinessReadFullDto()
@@ -526,7 +527,7 @@ namespace QardlessAPI.Data
             emp.EmailConfirmed = true;
             emp.LockoutEnabled = false;
 
-            _context.Employees.Add(emp);
+            // _context.Employees.Add(emp);
             await _context.SaveChangesAsync();
 
             EmployeeReadFullDto empFullRead = new EmployeeReadFullDto
@@ -630,7 +631,7 @@ namespace QardlessAPI.Data
             user_RegisteredUser.EmailConfirmed = true;
             user_RegisteredUser.LockoutEnabled = false;
 
-            _context.EndUsers.Add(user_RegisteredUser);
+            //_context.EndUsers.Add(user_RegisteredUser);
             await _context.SaveChangesAsync();
 
             EndUserReadFullDto endUserReadFullDto = new EndUserReadFullDto

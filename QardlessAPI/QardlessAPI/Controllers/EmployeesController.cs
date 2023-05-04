@@ -38,7 +38,7 @@ namespace QardlessAPI.Controllers
         }
 
         // GET: api/Employees
-        [HttpGet("/employees")]
+        [HttpGet]
         [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Employee>> AllEmployees()
         {
@@ -52,7 +52,7 @@ namespace QardlessAPI.Controllers
 
         // GET: api/Employees/5
 
-        [HttpGet("/employees/{id}")]
+        [HttpGet("{id}")]
         [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Employee>> ViewEmployeeById(Guid id)
         {
@@ -67,7 +67,7 @@ namespace QardlessAPI.Controllers
         //Task<IEnumerable<Employee?>> GetEmployeesById(Guid id); //TODO: Businesses controller
 
         // PUT: api/Employees/5
-        [HttpPut("/employees/{id}")]
+        [HttpPut("{id}")]
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> UpdateEmployeeDetails(Guid id, EmployeeUpdateDto employeeUpdateDto)
         {
@@ -85,7 +85,7 @@ namespace QardlessAPI.Controllers
 
         // Register Employee
         // POST: api/Employees
-        [HttpPost("/employees")]
+        [HttpPost]
         [Authorize(Roles = "Administrator,Business")]
         public async Task<ActionResult<EmployeeCreateDto?>> RegisterNewEmployee(EmployeeCreateDto employeeCreateDto)
         {
@@ -99,7 +99,7 @@ namespace QardlessAPI.Controllers
 
         // Business logic: Logout Employee
         // POST: api/Employees
-        [HttpPost("/employees/logout")]
+        [HttpPost("logout")]
         [Authorize(Roles = "Employee")]
         public async Task<ActionResult<LogoutResponseDto>> LogoutEmployee(
             [FromBody] LogoutRequestDto employeeLogoutRequest)
@@ -118,7 +118,7 @@ namespace QardlessAPI.Controllers
         }
 
         // DELETE: api/Employees/5
-        [HttpDelete("/employees/{id}")]
+        [HttpDelete("{id}")]
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeleteEmployee(Guid id)
         {
